@@ -12,9 +12,12 @@
     "@types/react-dom": "^18.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.5",
     "react-scripts": "5.0.1",
+    "react-xarrows": "^2.0.2",
     "typescript": "^4.8.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "wasm-lib": "file:wasm-lib/pkg"
   },
   "scripts": {
     "start": "react-scripts start",
