@@ -9,16 +9,19 @@ const Graph = () => {
   interface Data {
     [key: string]: string[];
   }
+  interface Time {
+    [key: string]: number;
+  }
 
   const [node, setNode] = useState<Node>();
   const [data, setData] = useState<Data>();
   const [twoWayData, setTwoWayData] = useState<Data>();
   const [dataLevels, setDataLevels] = useState();
   const [file, setFile] = useState<string>("");
+  const [cp, setCp] = useState<string[]>([]);
+  let criticalPath: string[] = [];
 
-  function getCriticalPath(job: string) {}
-
-  let times = {
+  let times: Time = {
     a: 2,
     b: 52,
     c: 15,
@@ -26,11 +29,47 @@ const Graph = () => {
     e: 5,
     f: 3,
     k: 11,
+    l: 4,
+    g: 2,
+    m: 4,
   };
+
+  function getCriticalPath(job: string): string[] {
+    let longestJob: string = "";
+    let longestTime = 0;
+    let prevJobs: string[] = [];
+    if (twoWayData !== undefined && twoWayData.hasOwnProperty(job)) {
+      prevJobs = twoWayData[job].filter((e: string) => {
+        return /p_[a-z0-9]+/.test(e);
+      });
+    }
+    prevJobs = prevJobs.map((e: string) => {
+      e = e.slice(2);
+      return e;
+    });
+    console.log(prevJobs);
+    if (prevJobs.length === 0) {
+      setCp(criticalPath);
+      console.log(criticalPath);
+      return criticalPath;
+    }
+    prevJobs.forEach((prevJob: string) => {
+      if (times[prevJob] > longestTime) {
+        longestJob = prevJob;
+      }
+    });
+    console.log(longestJob);
+    criticalPath.push(longestJob);
+    return getCriticalPath(longestJob);
+  }
+
   let levels: any = { 0: ["a"] };
   useEffect(() => {
     getl("a");
-  }, [data]);
+    console.log(twoWayData);
+    console.log(data);
+    getCriticalPath("h");
+  }, [data, twoWayData]);
 
   useEffect(() => {
     readTextFile("input.txt");
@@ -95,18 +134,9 @@ const Graph = () => {
                   let st = { top: h + "px", left: w + "px" };
                   return (
                     <>
-                      <Job id={item} st={st} />
+                      <Job id={item} st={st} cp={getCriticalPath} />
                       {node[parseInt(key) - 1] !== undefined &&
                         twoWayData &&
-                        // node[parseInt(key) - 1]
-                        //   .filter((e: string) => {
-                        //     if (data) {
-                        //       if (data[e]?.includes(item)) return true;
-                        //     }
-                        //   })
-                        //   .map((e: string) => {
-                        //     return <Xarrow start={e} end={item} curveness={0.5} startAnchor={"bottom"} endAnchor={"top"} color={"white"} strokeWidth={1} />;
-                        //   })
                         twoWayData[item]
                           .filter((e: string) => {
                             return /p_[a-z0-9]+/.test(e);
@@ -120,6 +150,12 @@ const Graph = () => {
                 })}
               </>
             );
+          })}
+        {cp !== undefined &&
+          cp.map((e: string) => {
+            if (cp.indexOf(e) !== cp.length - 1) {
+              return <Xarrow start={e} end={cp[cp.indexOf(e) + 1]} curveness={0.5} startAnchor={"top"} endAnchor={"bottom"} color={"red"} strokeWidth={2} />;
+            }
           })}
       </Xwrapper>
     </div>

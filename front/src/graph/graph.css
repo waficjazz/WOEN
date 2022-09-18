@@ -12,3 +12,9 @@
   color: white;
   text-align: center;
 }
+
+.job:hover {
+  border: 1px solid #ffffff;
+  background-color: rgb(255, 255, 255, 0.6);
+  color: #000000;
+}
