@@ -6,9 +6,10 @@ type Props = {
   id: string;
   st: any;
   cp: any;
+  time: number;
 };
 
-const Job = ({ id, st, cp }: Props) => {
+const Job = ({ id, st, cp, time }: Props) => {
   const updateXarrow = useXarrow();
   return (
     <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
@@ -20,6 +21,8 @@ const Job = ({ id, st, cp }: Props) => {
           cp(id);
         }}>
         {id}
+        <br />
+        {time}
       </div>
     </Draggable>
   );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import init, { get_two_way, get_one_way } from "wasm-lib";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import Job from "./Job";
+import { time } from "console";
 const Graph = () => {
   interface Node {
     [key: string]: string[];
@@ -12,7 +13,9 @@ const Graph = () => {
   interface Time {
     [key: string]: number;
   }
-
+  const [inp, setInp] = useState("");
+  const [timesInput, setTimesInput] = useState("");
+  const [dataInput, setDataInput] = useState("");
   const [node, setNode] = useState<Node>();
   const [data, setData] = useState<Data>();
   const [twoWayData, setTwoWayData] = useState<Data>();
@@ -20,7 +23,9 @@ const Graph = () => {
   const [file, setFile] = useState<string>("");
   const [cp, setCp] = useState<string[]>([]);
   let criticalPath: string[] = [];
-
+  let a = -1;
+  let count = 0;
+  let place = 1;
   let times: Time = {
     a: 2,
     b: 52,
@@ -32,6 +37,11 @@ const Graph = () => {
     l: 4,
     g: 2,
     m: 4,
+    x: 2,
+    y: 4,
+    v: 2,
+    w: 114,
+    o: 3,
   };
 
   function getCriticalPath(job: string): string[] {
@@ -47,18 +57,16 @@ const Graph = () => {
       e = e.slice(2);
       return e;
     });
-    console.log(prevJobs);
     if (prevJobs.length === 0) {
       setCp(criticalPath);
-      console.log(criticalPath);
       return criticalPath;
     }
     prevJobs.forEach((prevJob: string) => {
       if (times[prevJob] > longestTime) {
         longestJob = prevJob;
+        longestTime = times[prevJob];
       }
     });
-    console.log(longestJob);
     criticalPath.push(longestJob);
     return getCriticalPath(longestJob);
   }
@@ -66,21 +74,15 @@ const Graph = () => {
   let levels: any = { 0: ["a"] };
   useEffect(() => {
     getl("a");
-    console.log(twoWayData);
-    console.log(data);
-    getCriticalPath("h");
+    // getCriticalPath("h");
   }, [data, twoWayData]);
 
   useEffect(() => {
-    readTextFile("input.txt");
-  }, []);
-
-  useEffect(() => {
     init().then(() => {
-      setData(JSON.parse(get_one_way(file)));
-      setTwoWayData(JSON.parse(get_two_way(file)));
+      setData(JSON.parse(get_one_way(dataInput)));
+      setTwoWayData(JSON.parse(get_two_way(dataInput)));
     });
-  }, [file]);
+  }, [dataInput]);
 
   function readTextFile(file: string) {
     var rawFile = new XMLHttpRequest();
@@ -103,7 +105,6 @@ const Graph = () => {
     let i = 0;
     let nextLevel: string[] = [];
     nextLevel = nextLevel.concat(["a"]);
-    console.log(nextLevel);
     while (nextLevel.length > 0) {
       tmp = [];
       i++;
@@ -117,24 +118,41 @@ const Graph = () => {
       nextLevel = tmp;
     }
     setNode({ ...levels });
-    console.log(levels);
     return levels;
   }
 
   return (
     <div className="grapth_container">
+      <textarea
+        value={inp}
+        onChange={(e) => {
+          setInp(e.target.value);
+        }}
+        className="timeI"
+      />
+      <button onClick={() => setDataInput(inp)}>submit</button>
       <Xwrapper>
         {node &&
           Object.keys(node).map((key) => {
+            count = 0;
+            place = 0;
             return (
               <>
                 {node[key].map((item: string) => {
+                  a = a * -1;
                   let h = parseInt(key) * 100;
-                  let w = node[key].indexOf(item) * 145;
-                  let st = { top: h + "px", left: w + "px" };
+                  let w = a * 100;
+                  count++;
+
+                  if (count % 2 === 0) {
+                    place++;
+                  }
+                  w = place * 145 * a;
+
+                  let st = { top: h + "px", left: "calc(50% + " + w + "px )" };
                   return (
                     <>
-                      <Job id={item} st={st} cp={getCriticalPath} />
+                      <Job id={item} st={st} cp={getCriticalPath} time={times[item]} />
                       {node[parseInt(key) - 1] !== undefined &&
                         twoWayData &&
                         twoWayData[item]

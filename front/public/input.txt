@@ -10,3 +10,10 @@ f>g
 m>g
 l>g
 g>h
+e>x
+e>y
+e>v
+e>w
+w>o
+o>h
+m>o
