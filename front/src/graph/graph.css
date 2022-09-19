@@ -30,9 +30,8 @@
 }
 
 .job:hover {
-  border: 1px solid #ffffff;
-  background-color: rgb(255, 255, 255, 0.6);
-  color: #000000;
+  /* border: 1px solid #ffffff; */
+  border: 1px solid red;
 }
 
 .timeI {
@@ -42,4 +41,15 @@
 
 button {
   top: 300px;
+}
+
+.time_input,
+.time_input:focus,
+.time_input:active,
+.time_input:hover {
+  background-color: transparent;
+  color: white;
+  border: none;
+  outline: none;
+  width: 100%;
 }

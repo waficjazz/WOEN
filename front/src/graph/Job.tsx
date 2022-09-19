@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
 import { useXarrow } from "react-xarrows";
 import "./graph.css";
@@ -7,9 +7,16 @@ type Props = {
   st: any;
   cp: any;
   time: number;
+  registerTime: any;
 };
-
-const Job = ({ id, st, cp, time }: Props) => {
+const Job = ({ id, st, cp, time, registerTime }: Props) => {
+  const [timing, setTiming] = useState(1);
+  useEffect(() => {
+    registerTime(id, 1);
+  }, []);
+  useEffect(() => {
+    registerTime(id, timing);
+  }, [timing]);
   const updateXarrow = useXarrow();
   return (
     <Draggable onDrag={updateXarrow} onStop={updateXarrow} bounds="parent">
@@ -22,7 +29,18 @@ const Job = ({ id, st, cp, time }: Props) => {
         }}>
         {id}
         <br />
-        {time}
+        <input
+          className="time_input"
+          type="text"
+          value={timing}
+          onChange={(e) => {
+            if (e.target.value === "") {
+              setTiming(0);
+            } else {
+              setTiming(parseInt(e.target.value));
+            }
+          }}
+        />
       </div>
     </Draggable>
   );

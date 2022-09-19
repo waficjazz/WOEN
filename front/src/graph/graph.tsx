@@ -28,23 +28,14 @@ const Graph = () => {
   let a = -1;
   let count = 0;
   let place = 1;
-  let times: Time = {
-    a: 2,
-    b: 52,
-    c: 15,
-    d: 6,
-    e: 5,
-    f: 3,
-    k: 11,
-    l: 4,
-    g: 2,
-    m: 4,
-    x: 2,
-    y: 4,
-    v: 2,
-    w: 114,
-    o: 3,
-  };
+
+  const [times, setTimes] = useState<Time>({ a: 1 });
+
+  function registerTime(job: string, time: number) {
+    setTimes((prev) => {
+      return { ...prev, [job]: time };
+    });
+  }
 
   function getCriticalPath(job: string): string[] {
     let longestJob: string = "";
@@ -162,7 +153,7 @@ const Graph = () => {
                     let st = { top: h + "px", left: "calc(50% + " + w + "px )" };
                     return (
                       <>
-                        <Job id={item} st={st} cp={getCriticalPath} time={times[item]} />
+                        <Job id={item} st={st} cp={getCriticalPath} time={times[item]} registerTime={registerTime} />
                         {node[parseInt(key) - 1] !== undefined &&
                           twoWayData &&
                           twoWayData[item]
