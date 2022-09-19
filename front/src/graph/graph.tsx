@@ -13,6 +13,8 @@ const Graph = () => {
   interface Time {
     [key: string]: number;
   }
+  let cpDepth = 0;
+  let firstJob = "";
   const [inp, setInp] = useState("");
   const [timesInput, setTimesInput] = useState("");
   const [dataInput, setDataInput] = useState("");
@@ -48,6 +50,8 @@ const Graph = () => {
     let longestJob: string = "";
     let longestTime = 0;
     let prevJobs: string[] = [];
+    if (cpDepth === 0) firstJob = job;
+    cpDepth++;
     if (twoWayData !== undefined && twoWayData.hasOwnProperty(job)) {
       prevJobs = twoWayData[job].filter((e: string) => {
         return /p_[a-z0-9]+/.test(e);
@@ -58,6 +62,7 @@ const Graph = () => {
       return e;
     });
     if (prevJobs.length === 0) {
+      criticalPath.unshift(firstJob);
       setCp(criticalPath);
       return criticalPath;
     }
@@ -122,60 +127,66 @@ const Graph = () => {
   }
 
   return (
-    <div className="grapth_container">
-      <textarea
-        value={inp}
-        onChange={(e) => {
-          setInp(e.target.value);
-        }}
-        className="timeI"
-      />
-      <button onClick={() => setDataInput(inp)}>submit</button>
-      <Xwrapper>
-        {node &&
-          Object.keys(node).map((key) => {
-            count = 0;
-            place = 0;
-            return (
-              <>
-                {node[key].map((item: string) => {
-                  a = a * -1;
-                  let h = parseInt(key) * 100;
-                  let w = a * 100;
-                  count++;
+    <div className="parent_container">
+      <div className="relations_container">
+        <textarea
+          placeholder="Example:a>b"
+          value={inp}
+          onChange={(e) => {
+            setInp(e.target.value);
+          }}
+          className="timeI"
+        />
+        <br />
+        <button onClick={() => setDataInput(inp)}>submit</button>
+      </div>
+      <div className="grapth_container">
+        <Xwrapper>
+          {node &&
+            Object.keys(node).map((key) => {
+              count = 0;
+              place = 0;
+              return (
+                <>
+                  {node[key].map((item: string) => {
+                    a = a * -1;
+                    let h = (parseInt(key) + 0.5) * 100;
+                    let w = a * 100;
+                    count++;
 
-                  if (count % 2 === 0) {
-                    place++;
-                  }
-                  w = place * 145 * a;
+                    if (count % 2 === 0) {
+                      place++;
+                    }
+                    w = place * 145 * a;
 
-                  let st = { top: h + "px", left: "calc(50% + " + w + "px )" };
-                  return (
-                    <>
-                      <Job id={item} st={st} cp={getCriticalPath} time={times[item]} />
-                      {node[parseInt(key) - 1] !== undefined &&
-                        twoWayData &&
-                        twoWayData[item]
-                          .filter((e: string) => {
-                            return /p_[a-z0-9]+/.test(e);
-                          })
-                          .map((e: string) => {
-                            let a = e.slice(2);
-                            return <Xarrow start={a} end={item} curveness={0.5} startAnchor={"bottom"} endAnchor={"top"} color={"white"} strokeWidth={1} />;
-                          })}
-                    </>
-                  );
-                })}
-              </>
-            );
-          })}
-        {cp !== undefined &&
-          cp.map((e: string) => {
-            if (cp.indexOf(e) !== cp.length - 1) {
-              return <Xarrow start={e} end={cp[cp.indexOf(e) + 1]} curveness={0.5} startAnchor={"top"} endAnchor={"bottom"} color={"red"} strokeWidth={2} />;
-            }
-          })}
-      </Xwrapper>
+                    let st = { top: h + "px", left: "calc(50% + " + w + "px )" };
+                    return (
+                      <>
+                        <Job id={item} st={st} cp={getCriticalPath} time={times[item]} />
+                        {node[parseInt(key) - 1] !== undefined &&
+                          twoWayData &&
+                          twoWayData[item]
+                            .filter((e: string) => {
+                              return /p_[a-z0-9]+/.test(e);
+                            })
+                            .map((e: string) => {
+                              let a = e.slice(2);
+                              return <Xarrow start={a} end={item} curveness={0.5} startAnchor={"bottom"} endAnchor={"top"} color={"white"} strokeWidth={1} animateDrawing={0.5} />;
+                            })}
+                      </>
+                    );
+                  })}
+                </>
+              );
+            })}
+          {cp !== undefined &&
+            cp.map((e: string) => {
+              if (cp.indexOf(e) !== cp.length - 1) {
+                return <Xarrow start={e} end={cp[cp.indexOf(e) + 1]} curveness={0.5} startAnchor={"top"} endAnchor={"bottom"} color={"red"} strokeWidth={2} animateDrawing={0.5} />;
+              }
+            })}
+        </Xwrapper>
+      </div>
     </div>
   );
 };

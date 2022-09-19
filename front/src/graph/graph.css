@@ -1,6 +1,21 @@
+.parent_container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
 .grapth_container {
+  padding: 50px;
+  border: 1px solid #ccc;
   height: 100%;
+  position: relative;
+  overflow: auto;
+  width: 70%;
+
   /* background-color: red; */
+}
+
+.relations_container {
+  width: 30%;
 }
 
 .job {
@@ -21,11 +36,10 @@
 }
 
 .timeI {
-  position: absolute;
   height: 150px;
+  width: 100%;
 }
 
 button {
-  position: absolute;
   top: 300px;
 }
