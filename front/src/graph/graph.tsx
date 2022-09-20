@@ -13,8 +13,13 @@ const Graph = () => {
   interface Time {
     [key: string]: number;
   }
+  interface Levels {
+    [key: number]: string[];
+  }
   let cpDepth = 0;
   let firstJob = "";
+  let drawed: string[] = [];
+  let push = false;
   const [inp, setInp] = useState("");
   const [timesInput, setTimesInput] = useState("");
   const [dataInput, setDataInput] = useState("");
@@ -66,7 +71,7 @@ const Graph = () => {
     return getCriticalPath(longestJob);
   }
 
-  let levels: any = { 0: ["a"] };
+  let levels: Levels = { 0: ["a"] };
   useEffect(() => {
     getl("a");
     // getCriticalPath("h");
@@ -123,6 +128,23 @@ const Graph = () => {
       levels[i] = [...new Set(tmp)];
       nextLevel = tmp;
     }
+    Object.entries(levels).forEach(([key, value]) => {
+      value.forEach((e: string) => {
+        if (!drawed.includes(e)) {
+          drawed.push(e);
+        } else {
+          Object.entries(levels).forEach(([key1, value1]) => {
+            value1.forEach((e1: string) => {
+              if (e1 === e) {
+                if (value.length !== value1.length) {
+                  value1.splice(value1.indexOf(e1), 1);
+                }
+              }
+            });
+          });
+        }
+      });
+    });
     setNode({ ...levels });
     return levels;
   }
@@ -164,6 +186,9 @@ const Graph = () => {
               return (
                 <>
                   {node[key].map((item: string) => {
+                    // if (true) {
+                    //   return <div></div>;
+                    // }else{
                     a = a * -1;
                     let h = (parseInt(key) + 0.5) * 100;
                     let w = a * 100;

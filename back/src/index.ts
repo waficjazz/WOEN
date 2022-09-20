@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 const HttpError = require("./utils/http-error");
-
+const userRoutes = require("./routes/user-routes");
 const app = express();
 
 app.use(bodyParser.json());
@@ -12,6 +12,8 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET , POST , PATCH , DELETE");
   next();
 });
+
+app.use("/api/v1/users", userRoutes);
 
 app.use((req: any, res: any, next: any) => {
   const error = new HttpError("Could not find this route.", 404);
@@ -26,4 +28,6 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-app.listen(process.env.PORT || 5001);
+app.listen(process.env.PORT || 5001, () => {
+  console.log("Server started on port 5001");
+});
