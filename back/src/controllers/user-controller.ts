@@ -1,0 +1,99 @@
+import { PrismaClient } from "@prisma/client";
+const HttpError = require("../utils/http-error");
+import bcrypt from "bcrypt";
+
+const prisma = new PrismaClient();
+
+const signup = async (req: any, res: any, next: any) => {
+  const { username, email, password } = req.body;
+  let existingUser;
+  try {
+    existingUser = await prisma.user.findUnique({
+      where: {
+        username: username,
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Signing up failed, please try again later.", 500);
+    return next(error);
+  }
+  if (existingUser) {
+    const error = new HttpError("User exists already, please login instead.", 422);
+    return next(error);
+  }
+  try {
+    existingUser = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Signing up failed, please try again later.", 500);
+    return next(error);
+  }
+  if (existingUser) {
+    const error = new HttpError("User exists already, please login instead.", 422);
+    return next(error);
+  }
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    const error = new HttpError("Could not create user, please try again.", 500);
+    return next(error);
+  }
+  try {
+    await prisma.user.create({
+      data: {
+        username: username,
+        email: email,
+        password: hashedPassword,
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Signing up failed, please try again later.", 500);
+    return next(error);
+  }
+  res.status(201).json({ user: "created" });
+};
+
+const login = async (req: any, res: any, next: any) => {
+  const { email, username, password } = req.body;
+  if (!email && !username) {
+    const error = new HttpError("Please enter a valid email or username.", 422);
+    return next(error);
+  }
+  if (email || username) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (!user) {
+        const error = new HttpError("Could not find user with this email.", 404);
+        return next(error);
+      }
+      let isValidPassword = false;
+      try {
+        isValidPassword = await bcrypt.compare(password, user.password);
+      } catch (err) {
+        const error = new HttpError("Could not log you in, please check your credentials and try again.", 500);
+        return next(error);
+      }
+      if (!isValidPassword) {
+        const error = new HttpError("Invalid credentials, could not log you in.", 401);
+        return next(error);
+      }
+      res.json({ message: "Logged in!" });
+    } catch (err) {
+      const error = new HttpError("Logging in failed, please try again later.", 500);
+      return next(error);
+    }
+  }
+};
+
+module.exports = {
+  signup,
+  login,
+};
