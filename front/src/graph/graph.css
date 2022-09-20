@@ -15,7 +15,7 @@
 }
 
 .relations_container {
-  width: 30%;
+  width: 100%;
 }
 
 .job {
@@ -52,4 +52,8 @@ button {
   border: none;
   outline: none;
   width: 100%;
+}
+
+.input_container {
+  width: 30%;
 }

@@ -24,12 +24,11 @@ const Graph = () => {
   const [dataLevels, setDataLevels] = useState();
   const [file, setFile] = useState<string>("");
   const [cp, setCp] = useState<string[]>([]);
+  const [times, setTimes] = useState<Time>({ a: 1 });
   let criticalPath: string[] = [];
   let a = -1;
   let count = 0;
   let place = 1;
-
-  const [times, setTimes] = useState<Time>({ a: 1 });
 
   function registerTime(job: string, time: number) {
     setTimes((prev) => {
@@ -78,7 +77,18 @@ const Graph = () => {
       setData(JSON.parse(get_one_way(dataInput)));
       setTwoWayData(JSON.parse(get_two_way(dataInput)));
     });
-  }, [dataInput]);
+  }, [dataInput, times]);
+
+  function handleTimesInput(e: string) {
+    const arr = e.split("\n");
+    let obj: Time = {};
+    arr.forEach((e) => {
+      let temp = e.split(":");
+      obj[temp[0]] = parseInt(temp[1]);
+    });
+    setTimes(obj);
+    console.log(obj);
+  }
 
   function readTextFile(file: string) {
     var rawFile = new XMLHttpRequest();
@@ -119,17 +129,31 @@ const Graph = () => {
 
   return (
     <div className="parent_container">
-      <div className="relations_container">
-        <textarea
-          placeholder="Example:a>b"
-          value={inp}
-          onChange={(e) => {
-            setInp(e.target.value);
-          }}
-          className="timeI"
-        />
-        <br />
-        <button onClick={() => setDataInput(inp)}>submit</button>
+      <div className="input_container">
+        <div className="relations_container">
+          <textarea
+            placeholder="Example:a>b"
+            value={inp}
+            onChange={(e) => {
+              setInp(e.target.value);
+            }}
+            className="timeI"
+          />
+          <br />
+          <button onClick={() => setDataInput(inp)}>submit</button>
+        </div>
+        <div className="relations_container">
+          <textarea
+            placeholder="Example:a:4"
+            value={timesInput}
+            onChange={(e) => {
+              setTimesInput(e.target.value);
+            }}
+            className="timeI"
+          />
+          <br />
+          <button onClick={() => handleTimesInput(timesInput)}>update timings</button>
+        </div>
       </div>
       <div className="grapth_container">
         <Xwrapper>
@@ -155,14 +179,18 @@ const Graph = () => {
                       <>
                         <Job id={item} st={st} cp={getCriticalPath} time={times[item]} registerTime={registerTime} />
                         {node[parseInt(key) - 1] !== undefined &&
-                          twoWayData &&
+                          twoWayData !== undefined &&
+                          twoWayData[item] !== undefined &&
                           twoWayData[item]
                             .filter((e: string) => {
                               return /p_[a-z0-9]+/.test(e);
                             })
                             .map((e: string) => {
                               let a = e.slice(2);
-                              return <Xarrow start={a} end={item} curveness={0.5} startAnchor={"bottom"} endAnchor={"top"} color={"white"} strokeWidth={1} animateDrawing={0.5} />;
+                              if (a !== undefined)
+                                return (
+                                  <Xarrow start={a} end={item} curveness={0.5} startAnchor={"bottom"} endAnchor={"top"} color={"white"} strokeWidth={1} animateDrawing={0.5} />
+                                );
                             })}
                       </>
                     );

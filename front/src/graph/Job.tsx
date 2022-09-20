@@ -12,8 +12,12 @@ type Props = {
 const Job = ({ id, st, cp, time, registerTime }: Props) => {
   const [timing, setTiming] = useState(1);
   useEffect(() => {
-    registerTime(id, 1);
-  }, []);
+    if (time !== undefined) {
+      setTiming(time);
+    } else {
+      registerTime(id, 1);
+    }
+  }, [time]);
   useEffect(() => {
     registerTime(id, timing);
   }, [timing]);
