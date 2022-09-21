@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 const HttpError = require("./utils/http-error");
 const userRoutes = require("./routes/user-routes");
+const containerRoutes = require("./routes/container-routes");
 const app = express();
 
 app.use(bodyParser.json());
@@ -13,6 +14,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/api/v1/container", containerRoutes);
 app.use("/api/v1/users", userRoutes);
 
 app.use((req: any, res: any, next: any) => {
