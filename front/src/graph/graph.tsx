@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import init, { get_two_way, get_one_way } from "wasm-lib";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import Job from "./Job";
-import { time } from "console";
 const Graph = () => {
   interface Node {
     [key: string]: string[];
@@ -19,7 +18,9 @@ const Graph = () => {
   let cpDepth = 0;
   let firstJob = "";
   let drawed: string[] = [];
-  let push = false;
+  const [root, setRoot] = useState("");
+  const [neighbors, setNeighbors] = useState<string[]>([]);
+  const [showCp, setShowCp] = useState<boolean>(false);
   const [inp, setInp] = useState("");
   const [timesInput, setTimesInput] = useState("");
   const [dataInput, setDataInput] = useState("");
@@ -40,7 +41,16 @@ const Graph = () => {
       return { ...prev, [job]: time };
     });
   }
-
+  function getNeighbours(job: string) {
+    let tmp: string[] = [];
+    if (twoWayData !== undefined) {
+      twoWayData[job].forEach((element) => {
+        element = element.slice(2);
+        tmp.push(element);
+        setNeighbors(tmp);
+      });
+    }
+  }
   function getCriticalPath(job: string): string[] {
     let longestJob: string = "";
     let longestTime = 0;
@@ -71,10 +81,11 @@ const Graph = () => {
     return getCriticalPath(longestJob);
   }
 
-  let levels: Levels = { 0: ["a"] };
+  let levels: Levels = {};
   useEffect(() => {
-    getl("a");
-    // getCriticalPath("h");
+    if (root !== "") {
+      getl(root);
+    }
   }, [data, twoWayData]);
 
   useEffect(() => {
@@ -92,7 +103,6 @@ const Graph = () => {
       obj[temp[0]] = parseInt(temp[1]);
     });
     setTimes(obj);
-    console.log(obj);
   }
 
   function readTextFile(file: string) {
@@ -114,8 +124,9 @@ const Graph = () => {
     if (root === null) return 0;
     let tmp: string[] = [];
     let i = 0;
+    levels[0] = [root];
     let nextLevel: string[] = [];
-    nextLevel = nextLevel.concat(["a"]);
+    nextLevel = nextLevel.concat([root]);
     while (nextLevel.length > 0) {
       tmp = [];
       i++;
@@ -153,6 +164,7 @@ const Graph = () => {
     <div className="parent_container">
       <div className="input_container">
         <div className="relations_container">
+          <input type="text" placeholder="root" onChange={(e) => setRoot(e.target.value)} />
           <textarea
             placeholder="Example:a>b"
             value={inp}
@@ -199,7 +211,11 @@ const Graph = () => {
                     let st = { top: h + "px", left: "calc(50% + " + w + "px )" };
                     return (
                       <>
-                        <Job id={item} st={st} cp={getCriticalPath} time={times[item]} registerTime={registerTime} />
+                        {cp.includes(item) ? (
+                          <Job id={item} className="job_cp" st={st} cp={getCriticalPath} time={times[item]} registerTime={registerTime} setShowCp={setShowCp} showCp={showCp} />
+                        ) : (
+                          <Job id={item} st={st} className="job" cp={getCriticalPath} time={times[item]} registerTime={registerTime} setShowCp={setShowCp} showCp={showCp} />
+                        )}
                         {node[parseInt(key) - 1] !== undefined &&
                           twoWayData !== undefined &&
                           twoWayData[item] !== undefined &&
@@ -223,6 +239,7 @@ const Graph = () => {
           {cp !== undefined &&
             cp.map((e: string) => {
               if (cp.indexOf(e) !== cp.length - 1) {
+                let elem = document.getElementById(e);
                 return <Xarrow start={e} end={cp[cp.indexOf(e) + 1]} curveness={0.5} startAnchor={"top"} endAnchor={"bottom"} color={"red"} strokeWidth={2} animateDrawing={0.5} />;
               }
             })}
