@@ -135,8 +135,8 @@ const Graph = () => {
         } else {
           Object.entries(levels).forEach(([key1, value1]) => {
             value1.forEach((e1: string) => {
-              if (e1 === e) {
-                if (value.length !== value1.length) {
+              if (key !== key1) {
+                if (e1 === e) {
                   value1.splice(value1.indexOf(e1), 1);
                 }
               }
@@ -186,9 +186,6 @@ const Graph = () => {
               return (
                 <>
                   {node[key].map((item: string) => {
-                    // if (true) {
-                    //   return <div></div>;
-                    // }else{
                     a = a * -1;
                     let h = (parseInt(key) + 0.5) * 100;
                     let w = a * 100;
