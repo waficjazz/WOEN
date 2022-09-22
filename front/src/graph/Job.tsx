@@ -52,7 +52,7 @@ const Job = ({ id, st, cp, setShowCp, time, showCp, registerTime, className }: P
           setA(e.clientY.toString());
           setB(e.clientX.toString());
         }}> */}
-      <Draggable onDrag={updateXarrow} onStop={updateXarrow} bounds="parent">
+      <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
         <div
           id={id}
           className={className}
