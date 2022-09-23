@@ -6,7 +6,7 @@ const SideBar = () => {
   return (
     <div className="side_bar">
       <h3 className="side_bar_header">WOEN</h3>
-      <SideTile txt="test" route="/test" />
+      <SideTile txt="Containers" route="/containers" />
     </div>
   );
 };

@@ -9,7 +9,7 @@ const Dashboard = () => {
       <SideBar />
       <div className="dashboard_content">
         <Routes>
-          <Route path="c" element={<ContainerBoard />} />
+          <Route path="containers" element={<ContainerBoard />} />
         </Routes>
       </div>
     </div>

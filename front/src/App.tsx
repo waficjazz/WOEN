@@ -7,10 +7,9 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Dashboard />
         <Routes>
           <Route path="/*" element={<Dashboard />} />
-          <Route path="/graph" element={<Graph />} />
+          {/* <Route path="/graph" element={<Graph />} /> */}
         </Routes>
       </BrowserRouter>
     </div>
