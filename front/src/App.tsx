@@ -9,7 +9,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/*" element={<Dashboard />} />
-          {/* <Route path="/graph" element={<Graph />} /> */}
+          <Route path="/graph" element={<Graph />} />
         </Routes>
       </BrowserRouter>
     </div>
