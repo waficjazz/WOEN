@@ -10,7 +10,7 @@ const ContainerBoard = () => {
         <Button>Create</Button>
       </div>
       <div className="container_table">
-        <ContainerRow />
+        <ContainerRow image={"alpine"} name={"hello"} status={"created"} />
       </div>
     </div>
   );

@@ -43,3 +43,26 @@
   width: 100%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+.container_row:hover {
+  cursor: pointer;
+  background-color: rgb(255, 255, 255, 0.1);
+}
+
+.container_row_text {
+  margin-left: 1rem;
+}
+.container_row_text > p {
+  /* background-color: red; */
+  margin: 0;
+}
+.container_row_text > :nth-child(2) {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: small;
+}
+
+.container_row_text > p > span {
+  font-size: small;
+  margin-left: 0.75rem;
+  color: rgb(0, 119, 255);
+}
