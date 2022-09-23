@@ -1,10 +1,16 @@
 import React from "react";
 import "./ContainerBoard.css";
+import Button from "../../shared/Button";
 const ContainerBoard = () => {
   return (
     <div className="container_board">
-      <p className="container_board_header">Containers</p>
-      <div className="container_table"></div>
+      <div className="container_board_header">
+        <p>Containers</p>
+        <Button>Create</Button>
+      </div>
+      <div className="container_table">
+        <ContainerBoard />
+      </div>
     </div>
   );
 };
