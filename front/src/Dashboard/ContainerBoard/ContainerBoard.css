@@ -66,3 +66,13 @@
   margin-left: 0.75rem;
   color: rgb(0, 119, 255);
 }
+
+.container_form {
+  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  height: 100%;
+  width: 100%;
+  border: 1px solid white;
+}

@@ -14,7 +14,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/v1/container", containerRoutes);
+app.use("/api/v1/containers", containerRoutes);
 app.use("/api/v1/users", userRoutes);
 
 app.use((req: any, res: any, next: any) => {
