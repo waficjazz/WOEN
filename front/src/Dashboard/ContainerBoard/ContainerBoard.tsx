@@ -10,7 +10,11 @@ const ContainerBoard = () => {
     Image: string;
     Status: string;
   }
-  const [containers, setContainers] = useState<Container[]>([]);
+  let a = [
+    { Id: "1", Image: "1", Status: "1" },
+    { Id: "2", Image: "2", Status: "2" },
+  ];
+  const [containers, setContainers] = useState<Container[]>();
 
   const [showForm, setShowForm] = useState(false);
   useEffect(() => {
@@ -18,8 +22,8 @@ const ContainerBoard = () => {
       try {
         const response = await Axios.get("/containers/list");
         if (response.data) {
-          console.log(response.data);
-          setContainers((prev) => [...prev, response.data]);
+          console.log(typeof response.data, typeof a);
+          setContainers(response.data.containers);
         }
       } catch (err) {
         console.log(err);
@@ -38,12 +42,12 @@ const ContainerBoard = () => {
         <ContainerForm />
       ) : (
         <div className="container_table">
-          {/* {containers &&
+          {containers &&
             containers.length > 0 &&
-            containers.map((ctn) => {
-              console.log(ctn);
-              return <ContainerRow key={ctn.Id} image={ctn.Image} name={"hello"} status={ctn.Status} />;
-            })} */}
+            containers.map((container) => {
+              console.log(container);
+              return <ContainerRow key={container.Id} image={container.Image} name="a" status={container.Status} />;
+            })}
         </div>
       )}
     </div>
