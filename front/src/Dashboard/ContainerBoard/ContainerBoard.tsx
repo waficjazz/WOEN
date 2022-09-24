@@ -9,6 +9,7 @@ const ContainerBoard = () => {
     Id: string;
     Image: string;
     Status: string;
+    Names: string[];
   }
   let a = [
     { Id: "1", Image: "1", Status: "1" },
@@ -22,7 +23,6 @@ const ContainerBoard = () => {
       try {
         const response = await Axios.get("/containers/list");
         if (response.data) {
-          console.log(typeof response.data, typeof a);
           setContainers(response.data.containers);
         }
       } catch (err) {
@@ -45,8 +45,7 @@ const ContainerBoard = () => {
           {containers &&
             containers.length > 0 &&
             containers.map((container) => {
-              console.log(container);
-              return <ContainerRow key={container.Id} image={container.Image} name="a" status={container.Status} />;
+              return <ContainerRow key={container.Id} image={container.Image} name={container.Names[0].slice(1)} status={container.Status} />;
             })}
         </div>
       )}
