@@ -24,13 +24,29 @@ const ContainerForm = () => {
   };
 
   const handleCommands = (e: KeyUpEvent) => {
+    if (commandTxt.length === 1) {
+      setCommandTxt((prev) => "- " + prev);
+    }
     if (e.key === "Enter") {
       setCommandTxt((prev) => prev + "- ");
     }
   };
 
+  const parseCommands = (commands: string) => {
+    let parsedCommands = commands.split("\n");
+    console.log(parsedCommands);
+  };
+
   const handleSubmit = async () => {
-    const response = await Axios.post("/containers/create", container);
+    try {
+      parseCommands(commandTxt);
+      // const response = await Axios.post("/containers/create", container);
+      // if (response.data) {
+      //   console.log(response.data);
+      // }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -40,7 +56,6 @@ const ContainerForm = () => {
         <Input placeholder="Domain Name" name="domainName" onChange={handleChange} />
         <Input placeholder="Image" name="image" onChange={handleChange} />
         <CTextArea name="commands" placeholder="Commands" id="cmds" onKeyUp={handleCommands} value={commandTxt} onChange={(e) => setCommandTxt(e.target.value)} />
-        {/* <Input placeholder="Commands" name="commands" onChange={handleChange} /> */}
         <Button onClick={handleSubmit}>submit</Button>
       </div>
     </>

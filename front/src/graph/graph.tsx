@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import init, { get_two_way, get_one_way } from "wasm-lib";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import Job from "./Job";
@@ -41,7 +41,7 @@ const Graph = () => {
       return { ...prev, [job]: time };
     });
   }
-  function getNeighbours(job: string) {
+  function getNeighbors(job: string) {
     let tmp: string[] = [];
     if (twoWayData !== undefined) {
       twoWayData[job].forEach((element) => {
@@ -59,7 +59,7 @@ const Graph = () => {
     cpDepth++;
     if (twoWayData !== undefined && twoWayData.hasOwnProperty(job)) {
       prevJobs = twoWayData[job].filter((e: string) => {
-        return /p_[a-z0-9]+/.test(e);
+        return /^p_[a-z0-9]+/.test(e);
       });
     }
     prevJobs = prevJobs.map((e: string) => {
@@ -209,19 +209,26 @@ const Graph = () => {
                     w = place * 145 * a;
 
                     let st = { top: h + "px", left: "calc(50% + " + w + "px )" };
+
                     return (
                       <>
-                        {cp.includes(item) ? (
-                          <Job id={item} className="job_cp" st={st} cp={getCriticalPath} time={times[item]} registerTime={registerTime} setShowCp={setShowCp} showCp={showCp} />
-                        ) : (
-                          <Job id={item} st={st} className="job" cp={getCriticalPath} time={times[item]} registerTime={registerTime} setShowCp={setShowCp} showCp={showCp} />
-                        )}
+                        <Job
+                          id={item}
+                          st={st}
+                          className={neighbors.includes(item) ? (cp.includes(item) ? "job_cp job_neib" : "job job_neib") : cp.includes(item) ? "job_cp " : "job "}
+                          cp={getCriticalPath}
+                          time={times[item]}
+                          registerTime={registerTime}
+                          setShowCp={setShowCp}
+                          showCp={showCp}
+                          showNeib={getNeighbors}
+                        />
                         {node[parseInt(key) - 1] !== undefined &&
                           twoWayData !== undefined &&
                           twoWayData[item] !== undefined &&
                           twoWayData[item]
                             .filter((e: string) => {
-                              return /p_[a-z0-9]+/.test(e);
+                              return /^p_[a-z0-9]+/.test(e);
                             })
                             .map((e: string) => {
                               let a = e.slice(2);

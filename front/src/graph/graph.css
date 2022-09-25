@@ -6,10 +6,11 @@
 .grapth_container {
   padding: 50px;
   border: 1px solid #ccc;
-  height: 300%;
+  height: 800%;
   position: relative;
-  overflow: auto;
-  width: 70%;
+  overflow: scroll;
+  /* width: 80%; */
+  flex-grow: 1;
 
   /* background-color: red; */
 }
@@ -28,6 +29,7 @@
   text-align: center;
 }
 .job {
+  font-size: x-small;
   transform: translate(-50%, 0);
   position: absolute;
   width: 100px;
@@ -37,8 +39,12 @@
   color: white;
   text-align: center;
 }
+.job_neib {
+  border: 1px solid green !important;
+}
 
 .job:hover {
+  font-size: medium;
   /* border: 1px solid #ffffff; */
   border: 1px solid red;
 }
@@ -64,7 +70,10 @@ button {
 }
 
 .input_container {
-  width: 30%;
+  resize: both;
+  overflow: auto;
+  border: 1px solid #ccc;
+  width: 20%;
 }
 
 .contextMenu {

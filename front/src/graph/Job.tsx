@@ -6,6 +6,7 @@ type Props = {
   id: string;
   st: any;
   cp: any;
+  showNeib: any;
   time: number;
   setShowCp: any;
   registerTime: any;
@@ -27,7 +28,7 @@ const ContextMenu = ({ a, b }: CM) => {
   );
 };
 
-const Job = ({ id, st, cp, setShowCp, time, showCp, registerTime, className }: Props) => {
+const Job = ({ id, st, cp, setShowCp, time, showCp, registerTime, className, showNeib }: Props) => {
   const [a, setA] = useState("");
   const [b, setB] = useState("");
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -57,6 +58,9 @@ const Job = ({ id, st, cp, setShowCp, time, showCp, registerTime, className }: P
           id={id}
           className={className}
           style={st}
+          onMouseOver={() => {
+            showNeib(id);
+          }}
           onClick={() => {
             cp(id);
           }}>
