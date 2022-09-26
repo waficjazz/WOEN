@@ -1,8 +1,8 @@
 import React from "react";
 import "./App.css";
-import Graph from "./graph/Graph";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
+import Graph from "./graph/graph";
 function App() {
   return (
     <div className="App">
