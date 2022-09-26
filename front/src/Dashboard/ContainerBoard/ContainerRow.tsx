@@ -9,15 +9,13 @@ interface Props {
 
 const ContainerRow = ({ name, status, image }: Props) => {
   function setColor(status: string) {
-    switch (status) {
-      case "Running":
-        return "green";
-      case "Created":
-        return "red";
-      default:
-        return "grey";
+    if (/^Up/.test(status)) {
+      return "green";
     }
+    if (status === "Created") return "red";
+    return "grey";
   }
+
   return (
     <div className="container_row">
       <BsBoxSeam size={20} color={setColor(status)} />
