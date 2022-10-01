@@ -32,7 +32,7 @@ const ContainerBoard = () => {
 
   useEffect(() => {
     getContainers();
-    // refresh();
+    refresh();
   }, []);
 
   function refresh() {
@@ -49,6 +49,7 @@ const ContainerBoard = () => {
       console.log(err);
     }
   }
+
   return (
     <div className="container_board">
       <div className="container_board_header">

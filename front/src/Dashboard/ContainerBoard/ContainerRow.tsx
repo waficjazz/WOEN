@@ -28,7 +28,6 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
       console.log(err);
     }
   }
-
   return (
     <div className="container_row" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <FontAwesomeIcon icon={faBox} size="lg" color={setColor(status)} />
