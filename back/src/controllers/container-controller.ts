@@ -55,7 +55,7 @@ const createContainer = async (req: any, res: any, next: any) => {
 
 const runContainer = async (req: any, res: any, next: any) => {
   const { host, port, containerId } = req.body;
-  const url = `http://${host}:${port}/containers/${containerId}/start`;
+  const url = `http://localhost:2375/containers/${containerId}/start`;
   const response = await axios.post(url);
   if (!response || response.status !== 204) {
     const error = new HttpError("Could not start container.", 500);
@@ -64,7 +64,19 @@ const runContainer = async (req: any, res: any, next: any) => {
   res.status(204).json({ container: response.data });
 };
 
+const removeContainer = async (req: any, res: any, next: any) => {
+  const { host, port, containerId } = req.body;
+  const url = `http://localhost:2375/containers/${containerId}`;
+  const response = await axios.delete(url);
+  if (!response || response.status !== 204) {
+    const error = new HttpError("Could not remove container.", 500);
+    return next(error);
+  }
+  res.status(204).json({ container: response.data });
+};
+
 module.exports = {
+  removeContainer,
   listImages,
   createContainer,
   runContainer,

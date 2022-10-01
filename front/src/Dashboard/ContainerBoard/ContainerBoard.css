@@ -76,3 +76,30 @@
   width: 100%;
   border: 1px solid white;
 }
+
+.select_shell {
+  border: 2px solid rgb(0, 81, 255);
+  height: 30px;
+  color: white;
+  background-color: transparent;
+  width: 20rem;
+  outline: none;
+}
+
+.select_shell > option {
+  outline: none;
+  border: none !important;
+  background-color: var(--primary-color);
+}
+
+.container_actions {
+  margin-left: auto;
+}
+
+.action_icon {
+  color: rgb(0, 81, 255);
+}
+
+.action_icon:hover {
+  color: rgb(31, 101, 253);
+}

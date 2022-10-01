@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
-import Graph from "./graph/graph";
+import Graph from "./graph/Graph";
 function App() {
   return (
     <div className="App">
