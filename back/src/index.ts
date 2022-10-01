@@ -30,6 +30,6 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-app.listen(process.env.PORT || 5001, () => {
+app.listen(process.env.PORT || 5000, () => {
   console.log("Server started on port 5001");
 });

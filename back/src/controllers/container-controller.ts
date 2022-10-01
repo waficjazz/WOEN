@@ -1,4 +1,5 @@
 import axios from "axios";
+const HttpError = require("../utils/http-error");
 
 const listImages = async (req: any, res: any, next: any) => {
   const { host, port } = req.body;
@@ -66,7 +67,7 @@ const runContainer = async (req: any, res: any, next: any) => {
 
 const removeContainer = async (req: any, res: any, next: any) => {
   const { host, port, containerId } = req.body;
-  const url = `http://localhost:2375/containers/${containerId}`;
+  const url = `http://localhost:2375/containers/${containerId}?force=true`;
   const response = await axios.delete(url);
   if (!response || response.status !== 204) {
     const error = new HttpError("Could not remove container.", 500);

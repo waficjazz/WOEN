@@ -32,13 +32,22 @@ const ContainerBoard = () => {
 
   useEffect(() => {
     getContainers();
-    refresh();
+    // refresh();
   }, []);
 
   function refresh() {
     setInterval(() => {
       getContainers();
     }, 5000);
+  }
+
+  function removeContainer(id: string) {
+    try {
+      const response = Axios.delete(`/containers/remove`, { data: { containerId: id } });
+      setContainers((prev) => prev?.filter((c) => c.Id !== id));
+    } catch (err) {
+      console.log(err);
+    }
   }
   return (
     <div className="container_board">
@@ -55,6 +64,7 @@ const ContainerBoard = () => {
             containers.map((container) => {
               return (
                 <ContainerRow
+                  remove={removeContainer}
                   key={container.Id}
                   id={container.Id}
                   image={container.Image}

@@ -97,6 +97,7 @@
 }
 
 .action_icon {
+  margin-inline: 0.75rem;
   color: rgb(0, 81, 255);
 }
 

@@ -1,17 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBox } from "@fortawesome/free-solid-svg-icons";
+import { faBox, faPlay, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import Axios from "../../axios";
 interface Props {
   name: string;
   image: string;
   status: string;
   id: string;
+  remove: any;
 }
 
-const ContainerRow = ({ id, name, status, image }: Props) => {
-  const [hover, setHover] = React.useState(false);
-
+const ContainerRow = ({ id, name, status, remove, image }: Props) => {
+  const [hover, setHover] = useState(false);
   function setColor(status: string) {
     if (/^Up/.test(status)) {
       return "green";
@@ -29,18 +29,9 @@ const ContainerRow = ({ id, name, status, image }: Props) => {
     }
   }
 
-  function removeContainer() {
-    try {
-      const response = Axios.post(`/containers/remove`, { containerId: id });
-      console.log(response);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   return (
     <div className="container_row" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-      <FontAwesomeIcon icon={faBox} size="lg" color={"red"} />
+      <FontAwesomeIcon icon={faBox} size="lg" color={setColor(status)} />
       <div className="container_row_text">
         <p>
           {name}
@@ -52,6 +43,8 @@ const ContainerRow = ({ id, name, status, image }: Props) => {
         <div className="container_actions">
           {/* <VscDebugStart size={25} className="action_icon" onClick={runContainer} />
           <FaTrash size={20} className="action_icon" onClick={removeContainer} /> */}
+          <FontAwesomeIcon icon={faPlay} size="lg" className="action_icon" onClick={runContainer} />
+          <FontAwesomeIcon icon={faTrashCan} size="lg" className="action_icon" onClick={() => remove(id)} />
         </div>
       )}
     </div>

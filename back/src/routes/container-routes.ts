@@ -8,4 +8,5 @@ router.get("/images", userController.listImages);
 router.post("/create", userController.createContainer);
 router.post("/run", userController.runContainer);
 router.get("/list", userController.listContainers);
+router.delete("/remove", userController.removeContainer);
 module.exports = router;
