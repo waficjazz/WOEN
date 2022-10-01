@@ -76,7 +76,19 @@ const removeContainer = async (req: any, res: any, next: any) => {
   res.status(204).json({ container: response.data });
 };
 
+const getContainerLogs = async (req: any, res: any, next: any) => {
+  const { host, port, containerId } = req.body;
+  const url = `http://localhost:2375/containers/${containerId}/logs?stdout=true&stderr=true`;
+  const response = await axios.get(url);
+  if (!response || response.status !== 200) {
+    const error = new HttpError("Could not get container logs.", 500);
+    return next(error);
+  }
+  res.status(200).json({ logs: response.data });
+};
+
 module.exports = {
+  getContainerLogs,
   removeContainer,
   listImages,
   createContainer,

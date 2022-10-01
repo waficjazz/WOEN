@@ -41,9 +41,9 @@ const ContainerBoard = () => {
     }, 5000);
   }
 
-  function removeContainer(id: string) {
+  async function removeContainer(id: string) {
     try {
-      const response = Axios.delete(`/containers/remove`, { data: { containerId: id } });
+      const response = await Axios.delete(`/containers/remove`, { data: { containerId: id } });
       setContainers((prev) => prev?.filter((c) => c.Id !== id));
     } catch (err) {
       console.log(err);

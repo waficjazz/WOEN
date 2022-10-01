@@ -9,4 +9,5 @@ router.post("/create", userController.createContainer);
 router.post("/run", userController.runContainer);
 router.get("/list", userController.listContainers);
 router.delete("/remove", userController.removeContainer);
+router.post("/logs", userController.getContainerLogs);
 module.exports = router;
