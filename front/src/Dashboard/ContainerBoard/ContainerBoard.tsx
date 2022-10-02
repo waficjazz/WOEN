@@ -4,21 +4,15 @@ import "./ContainerBoard.css";
 import ContainerRow from "./ContainerRow";
 import ContainerForm from "./ContainerForm";
 import Button from "../../shared/Buttons/Button";
-const ContainerBoard = () => {
+
+const ContainerTable = () => {
   interface Container {
     Id: string;
     Image: string;
     Status: string;
     Names: string[];
   }
-  let a = [
-    { Id: "1", Image: "1", Status: "1" },
-    { Id: "2", Image: "2", Status: "2" },
-  ];
   const [containers, setContainers] = useState<Container[]>();
-
-  const [showForm, setShowForm] = useState(false);
-
   const getContainers = async () => {
     try {
       const response = await Axios.get("/containers/list");
@@ -29,18 +23,6 @@ const ContainerBoard = () => {
       console.log(err);
     }
   };
-
-  useEffect(() => {
-    getContainers();
-    refresh();
-  }, []);
-
-  function refresh() {
-    setInterval(() => {
-      getContainers();
-    }, 5000);
-  }
-
   async function removeContainer(id: string) {
     try {
       const response = await Axios.delete(`/containers/remove`, { data: { containerId: id } });
@@ -49,33 +31,46 @@ const ContainerBoard = () => {
       console.log(err);
     }
   }
+  useEffect(() => {
+    console.log("rendered");
+    getContainers();
+    const interval = setInterval(() => {
+      getContainers();
+      console.log("arefresh");
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="container_table">
+      {containers &&
+        containers.length > 0 &&
+        containers.map((container) => {
+          return (
+            <ContainerRow
+              remove={removeContainer}
+              key={container.Id}
+              id={container.Id}
+              image={container.Image}
+              name={container.Names[0].slice(1)}
+              status={container.Status}
+            />
+          );
+        })}
+    </div>
+  );
+};
+
+const ContainerBoard = () => {
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <div className="container_board">
       <div className="container_board_header">
         <p>Containers</p>
-        <Button onClick={() => setShowForm(true)}>Create</Button>
+        {!showForm && <Button onClick={() => setShowForm(true)}>Create</Button>}
       </div>
-      {showForm ? (
-        <ContainerForm />
-      ) : (
-        <div className="container_table">
-          {containers &&
-            containers.length > 0 &&
-            containers.map((container) => {
-              return (
-                <ContainerRow
-                  remove={removeContainer}
-                  key={container.Id}
-                  id={container.Id}
-                  image={container.Image}
-                  name={container.Names[0].slice(1)}
-                  status={container.Status}
-                />
-              );
-            })}
-        </div>
-      )}
+      {showForm ? <ContainerForm /> : <ContainerTable />}
     </div>
   );
 };
