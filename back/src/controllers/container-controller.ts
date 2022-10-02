@@ -32,14 +32,14 @@ const listContainers = async (req: any, res: any, next: any) => {
 };
 
 const createContainer = async (req: any, res: any, next: any) => {
-  const { host, port, image, CMD, hostName, domainName } = req.body;
+  const { host, port, image, CMD, name, hostName, domainName } = req.body;
   // const url = `http://localhost:2375/images/create?fromImage=${image}`;
   // const response = await axios.post(url);
   // if (!response) {
   //   const error = new HttpError("Could not pull image.", 500);
   //   return next(error);
   // } else {
-  const url = `http://localhost:2375/containers/create`;
+  const url = `http://localhost:2375/containers/create?name=${name}`;
   const response = await axios.post(url, {
     Hostname: hostName,
     Domainname: domainName,

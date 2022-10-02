@@ -18,6 +18,7 @@ const ContainerTable = () => {
       const response = await Axios.get("/containers/list");
       if (response.data) {
         setContainers(response.data.containers);
+        console.log(response.data);
       }
     } catch (err) {
       console.log(err);
@@ -26,17 +27,16 @@ const ContainerTable = () => {
   async function removeContainer(id: string) {
     try {
       const response = await Axios.delete(`/containers/remove`, { data: { containerId: id } });
+      console.log(response.data);
       setContainers((prev) => prev?.filter((c) => c.Id !== id));
     } catch (err) {
       console.log(err);
     }
   }
   useEffect(() => {
-    console.log("rendered");
     getContainers();
     const interval = setInterval(() => {
       getContainers();
-      console.log("arefresh");
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -70,7 +70,7 @@ const ContainerBoard = () => {
         <p>Containers</p>
         {!showForm && <Button onClick={() => setShowForm(true)}>Create</Button>}
       </div>
-      {showForm ? <ContainerForm /> : <ContainerTable />}
+      {showForm ? <ContainerForm show={showForm} close={setShowForm} /> : <ContainerTable />}
     </div>
   );
 };

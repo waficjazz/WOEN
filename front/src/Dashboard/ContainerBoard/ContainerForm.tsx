@@ -4,13 +4,18 @@ import Axios from "../../axios";
 import Button from "../../shared/Buttons/Button";
 import Input from "../../shared/Inputs/Input";
 import CTextArea from "../../shared/TextAreas/CTextArea";
-const ContainerForm = () => {
+
+interface Props {
+  show: boolean;
+  close: any;
+}
+const ContainerForm = ({ show, close }: Props) => {
   type InputEvent = React.ChangeEvent<HTMLInputElement>;
   type TextAreaEvent = React.ChangeEvent<HTMLTextAreaElement>;
   type KeyUpEvent = React.KeyboardEvent<HTMLTextAreaElement>;
   interface Container {
     domainName: string;
-    hostName: string;
+    name: string;
     image: string;
   }
   const [container, setContainer] = useState<Container>({} as Container);
@@ -42,8 +47,8 @@ const ContainerForm = () => {
       let arr = [shellType, "-c", cmds];
       let obj = { ...container, CMD: arr };
       const response = await Axios.post("/containers/create", obj);
-      if (response.data) {
-        console.log(response.data);
+      if (response.status === 201) {
+        close(false);
       }
     } catch (err) {
       console.log(err);
@@ -53,7 +58,7 @@ const ContainerForm = () => {
   return (
     <>
       <div className="container_form">
-        <Input placeholder="Host Name" name="hostName" onChange={handleChange} />
+        <Input placeholder="Name" name="name" onChange={handleChange} />
         <Input placeholder="Domain Name" name="domainName" onChange={handleChange} />
         <Input placeholder="Image" name="image" onChange={handleChange} />
         <select className="select_shell" onChange={(e) => setShellType(e.target.value)}>

@@ -5,8 +5,10 @@ import SideTile from "./SideTile";
 const SideBar = () => {
   return (
     <div className="side_bar">
-      <h3 className="side_bar_header">WOEN</h3>
+      <h2 className="side_bar_header">WOEN</h2>
       <SideTile txt="Containers" route="/containers" />
+      <SideTile txt="Workflows" route="/workflows" />
+      <SideTile txt="Graph" route="/graph" />
     </div>
   );
 };
