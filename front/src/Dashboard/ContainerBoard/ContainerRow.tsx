@@ -51,8 +51,6 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
         </div>
         {hover && (
           <div className="container_actions">
-            {/* <VscDebugStart size={25} className="action_icon" onClick={runContainer} />
-          <FaTrash size={20} className="action_icon" onClick={removeContainer} /> */}
             <FontAwesomeIcon icon={faPlay} size="lg" className="action_icon" onClick={runContainer} />
             <FontAwesomeIcon icon={faTrashCan} size="lg" className="action_icon" onClick={() => remove(id)} />
           </div>
