@@ -131,6 +131,10 @@ const saveContainer = async (req: any, res: any, next: any) => {
       commands: Cmd,
     },
   });
+  if (!savedContainer) {
+    const error = new HttpError("Could not save container.", 500);
+    return next(error);
+  }
   res.status(201).json({ container: savedContainer });
 };
 

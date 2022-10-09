@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBox, faPlay, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import Axios from "../../axios";
 import CTextArea from "../../shared/TextAreas/CTextArea";
 interface Props {
@@ -30,6 +30,14 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
     }
   }
 
+  async function saveContainer() {
+    try {
+      const response = await Axios.post(`/containers/save`, { containerId: id });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async function getLogs() {
     try {
       const response = await Axios.post(`/containers/logs`, { containerId: id });
@@ -51,6 +59,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
         </div>
         {hover && (
           <div className="container_actions">
+            <FontAwesomeIcon icon={faFloppyDisk} size="lg" className="action_icon" onClick={saveContainer} />
             <FontAwesomeIcon icon={faPlay} size="lg" className="action_icon" onClick={runContainer} />
             <FontAwesomeIcon icon={faTrashCan} size="lg" className="action_icon" onClick={() => remove(id)} />
           </div>
