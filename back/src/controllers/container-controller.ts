@@ -1,4 +1,7 @@
 import axios from "axios";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 const HttpError = require("../utils/http-error");
 
 const listImages = async (req: any, res: any, next: any) => {
@@ -87,7 +90,54 @@ const getContainerLogs = async (req: any, res: any, next: any) => {
   res.status(200).json({ logs: response.data });
 };
 
+const waitContainer = async (req: any, res: any, next: any) => {
+  const { host, port, containerId } = req.body;
+  const url = `http://localhost:2375/containers/${containerId}/wait`;
+  const response = await axios.post(url);
+  if (!response || response.status !== 200) {
+    const error = new HttpError("Could not wait for container.", 500);
+    return next(error);
+  }
+  res.status(200).json({ container: response.data });
+};
+
+const inspectContainer = async (req: any, res: any, next: any) => {
+  const { host, port, containerId } = req.body;
+  const url = `http://localhost:2375/containers/${containerId}/json`;
+  const response = await axios.get(url);
+  if (!response || response.status !== 200) {
+    const error = new HttpError("Could not inspect container.", 500);
+    return next(error);
+  }
+  res.status(200).json({ container: response.data });
+};
+
+const saveContainer = async (req: any, res: any, next: any) => {
+  const { host, port, containerId } = req.body;
+  const url = `http://localhost:2375/containers/${containerId}/json`;
+  const response = await axios.get(url);
+  if (!response || response.status !== 200) {
+    const error = new HttpError("Could not inspect container.", 500);
+    return next(error);
+  }
+  const container = response.data;
+  const name = container.Name;
+  const { Cmd, Image } = container.Config;
+
+  const savedContainer = await prisma.container.create({
+    data: {
+      name: name,
+      image: Image,
+      commands: Cmd,
+    },
+  });
+  res.status(201).json({ container: savedContainer });
+};
+
 module.exports = {
+  saveContainer,
+  inspectContainer,
+  waitContainer,
   getContainerLogs,
   removeContainer,
   listImages,
