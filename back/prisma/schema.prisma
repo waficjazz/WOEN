@@ -23,8 +23,20 @@ model container {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name      String   @unique
   image     String
-  shell     String
   commands  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  job       job[]
+}
+
+model job {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String    @unique
+  container    container @relation(fields: [containerId], references: [id])
+  status       String
+  dependencies String[]
+  successors   String[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  containerId  String    @db.Uuid
 }

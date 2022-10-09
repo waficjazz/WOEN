@@ -31,5 +31,5 @@ app.use((error: any, req: any, res: any, next: any) => {
 });
 
 app.listen(process.env.PORT || 5000, () => {
-  console.log("Server started on port 5001");
+  console.log("Server started on port 5000");
 });

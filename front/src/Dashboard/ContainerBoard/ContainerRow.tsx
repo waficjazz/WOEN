@@ -56,7 +56,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
           </div>
         )}
       </div>
-      {logs.length > 1 && <CTextArea value={logs} />}
+      {/* {logs.length > 1 && <CTextArea value={logs} />} */}
     </>
   );
 };
