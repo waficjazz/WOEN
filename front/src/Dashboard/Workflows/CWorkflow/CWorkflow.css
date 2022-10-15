@@ -1,0 +1,15 @@
+.tools_list {
+  position: fixed;
+  height: 100%;
+  right: 0;
+  top: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  width: 15%;
+}
+
+.tcontainer {
+  height: 50px;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255);
+  border-bottom: 1px solid rgba(255, 255, 255);
+}

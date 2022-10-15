@@ -138,7 +138,17 @@ const saveContainer = async (req: any, res: any, next: any) => {
   res.status(201).json({ container: savedContainer });
 };
 
+const getSavedContainers = async (req: any, res: any, next: any) => {
+  const savedContainers = await prisma.container.findMany();
+  if (!savedContainers) {
+    const error = new HttpError("Could not get saved containers.", 500);
+    return next(error);
+  }
+  res.status(200).json({ containers: savedContainers });
+};
+
 module.exports = {
+  getSavedContainers,
   saveContainer,
   inspectContainer,
   waitContainer,

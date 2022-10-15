@@ -3,6 +3,7 @@ import SideBar from "./SideBar/SideBar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ContainerBoard from "./ContainerBoard/ContainerBoard";
 import "./Dashboard.css";
+import CWorkflow from "./Workflows/CWorkflow/CWorkflow";
 const Dashboard = () => {
   return (
     <div className="dashboard">
@@ -10,6 +11,7 @@ const Dashboard = () => {
       <div className="dashboard_content">
         <Routes>
           <Route path="containers" element={<ContainerBoard />} />
+          <Route path="cworkflow" element={<CWorkflow />} />
         </Routes>
       </div>
     </div>
