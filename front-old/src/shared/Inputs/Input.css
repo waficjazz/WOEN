@@ -1,0 +1,13 @@
+.p_input {
+  color: white;
+  background-color: transparent;
+  width: 20rem;
+  height: 30px;
+  border-bottom: 2px solid rgb(0, 81, 255) !important;
+  border: none;
+}
+
+.p_input:focus {
+  outline: none;
+  border: none;
+}

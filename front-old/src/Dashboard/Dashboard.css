@@ -1,0 +1,13 @@
+.dashboard {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+}
+
+.dashboard_content {
+  background-color: var(--primary-color);
+  padding: 2rem;
+  flex-grow: 1;
+  height: 100%;
+}
