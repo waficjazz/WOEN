@@ -3,16 +3,19 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
 import Graph from "./graph/Graph";
+import { Provider } from "jotai";
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/*" element={<Dashboard />} />
-          <Route path="/graph" element={<Graph />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <Provider>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/*" element={<Dashboard />} />
+            <Route path="/graph" element={<Graph />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </Provider>
   );
 }
 

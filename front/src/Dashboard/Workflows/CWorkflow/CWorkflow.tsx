@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Axios from "../../../axios";
 import "./CWorkflow.css";
 import SContainer from "./SContainer";
-
+import { useAtom } from "jotai";
+import { test } from "../../../store";
 const CWorkflow = () => {
   interface SContainer {
     id: string;
@@ -10,6 +11,7 @@ const CWorkflow = () => {
     image: string;
     commands: string[];
   }
+  const [count, setCount] = useAtom(test);
 
   const [containres, setContainers] = useState([] as SContainer[]);
   useEffect(() => {
@@ -28,6 +30,7 @@ const CWorkflow = () => {
   }, []);
   return (
     <div className="tools_list">
+      <button onClick={() => setCount("jakk")}>click</button>
       {containres.map((container) => {
         return <SContainer id={container.id} key={container.id} name={container.name} image={container.image} />;
       })}

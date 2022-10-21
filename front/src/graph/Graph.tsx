@@ -215,7 +215,15 @@ const Graph = () => {
                         <Job
                           id={item}
                           st={st}
-                          className={neighbors.includes(item) ? (cp.includes(item) ? "job_cp job_neib" : "job job_neib") : cp.includes(item) ? "job_cp " : "job "}
+                          className={
+                            neighbors.includes(item)
+                              ? cp.includes(item)
+                                ? "job_cp job_neib"
+                                : "job job_neib"
+                              : cp.includes(item)
+                              ? "job_cp "
+                              : "job "
+                          }
                           cp={getCriticalPath}
                           time={times[item]}
                           registerTime={registerTime}
@@ -234,7 +242,16 @@ const Graph = () => {
                               let a = e.slice(2);
                               if (a !== undefined)
                                 return (
-                                  <Xarrow start={a} end={item} curveness={0.5} startAnchor={"bottom"} endAnchor={"top"} color={"white"} strokeWidth={1} animateDrawing={0.5} />
+                                  <Xarrow
+                                    start={a}
+                                    end={item}
+                                    curveness={0.5}
+                                    startAnchor={"bottom"}
+                                    endAnchor={"top"}
+                                    color={"white"}
+                                    strokeWidth={1}
+                                    animateDrawing={0.5}
+                                  />
                                 );
                             })}
                       </>
@@ -247,7 +264,18 @@ const Graph = () => {
             cp.map((e: string) => {
               if (cp.indexOf(e) !== cp.length - 1) {
                 let elem = document.getElementById(e);
-                return <Xarrow start={e} end={cp[cp.indexOf(e) + 1]} curveness={0.5} startAnchor={"top"} endAnchor={"bottom"} color={"red"} strokeWidth={2} animateDrawing={0.5} />;
+                return (
+                  <Xarrow
+                    start={e}
+                    end={cp[cp.indexOf(e) + 1]}
+                    curveness={0.5}
+                    startAnchor={"top"}
+                    endAnchor={"bottom"}
+                    color={"red"}
+                    strokeWidth={2}
+                    animateDrawing={0.5}
+                  />
+                );
               }
             })}
         </Xwrapper>
