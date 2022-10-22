@@ -3,17 +3,12 @@ import Axios from "../../../axios";
 import "./CWorkflow.css";
 import SContainer from "./SContainer";
 import { useAtom } from "jotai";
-import { test } from "../../../store";
-const CWorkflow = () => {
-  interface SContainer {
-    id: string;
-    name: string;
-    image: string;
-    commands: string[];
-  }
-  const [count, setCount] = useAtom(test);
+import { aJobs } from "../../../store";
+import { ISContainer } from "../../typess";
 
-  const [containres, setContainers] = useState([] as SContainer[]);
+const CWorkflow = () => {
+  const [jobs, setJobs] = useAtom(aJobs);
+  const [containres, setContainers] = useState([] as ISContainer[]);
   useEffect(() => {
     const getSavedContainers = async () => {
       try {
@@ -29,12 +24,17 @@ const CWorkflow = () => {
     getSavedContainers();
   }, []);
   return (
-    <div className="tools_list">
-      <button onClick={() => setCount("jakk")}>click</button>
-      {containres.map((container) => {
-        return <SContainer id={container.id} key={container.id} name={container.name} image={container.image} />;
+    <>
+      {jobs.map((job) => {
+        console.log(job.name);
+        return <div>{job.name}</div>;
       })}
-    </div>
+      <div className="tools_list">
+        {containres.map((container) => {
+          return <SContainer id={container.id} key={container.id} name={container.name} image={container.image} />;
+        })}
+      </div>
+    </>
   );
 };
 

@@ -1,14 +1,21 @@
 import React from "react";
 import "./CWorkflow.css";
+import { ISContainer } from "../../typess";
+import { useAtom } from "jotai";
+import { aJobs } from "../../../store";
 
-interface ISContainer {
-  id: string;
-  name: string;
-  image: string;
-  commands?: string[];
-}
 const SContainer = (props: ISContainer) => {
-  return <div className="scontainer">{props.name.substring(1)}</div>;
+  const [jobs, setJobs] = useAtom(aJobs);
+
+  const addToWorkflow = () => {
+    setJobs([...jobs, props]);
+    console.log(jobs);
+  };
+  return (
+    <div className="scontainer" onClick={addToWorkflow}>
+      {props.name.substring(1)}
+    </div>
+  );
 };
 
 export default SContainer;

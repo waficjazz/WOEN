@@ -13,3 +13,8 @@
   width: 100%;
   border-bottom: 1px solid rgba(255, 255, 255);
 }
+
+.created_job {
+  border: 1px solid rgba(255, 255, 255);
+  border-radius: 5px;
+}
