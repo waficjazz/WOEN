@@ -53,7 +53,7 @@ const Jobs = (props: IJob) => {
       ) : (
         <> </>
       )}
-      <div className="created_job" about="job">
+      <div id={props.id} className="created_job" about="job">
         {props.name.substring(1)}
       </div>
     </>
