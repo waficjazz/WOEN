@@ -1,6 +1,6 @@
 import React from "react";
 import "./CWorkflow.css";
-import { ISContainer } from "../../typess";
+import { ISContainer } from "../../types";
 import { useAtom } from "jotai";
 import { aJobs } from "../../../store";
 
@@ -9,8 +9,8 @@ const SContainer = (props: ISContainer) => {
 
   const addToWorkflow = () => {
     setJobs([...jobs, props]);
-    console.log(jobs);
   };
+
   return (
     <div className="scontainer" onClick={addToWorkflow}>
       {props.name.substring(1)}

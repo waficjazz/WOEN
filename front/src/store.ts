@@ -1,4 +1,4 @@
 import { atom } from "jotai";
-import { ISContainer } from "./Dashboard/typess";
+import { ISContainer } from "./Dashboard/types";
 
 export const aJobs = atom<ISContainer[]>([]);

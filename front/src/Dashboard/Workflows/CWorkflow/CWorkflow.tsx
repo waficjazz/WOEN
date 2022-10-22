@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import Axios from "../../../axios";
 import "./CWorkflow.css";
 import SContainer from "./SContainer";
+import Job from "./Jobs";
 import { useAtom } from "jotai";
 import { aJobs } from "../../../store";
-import { ISContainer } from "../../typess";
+import { ISContainer } from "../../types";
 
 const CWorkflow = () => {
   const [jobs, setJobs] = useAtom(aJobs);
@@ -25,13 +26,15 @@ const CWorkflow = () => {
   }, []);
   return (
     <>
-      {jobs.map((job) => {
-        console.log(job.name);
-        return <div>{job.name}</div>;
-      })}
+      <div className="jobs_container">
+        {jobs.map((job) => {
+          console.log(job.name);
+          return <Job {...job} />;
+        })}
+      </div>
       <div className="tools_list">
         {containres.map((container) => {
-          return <SContainer id={container.id} key={container.id} name={container.name} image={container.image} />;
+          return <SContainer key={container.id} {...container} />;
         })}
       </div>
     </>

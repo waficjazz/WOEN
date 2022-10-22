@@ -15,6 +15,17 @@
 }
 
 .created_job {
+  color: white;
+  width: 8rem;
+  height: 5rem;
   border: 1px solid rgba(255, 255, 255);
   border-radius: 5px;
+}
+
+.jobs_container {
+  width: 82%;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
