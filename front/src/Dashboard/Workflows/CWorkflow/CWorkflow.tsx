@@ -29,7 +29,7 @@ const CWorkflow = () => {
       <div className="jobs_container">
         {jobs.map((job) => {
           console.log(job.name);
-          return <Job {...job} />;
+          return <Job {...job} key={job.id} />;
         })}
       </div>
       <div className="tools_list">
