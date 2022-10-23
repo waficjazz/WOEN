@@ -1,11 +1,12 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { useAtom } from "jotai";
 import { IJob } from "../../types";
+import Draggable from "react-draggable";
 
 const Jobs = (props: IJob) => {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [showMenu, setShowMenu] = useState(false);
-
+  const nodeRef = useRef(null);
   const handleClick = () => {
     setShowMenu(false);
   };
@@ -35,7 +36,7 @@ const Jobs = (props: IJob) => {
 
   return (
     <>
-      {showMenu ? (
+      {/* {showMenu ? (
         <ul
           className="menu"
           style={{
@@ -52,10 +53,12 @@ const Jobs = (props: IJob) => {
         </ul>
       ) : (
         <> </>
-      )}
-      <div id={props.id} className="created_job" about="job">
-        {props.name.substring(1)}
-      </div>
+      )} */}
+      <Draggable grid={[120, 120]} bounds={"parent"} nodeRef={nodeRef}>
+        <div ref={nodeRef} id={props.id} className="created_job" about="job">
+          {props.name.substring(1)}
+        </div>
+      </Draggable>
     </>
   );
 };
