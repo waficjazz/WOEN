@@ -4,7 +4,6 @@ import { IJob } from "../../types";
 import Draggable from "react-draggable";
 
 const Jobs = (props: IJob) => {
-  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const nodeRef = useRef(null);
 
   return (

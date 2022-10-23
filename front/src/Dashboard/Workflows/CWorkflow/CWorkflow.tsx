@@ -13,7 +13,8 @@ const CWorkflow = () => {
   const [jobs, setJobs] = useAtom(aJobs);
 
   const handleClick = (event: MouseEvent) => {
-    if (event.target?.id == "jobscontainer") setShowMenu(false);
+    let target = event.target as HTMLDivElement;
+    if (target?.id == "jobscontainer") setShowMenu(false);
   };
   const handleEscape = (event: KeyboardEvent) => {
     if (event.key == "Escape") setShowMenu(false);
