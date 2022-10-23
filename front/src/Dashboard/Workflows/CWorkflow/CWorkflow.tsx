@@ -15,6 +15,9 @@ const CWorkflow = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   const [containres, setContainers] = useState([] as ISContainer[]);
 
+  const handleClick = (event: MouseEvent) => {
+    if (event.target?.id !== "cmenu") setShowMenu(false);
+  };
   const handleEscape = (event: KeyboardEvent) => {
     if (event.key == "Escape") setShowMenu(false);
   };
@@ -38,9 +41,11 @@ const CWorkflow = () => {
   }, []);
 
   useEffect(() => {
+    document.addEventListener("click", handleClick);
     document.addEventListener("keypress", handleKeyPress);
     document.addEventListener("keyup", handleEscape);
     return () => {
+      document.removeEventListener("click", handleClick);
       document.removeEventListener("keyup", handleEscape);
       document.removeEventListener("keypress", handleKeyPress);
     };

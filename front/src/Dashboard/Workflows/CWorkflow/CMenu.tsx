@@ -7,7 +7,7 @@ interface IAnchorPoints {
 }
 
 const CMenu = () => {
-  return <div className="c_menu"></div>;
+  return <div className="c_menu" id="cmenu"></div>;
 };
 
 export default CMenu;
