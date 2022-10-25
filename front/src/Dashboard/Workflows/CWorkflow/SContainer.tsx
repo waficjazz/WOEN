@@ -16,6 +16,9 @@ const SContainer = (props: ISContainer) => {
       setShowMenu("");
     }
     if (showMenu == "connect") {
+      if (!jobs.hasOwnProperty(selectedJob)) {
+        setJobs([...jobs, props]);
+      }
       const currentValues = connection[selectedJob] || [];
       setConnection({ ...connection, [selectedJob]: [...currentValues, props.id] });
     }
