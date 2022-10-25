@@ -45,20 +45,21 @@ const CWorkflow = () => {
         <div className="jobs_container" id="jobscontainer" onMouseEnter={() => setMouseHover(true)} onMouseLeave={() => setMouseHover(false)}>
           <>
             {showMenu !== "" && <CMenu />}
-            {Array.from(connection).map(([key, value]) => {
-              console.log(key, value);
-              return (
-                <Xarrow
-                  start={key}
-                  end={value}
-                  curveness={0.5}
-                  startAnchor={"bottom"}
-                  endAnchor={"top"}
-                  color={"red"}
-                  strokeWidth={2}
-                  animateDrawing={0.5}
-                />
-              );
+            {Object.keys(connection).map((key) => {
+              return connection[key].map((value) => {
+                return (
+                  <Xarrow
+                    start={key}
+                    end={value}
+                    curveness={0.5}
+                    startAnchor={"bottom"}
+                    endAnchor={"top"}
+                    color={"red"}
+                    strokeWidth={2}
+                    animateDrawing={0.5}
+                  />
+                );
+              });
             })}
             {jobs.map((job) => {
               return <Job {...job} key={job.id} top={200} left={200} />;

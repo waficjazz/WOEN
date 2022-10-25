@@ -14,3 +14,7 @@ export interface IJob {
   successors?: string[];
   status?: string;
 }
+
+export interface IConnection {
+  [key: string]: string[];
+}
