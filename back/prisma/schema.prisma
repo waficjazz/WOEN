@@ -30,13 +30,24 @@ model container {
 }
 
 model job {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name         String    @unique
-  container    container @relation(fields: [containerId], references: [id])
-  status       String    @default("pending")
-  dependencies String[]
-  successors   String[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  containerId  String    @db.Uuid
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String    @unique
+  container   container @relation(fields: [containerId], references: [id])
+  status      String    @default("pending")
+  successors  String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  containerId String    @db.Uuid
+  workflow    workflow? @relation(fields: [workflowId], references: [id])
+  workflowId  String?   @db.Uuid
+}
+
+model workflow {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique
+  jobs      job[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  initJob   String   @default("init")
+  status    String   @default("pending")
 }

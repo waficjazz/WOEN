@@ -3,9 +3,9 @@ import SideBar from "./SideBar/SideBar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ContainerBoard from "./ContainerBoard/ContainerBoard";
 import "./Dashboard.css";
-import CWorkflow from "./Workflows/CWorkflow/CWorkflow";
 import { useAtom } from "jotai";
 import { aJobs } from "../store";
+import Workflows from "./Workflows/Workflows";
 const Dashboard = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   return (
@@ -14,7 +14,7 @@ const Dashboard = () => {
       <div className="dashboard_content">
         <Routes>
           <Route path="containers" element={<ContainerBoard />} />
-          <Route path="workflows" element={<CWorkflow />} />
+          <Route path="workflows" element={<Workflows />} />
         </Routes>
       </div>
     </div>

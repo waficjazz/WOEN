@@ -2,6 +2,8 @@ docker run --name postgresql -e POSTGRES_USER=1234 -e POSTGRES_PASSWORD=1234 -p 
 
 export DATABASE_URL=postgresql://1234:1234@localhost:5432/public
 
+npx prisma generate
+
 npx prisma migrate dev --name init
 
 const client = createClient();

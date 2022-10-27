@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 const HttpError = require("./utils/http-error");
 const userRoutes = require("./routes/user-routes");
+const workflowRoutes = require("./routes/workflow-routes");
 const containerRoutes = require("./routes/container-routes");
 const app = express();
 
@@ -16,6 +17,7 @@ app.use((req, res, next) => {
 
 app.use("/api/v1/containers", containerRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/workflow", workflowRoutes);
 
 app.use((req: any, res: any, next: any) => {
   const error = new HttpError("Could not find this route.", 404);
