@@ -58,3 +58,10 @@
   transform: translate(-50%, -50%);
   background-color: rgb(0, 0, 0, 0.95);
 }
+
+.workflow_form {
+  position: absolute;
+  background-color: rgb(40, 54, 47);
+  height: 50%;
+  width: 50%;
+}
