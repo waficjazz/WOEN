@@ -1,8 +1,8 @@
 import express from "express";
 
-const userController = require("../controllers/container-controller");
+const workflowController = require("../controllers/workflow-controller");
 
 const router = express.Router();
 
-router.post("/create", userController.createContainer);
+router.post("/create", workflowController.createWorkflow);
 module.exports = router;

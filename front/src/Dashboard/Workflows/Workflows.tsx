@@ -13,7 +13,7 @@ const Workflows = () => {
           <Button onClick={() => setShowForm(true)}>Create</Button>
         </div>
       </div>
-      {showForm && <CFrom />}
+      {showForm && <CFrom setShow={setShowForm} />}
     </>
   );
 };
