@@ -29,7 +29,7 @@ const WorkflowTable = () => {
   }, []);
 
   return (
-    <div className="container_table">
+    <div className="workflow_table">
       {workflows &&
         workflows.length > 0 &&
         workflows.map((workflow) => {
@@ -44,13 +44,13 @@ const Workflows = () => {
   return (
     <>
       <div className="workflow_board">
-        <div className="container_board_header">
+        <div className="workflow_board_header">
           <p>Workflows</p>
           <Button onClick={() => setShowForm(true)}>Create</Button>
         </div>
         <WorkflowTable />
       </div>
-      {showForm && <CFrom setShow={setShowForm} />}
+      {/* {showForm && <CFrom setShow={setShowForm} />} */}
     </>
   );
 };

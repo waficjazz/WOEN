@@ -16,7 +16,7 @@ const createWorkflow = async (req: any, res: any, next: any) => {
     const error = new HttpError("Could not create workflow.", 500);
     return next(error);
   }
-  res.status(201).json({ workflow });
+  res.status(201).json(workflow);
 };
 
 const getWorkflows = async (req: any, res: any, next: any) => {
@@ -26,7 +26,7 @@ const getWorkflows = async (req: any, res: any, next: any) => {
       const error = new HttpError("Could not find workflows.", 404);
       return next(error);
     }
-    res.status(200).json({ workflows });
+    res.status(200).json(workflows);
   } catch (err) {
     const error = new HttpError("Could not get workflows.", 500);
     return next(error);

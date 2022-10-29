@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import Axios from "../../axios";
-
+import "./Workflows.css";
 interface Props {
   id: string;
   name: string;
@@ -14,7 +14,10 @@ const WorkflowRow = ({ id, name }: Props) => {
 
   return (
     <>
-      <div className="container_row">new workflow</div>
+      <div className="workflow_row">
+        {id}
+        {name}
+      </div>
     </>
   );
 };
