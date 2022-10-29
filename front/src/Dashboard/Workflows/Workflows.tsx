@@ -7,7 +7,7 @@ import Axios from "../../axios";
 import { IWorkflow } from "../types";
 
 const Workflows = () => {
-  const [workflows, setWorkflows] = useState<IWorkflow[]>();
+  const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
   const getWorkflow = async () => {
     try {
       const response = await Axios.get("/workflow/list");
