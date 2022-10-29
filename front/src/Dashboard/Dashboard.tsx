@@ -6,6 +6,7 @@ import "./Dashboard.css";
 import { useAtom } from "jotai";
 import { aJobs } from "../store";
 import Workflows from "./Workflows/Workflows";
+import CWorkflow from "./Workflows/CWorkflow/CWorkflow";
 const Dashboard = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   return (
@@ -15,6 +16,7 @@ const Dashboard = () => {
         <Routes>
           <Route path="containers" element={<ContainerBoard />} />
           <Route path="workflows" element={<Workflows />} />
+          <Route path="cworkflow/:id" element={<CWorkflow />} />
         </Routes>
       </div>
     </div>

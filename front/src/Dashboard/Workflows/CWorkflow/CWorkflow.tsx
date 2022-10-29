@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import "./CWorkflow.css";
-import SContainer from "./SContainer";
 import Job from "./Job";
+import { useParams } from "react-router-dom";
 import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect } from "../../../store";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import CMenu from "./CMenu";
 
 const CWorkflow = () => {
+  const { id } = useParams();
   const [mouseHover, setMouseHover] = useState(false);
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
@@ -43,6 +44,7 @@ const CWorkflow = () => {
     <>
       <Xwrapper>
         <div className="jobs_container" id="jobscontainer" onMouseEnter={() => setMouseHover(true)} onMouseLeave={() => setMouseHover(false)}>
+          {id}
           <>
             {showMenu !== "" && <CMenu />}
             {Object.keys(connection).map((key) => {
