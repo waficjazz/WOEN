@@ -3,8 +3,10 @@ import Input from "../../../shared/Inputs/Input";
 import "./CWorkflow.css";
 import Axios from "../../../axios";
 import Button from "../../../shared/Buttons/Button";
+import { IWorkflow } from "../../types";
 interface Props {
   setShow: any;
+  addWorkflow: any;
 }
 const CFrom = (props: Props) => {
   const [wfName, setWfName] = useState("");
@@ -14,6 +16,7 @@ const CFrom = (props: Props) => {
     try {
       const response = await Axios.post("/workflow/create", obj);
       if (response.status === 201) {
+        props.addWorkflow((prev: IWorkflow[]) => [...prev, response.data]);
         props.setShow(false);
       }
     } catch (err) {

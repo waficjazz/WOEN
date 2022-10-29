@@ -14,10 +14,7 @@ const WorkflowRow = ({ id, name }: Props) => {
 
   return (
     <>
-      <div className="workflow_row">
-        {id}
-        {name}
-      </div>
+      <div className="workflow_row">{name}</div>
     </>
   );
 };

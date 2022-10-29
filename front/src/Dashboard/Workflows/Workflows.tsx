@@ -4,14 +4,10 @@ import CFrom from "./CWorkflow/CFrom";
 import WorkflowRow from "./WorkflowRow";
 import "./Workflows.css";
 import Axios from "../../axios";
+import { IWorkflow } from "../types";
 
-const WorkflowTable = () => {
-  interface IWorkflow {
-    id: string;
-    name: string;
-  }
+const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>();
-
   const getWorkflow = async () => {
     try {
       const response = await Axios.get("/workflow/list");
@@ -28,18 +24,6 @@ const WorkflowTable = () => {
     getWorkflow();
   }, []);
 
-  return (
-    <div className="workflow_table">
-      {workflows &&
-        workflows.length > 0 &&
-        workflows.map((workflow) => {
-          return <WorkflowRow id={workflow.id} name={workflow.name} />;
-        })}
-    </div>
-  );
-};
-
-const Workflows = () => {
   const [showForm, setShowForm] = useState(false);
   return (
     <>
@@ -48,9 +32,15 @@ const Workflows = () => {
           <p>Workflows</p>
           <Button onClick={() => setShowForm(true)}>Create</Button>
         </div>
-        <WorkflowTable />
+        <div className="workflow_table">
+          {workflows &&
+            workflows.length > 0 &&
+            workflows.map((workflow) => {
+              return <WorkflowRow key={workflow.id} id={workflow.id} name={workflow.name} />;
+            })}
+        </div>
       </div>
-      {/* {showForm && <CFrom setShow={setShowForm} />} */}
+      {showForm && <CFrom setShow={setShowForm} addWorkflow={setWorkflows} />}
     </>
   );
 };

@@ -18,3 +18,8 @@ export interface IJob {
 export interface IConnection {
   [key: string]: string[];
 }
+
+export interface IWorkflow {
+  id: string;
+  name: string;
+}
