@@ -14,13 +14,23 @@ const CWorkflow = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   const [connection, setConnection] = useAtom(aConnect);
 
+  const [center, setCenter] = useState(0);
+  const [initHeight, setInitHeight] = useState(100);
+
+  const calculateCenter = () => {
+    let container = document.getElementById("jobscontainer");
+    if (container) setCenter(container?.offsetWidth / 2 - 140 || 0);
+  };
+
   const handleClick = (event: MouseEvent) => {
     let target = event.target as HTMLDivElement;
     if (target?.id == "jobscontainer") setShowMenu("");
   };
+
   const handleEscape = (event: KeyboardEvent) => {
     if (event.key == "Escape") setShowMenu("");
   };
+
   const handleKeyPress = (event: KeyboardEvent) => {
     if (mouseHover)
       if (event.code == "Space") {
@@ -29,6 +39,10 @@ const CWorkflow = () => {
       }
     if (event.key == "Escape") setShowMenu("");
   };
+
+  useEffect(() => {
+    calculateCenter();
+  }, []);
 
   useEffect(() => {
     document.addEventListener("click", handleClick);
@@ -40,6 +54,7 @@ const CWorkflow = () => {
       document.removeEventListener("keypress", handleKeyPress);
     };
   });
+
   return (
     <>
       <Xwrapper>
@@ -48,6 +63,7 @@ const CWorkflow = () => {
           <>
             {showMenu !== "" && <CMenu />}
             {Object.keys(connection).map((key) => {
+              console.log(connection);
               return connection[key].map((value) => {
                 return (
                   <Xarrow
@@ -64,7 +80,7 @@ const CWorkflow = () => {
               });
             })}
             {jobs.map((job) => {
-              return <Job {...job} key={job.id} top={200} left={200} />;
+              return <Job {...job} key={job.id} top={initHeight} left={center} />;
             })}
           </>
         </div>
