@@ -3,12 +3,26 @@ import "./CWorkflow.css";
 import { ISContainer } from "../../types";
 import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aSelectedJob } from "../../../store";
+import Axios from "../../../axios";
+import { useParams } from "react-router-dom";
 
 const SContainer = (props: ISContainer) => {
+  const { id } = useParams();
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
   const [selectedJob] = useAtom(aSelectedJob);
   const [connection, setConnection] = useAtom(aConnect);
+
+  const createJob = async () => {
+    try {
+      const response = await Axios.post("/workflow/job/create", { workflowId: id, name: "newjob", containerId: props.id });
+      if (response.status === 201) {
+        setJobs([...jobs, props]);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const includeJob = (id: string) => {
     let a = false;
@@ -21,17 +35,20 @@ const SContainer = (props: ISContainer) => {
   };
   const addToWorkflow = () => {
     if (showMenu == "add") {
-      if (!includeJob(props.id)) setJobs([...jobs, props]);
+      if (!includeJob(props.id)) {
+        createJob();
+      }
       setShowMenu("");
     }
     if (showMenu == "connect") {
       if (!includeJob(props.id)) {
-        setJobs([...jobs, props]);
+        createJob();
       }
       const currentValues = connection[selectedJob] || [];
       setConnection({ ...connection, [selectedJob]: [...currentValues, props.id] });
+
+      setShowMenu("");
     }
-    setShowMenu("");
   };
 
   return (

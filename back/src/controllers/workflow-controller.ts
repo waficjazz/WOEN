@@ -33,7 +33,31 @@ const getWorkflows = async (req: any, res: any, next: any) => {
   }
 };
 
+const createJob = async (req: any, res: any, next: any) => {
+  const { name, workflowId, containerId } = req.body;
+  console.log("hhh", name, workflowId, containerId);
+  try {
+    const job = await prisma.job.create({
+      data: {
+        name,
+        workflowId,
+        containerId,
+      },
+    });
+    // if (!job) {
+    //   const error = new HttpError("Could not create job.", 500);
+    //   return next(error);
+    // }
+    res.status(201).json(job);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Could not create job.", 500);
+    return next(error);
+  }
+};
+
 module.exports = {
+  createJob,
   createWorkflow,
   getWorkflows,
 };

@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { IJob, IPlacement } from "../../types";
 import { aShowMenu, aSelectedJob } from "../../../store";
 import { useXarrow } from "react-xarrows";
+import { aJobs } from "../../../store";
 
 import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from "react-draggable";
 
@@ -17,6 +18,7 @@ const Job = (props: IProps) => {
   const coor = useRef(props.placement[props.id]);
   const updateXarrow = useXarrow();
   const [, setShowMenu] = useAtom(aShowMenu);
+  const [jobs, setJobs] = useAtom(aJobs);
   const [, setSelectedJob] = useAtom(aSelectedJob);
   const [initialCoord, setInitialCoord] = useState({ x: 0, y: 0 });
 
@@ -61,6 +63,11 @@ const Job = (props: IProps) => {
     setShowMenu("connect");
   };
 
+  const handleRemove = () => {
+    setJobs(jobs.filter((job) => job.id !== props.id));
+    delete props.placement[props.id];
+    props.getBiggestY();
+  };
   return (
     <>
       <Draggable
@@ -73,6 +80,7 @@ const Job = (props: IProps) => {
         defaultPosition={{ x: props.left, y: props.top }}>
         <div ref={nodeRef} id={props.id} className="created_job">
           <button onClick={handleConnect}>connect</button>
+          <button onClick={handleRemove}>remove</button>
           {props.name.substring(1)}
         </div>
       </Draggable>

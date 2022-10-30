@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
-import Axios from "../../axios";
 import { useNavigate } from "react-router-dom";
 import "./Workflows.css";
 interface Props {

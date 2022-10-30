@@ -186,7 +186,7 @@ const getSavedContainers = async (req: any, res: any, next: any) => {
       const error = new HttpError("Could not get saved containers.", 500);
       return next(error);
     }
-    res.status(200).json({ containers: savedContainers });
+    res.status(200).json(savedContainers);
   } catch (err) {
     const error = new HttpError("Could not get saved containers.", 500);
     return next(error);

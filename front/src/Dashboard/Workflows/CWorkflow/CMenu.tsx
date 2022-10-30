@@ -12,7 +12,7 @@ const CMenu = () => {
       try {
         const response = await Axios.get("/containers/saved");
         if (response.status === 200) {
-          setContainers(response.data.containers);
+          setContainers(response.data);
         }
         // handle non 200 response
       } catch (error) {
