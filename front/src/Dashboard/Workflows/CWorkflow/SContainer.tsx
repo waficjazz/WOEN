@@ -10,13 +10,22 @@ const SContainer = (props: ISContainer) => {
   const [selectedJob] = useAtom(aSelectedJob);
   const [connection, setConnection] = useAtom(aConnect);
 
+  const includeJob = (id: string) => {
+    let a = false;
+    jobs.map((job: ISContainer) => {
+      if (job.id === id) {
+        a = true;
+      }
+    });
+    return a;
+  };
   const addToWorkflow = () => {
     if (showMenu == "add") {
-      setJobs([...jobs, props]);
+      if (!includeJob(props.id)) setJobs([...jobs, props]);
       setShowMenu("");
     }
     if (showMenu == "connect") {
-      if (!jobs.hasOwnProperty(selectedJob)) {
+      if (!includeJob(props.id)) {
         setJobs([...jobs, props]);
       }
       const currentValues = connection[selectedJob] || [];

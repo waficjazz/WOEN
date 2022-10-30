@@ -26,7 +26,6 @@ const CWorkflow = () => {
   const getBiggestY = () => {
     let bY = -1;
     Object.keys(placement.current).forEach((key) => {
-      console.log("key", placement.current[key][1]);
       if (placement.current[key][1] > bY) {
         bY = placement.current[key][1];
       }
@@ -80,10 +79,10 @@ const CWorkflow = () => {
           <>
             {showMenu !== "" && <CMenu />}
             {Object.keys(connection).map((key) => {
-              console.log(connection);
               return connection[key].map((value) => {
                 return (
                   <Xarrow
+                    key={`key,value`}
                     start={key}
                     end={value}
                     curveness={0.5}
