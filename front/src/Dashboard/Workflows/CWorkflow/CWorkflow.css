@@ -20,12 +20,11 @@
   height: 5rem;
   border: 1px solid rgba(255, 255, 255);
   border-radius: 5px;
-  top: 10px;
-  left: 200px;
   position: absolute;
 }
 
 .jobs_container {
+  background-color: red;
   width: 82%;
   height: 100%;
   position: relative;

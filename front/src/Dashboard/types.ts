@@ -23,3 +23,7 @@ export interface IWorkflow {
   id: string;
   name: string;
 }
+
+export interface IPlacement {
+  [key: string]: [number, number];
+}

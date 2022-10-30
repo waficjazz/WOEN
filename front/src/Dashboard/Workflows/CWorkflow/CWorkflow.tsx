@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import "./CWorkflow.css";
 import Job from "./Job";
 import { useParams } from "react-router-dom";
+import { IPlacement } from "../../types";
 import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect } from "../../../store";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
@@ -14,12 +15,15 @@ const CWorkflow = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   const [connection, setConnection] = useAtom(aConnect);
 
+  let biggestY = -1;
+  const placement = useRef({} as IPlacement);
+  // const [placement, setPlacement] = useState<IPlacement>({});
   const [center, setCenter] = useState(0);
-  const [initHeight, setInitHeight] = useState(100);
+  const [initHeight, setInitHeight] = useState(20);
 
   const calculateCenter = () => {
     let container = document.getElementById("jobscontainer");
-    if (container) setCenter(container?.offsetWidth / 2 - 140 || 0);
+    if (container) setCenter(container?.offsetWidth / 2 - 70 || 0);
   };
 
   const handleClick = (event: MouseEvent) => {
@@ -79,8 +83,16 @@ const CWorkflow = () => {
                 );
               });
             })}
-            {jobs.map((job) => {
-              return <Job {...job} key={job.id} top={initHeight} left={center} />;
+            {jobs.map((job, index) => {
+              let x = 0;
+              let y = 0;
+              y = biggestY + 1;
+              biggestY = y;
+              let height = initHeight + y * 120;
+              let left = center + x * 170;
+              placement.current[job.id] = [x, y];
+              console.log(placement.current);
+              return <Job {...job} placement={placement.current} key={job.id} top={height} left={left} />;
             })}
           </>
         </div>
