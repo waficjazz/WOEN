@@ -21,6 +21,17 @@ const CWorkflow = () => {
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
 
+  const getBiggestY = () => {
+    let bY = -1;
+    Object.keys(placement.current).forEach((key) => {
+      if (placement.current[key][1] > bY) {
+        bY = placement.current[key][1];
+      }
+    });
+    console.log(bY);
+    return bY;
+  };
+
   const calculateCenter = () => {
     let container = document.getElementById("jobscontainer");
     if (container) setCenter(container?.offsetWidth / 2 - 70 || 0);
@@ -86,12 +97,13 @@ const CWorkflow = () => {
             {jobs.map((job, index) => {
               let x = 0;
               let y = 0;
+              biggestY = getBiggestY();
               y = biggestY + 1;
               biggestY = y;
               let height = initHeight + y * 120;
               let left = center + x * 170;
               placement.current[job.id] = [x, y];
-              console.log(placement.current);
+              console.log(biggestY);
               return <Job {...job} placement={placement.current} key={job.id} top={height} left={left} />;
             })}
           </>

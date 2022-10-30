@@ -43,7 +43,7 @@ const Job = (props: IProps) => {
       if (deltaY / 120 < -1 || deltaY / 120 === -1) {
         coor.current[1] = Math.ceil(deltaY / 120) + coor.current[1];
       }
-      console.log(coor.current);
+      props.placement[props.id] = coor.current;
     }
   };
   const nodeRef = useRef(null);
