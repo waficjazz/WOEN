@@ -15,7 +15,9 @@ const CWorkflow = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   const [connection, setConnection] = useAtom(aConnect);
 
-  let biggestY = -1;
+  let biggestY = useRef(-1);
+  let x = 0;
+  let y = 0;
   const placement = useRef({} as IPlacement);
   // const [placement, setPlacement] = useState<IPlacement>({});
   const [center, setCenter] = useState(0);
@@ -24,12 +26,12 @@ const CWorkflow = () => {
   const getBiggestY = () => {
     let bY = -1;
     Object.keys(placement.current).forEach((key) => {
+      console.log("key", placement.current[key][1]);
       if (placement.current[key][1] > bY) {
         bY = placement.current[key][1];
       }
     });
-    console.log(bY);
-    return bY;
+    biggestY.current = bY;
   };
 
   const calculateCenter = () => {
@@ -94,17 +96,12 @@ const CWorkflow = () => {
                 );
               });
             })}
-            {jobs.map((job, index) => {
-              let x = 0;
-              let y = 0;
-              biggestY = getBiggestY();
-              y = biggestY + 1;
-              biggestY = y;
+            {jobs.map((job) => {
+              y = biggestY.current + 1;
               let height = initHeight + y * 120;
               let left = center + x * 170;
-              placement.current[job.id] = [x, y];
-              console.log(biggestY);
-              return <Job {...job} placement={placement.current} key={job.id} top={height} left={left} />;
+              if (!placement.current[job.id]) placement.current[job.id] = [x, y];
+              return <Job {...job} getBiggestY={getBiggestY} placement={placement.current} key={job.id} top={height} left={left} />;
             })}
           </>
         </div>

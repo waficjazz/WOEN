@@ -8,6 +8,7 @@ import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from 
 
 interface IProps extends IJob {
   placement: IPlacement;
+  getBiggestY: () => void;
   top: number;
   left: number;
 }
@@ -19,6 +20,10 @@ const Job = (props: IProps) => {
   const [, setSelectedJob] = useAtom(aSelectedJob);
   const [initialCoord, setInitialCoord] = useState({ x: 0, y: 0 });
 
+  useEffect(() => {
+    props.getBiggestY();
+  }, []);
+
   const setInitialCoordinates = (e: DraggableEvent, data: DraggableData) => {
     if (data) {
       setInitialCoord({ x: data.x, y: data.y });
@@ -27,10 +32,8 @@ const Job = (props: IProps) => {
 
   const calculatePlacement = (e: DraggableEvent, data: DraggableData) => {
     if (data) {
-      console.log(coor.current);
       let deltaX = data.x - initialCoord.x;
       let deltaY = data.y - initialCoord.y;
-      console.log(deltaX);
       if (deltaX / 170 > 1 || deltaX / 170 === 1) {
         coor.current[0] = Math.floor(deltaX / 170) + coor.current[0];
       }
@@ -44,6 +47,7 @@ const Job = (props: IProps) => {
         coor.current[1] = Math.ceil(deltaY / 120) + coor.current[1];
       }
       props.placement[props.id] = coor.current;
+      props.getBiggestY();
     }
   };
   const nodeRef = useRef(null);
