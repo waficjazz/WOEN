@@ -80,6 +80,7 @@ const CWorkflow = () => {
             {showMenu !== "" && <CMenu />}
             {Object.keys(connection).map((key) => {
               return connection[key].map((value) => {
+                console.log(key, value);
                 return (
                   <Xarrow
                     key={`key,value`}

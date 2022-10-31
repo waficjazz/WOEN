@@ -13,7 +13,7 @@ const Workflows = () => {
       const response = await Axios.get("/workflow/list");
       if (response.data) {
         setWorkflows(response.data);
-        console.log(response.data);
+        console.log("seeme", response.data);
       }
     } catch (err) {
       console.log(err);
