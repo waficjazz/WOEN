@@ -7,4 +7,5 @@ const router = express.Router();
 router.post("/create", workflowController.createWorkflow);
 router.get("/list", workflowController.getWorkflows);
 router.post("/job/create", workflowController.createJob);
+router.post("/job/update", workflowController.upateJobDependencies);
 module.exports = router;

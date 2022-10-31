@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import "./CWorkflow.css";
-import { ISContainer } from "../../types";
+import { ISContainer, IJob } from "../../types";
 import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aSelectedJob, aDepends } from "../../../store";
 import Axios from "../../../axios";
@@ -13,13 +13,24 @@ const SContainer = (props: ISContainer) => {
   const [selectedJob] = useAtom(aSelectedJob);
   const [connection, setConnection] = useAtom(aConnect);
   const [depends, setDepends] = useAtom(aDepends);
+  // const [newJob, setNewJob] = useState<IJob>();
+  const newJob = useRef<IJob>();
 
+  const updateJob = async () => {
+    try {
+      let old = connection[selectedJob] || [];
+      const response = await Axios.post("/workflow/job/update", { jobId: selectedJob, successors: [...old, props.id] });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const createJob = async () => {
     try {
       const response = await Axios.post("/workflow/job/create", { workflowId: id, name: "newjob", containerId: props.id });
-      // if (response.status === 201) {
-      //   setJobs([...jobs, props]);
-      // }
+      if (response.status === 201) {
+        newJob.current = response.data;
+        setJobs([...jobs, response.data]);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -43,16 +54,15 @@ const SContainer = (props: ISContainer) => {
     if (showMenu == "add") {
       if (!includeJob(props.id)) {
         createJob();
-        setJobs([...jobs, props]);
       }
       setShowMenu("");
     }
     if (showMenu == "connect") {
       if (!includeJob(props.id)) {
         createJob();
-        setJobs([...jobs, props]);
       }
       const currentValues = connection[selectedJob] || [];
+      updateJob();
       setConnection({ ...connection, [selectedJob]: [...currentValues, props.id] });
       // const currentDeps = depends[props.id] || [];
       // setDepends({ ...depends, [props.id]: [...currentDeps, selectedJob] });

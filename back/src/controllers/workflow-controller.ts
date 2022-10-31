@@ -56,8 +56,27 @@ const createJob = async (req: any, res: any, next: any) => {
   }
 };
 
+const upateJobDependencies = async (req: any, res: any, next: any) => {
+  const { jobId, successors, dependencies } = req.body;
+  try {
+    const job = await prisma.job.update({
+      where: {
+        id: jobId,
+      },
+      data: {
+        successors,
+      },
+    });
+    res.status(201).json(job);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Could not update job.", 500);
+    return next(error);
+  }
+};
 module.exports = {
   createJob,
   createWorkflow,
   getWorkflows,
+  upateJobDependencies,
 };
