@@ -26,7 +26,9 @@ const SContainer = (props: ISContainer) => {
   };
   const createJob = async () => {
     try {
-      const response = await Axios.post("/workflow/job/create", { workflowId: id, name: "newjob", containerId: props.id });
+      // random 4 letter name
+      let name = Math.random().toString(36).substring(2, 6);
+      const response = await Axios.post("/workflow/job/create", { workflowId: id, name: name, containerId: props.id });
       if (response.status === 201) {
         newJob.current = response.data;
         setJobs([...jobs, response.data]);
@@ -37,9 +39,8 @@ const SContainer = (props: ISContainer) => {
   };
 
   useEffect(() => {
-    console.log(depends);
-    console.log(connection);
-  }, [depends]);
+    console.log("jobs", jobs);
+  }, [jobs]);
 
   const includeJob = (id: string) => {
     let a = false;
@@ -57,10 +58,11 @@ const SContainer = (props: ISContainer) => {
       }
       setShowMenu("");
     }
+    // connected job already in workflow
     if (showMenu == "connect") {
-      if (!includeJob(props.id)) {
-        createJob();
-      }
+      //   if (!includeJob(props.id)) {
+      //     createJob();
+      //   }
       const currentValues = connection[selectedJob] || [];
       updateJob();
       setConnection({ ...connection, [selectedJob]: [...currentValues, props.id] });

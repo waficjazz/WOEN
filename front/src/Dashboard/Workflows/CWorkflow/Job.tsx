@@ -81,7 +81,7 @@ const Job = (props: IProps) => {
         <div ref={nodeRef} id={props.id} className="created_job">
           <button onClick={handleConnect}>connect</button>
           <button onClick={handleRemove}>remove</button>
-          {props.name.substring(1)}
+          {props.name}
         </div>
       </Draggable>
     </>

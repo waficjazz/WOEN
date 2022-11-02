@@ -3,10 +3,13 @@ import { ISContainer } from "../../types";
 import Axios from "../../../axios";
 import "./CWorkflow.css";
 import SContainer from "./SContainer";
+import { aJobs, aShowMenu } from "../../../store";
+import { useAtom } from "jotai";
 
 const CMenu = () => {
   const [containres, setContainers] = useState([] as ISContainer[]);
-
+  const [showMenu] = useAtom(aShowMenu);
+  const [jobs, setJobs] = useAtom(aJobs);
   useEffect(() => {
     const getSavedContainers = async () => {
       try {
@@ -24,9 +27,14 @@ const CMenu = () => {
   return (
     <div className="c_menu" id="cmenu">
       <input />
-      {containres.map((container) => {
-        return <SContainer key={container.id} {...container} />;
-      })}
+      {showMenu == "connect" &&
+        jobs.map((job: ISContainer) => {
+          return <SContainer key={job.id} {...job} />;
+        })}
+      {showMenu == "add" &&
+        containres.map((container) => {
+          return <SContainer key={container.id} {...container} />;
+        })}
     </div>
   );
 };
