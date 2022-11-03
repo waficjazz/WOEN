@@ -1,12 +1,12 @@
 export interface ISContainer {
-  id: string;
+  id: number;
   name: string;
   image: string;
   commands?: string[];
 }
 
 export interface IJob {
-  id: string;
+  id: number;
   name: string;
   image: string;
   commands?: string[];

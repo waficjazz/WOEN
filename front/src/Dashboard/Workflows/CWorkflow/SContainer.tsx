@@ -7,7 +7,8 @@ import Axios from "../../../axios";
 import { useParams } from "react-router-dom";
 
 const SContainer = (props: ISContainer) => {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id || "0";
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
   const [selectedJob] = useAtom(aSelectedJob);
@@ -19,7 +20,11 @@ const SContainer = (props: ISContainer) => {
   const updateJob = async () => {
     try {
       let old = connection[selectedJob] || [];
-      const response = await Axios.post("/workflow/job/update", { jobId: selectedJob, successors: [...old, props.id] });
+      let oldDepends = depends[props.id] || [];
+      const response = await Axios.post("/workflow/job/update", { jobId: selectedJob, successors: [...old, props.id.toString()] });
+      const response1 = await Axios.post("/workflow/job/update", { jobId: props.id, dependencies: [...oldDepends, selectedJob.toString()] });
+      console.log(response);
+      console.log(response1);
     } catch (err) {
       console.log(err);
     }
@@ -28,7 +33,7 @@ const SContainer = (props: ISContainer) => {
     try {
       // random 4 letter name
       let name = Math.random().toString(36).substring(2, 6);
-      const response = await Axios.post("/workflow/job/create", { workflowId: id, name: name, containerId: props.id });
+      const response = await Axios.post("/workflow/job/create", { workflowId: parseInt(id), name: name, containerId: props.id });
       if (response.status === 201) {
         newJob.current = response.data;
         setJobs([...jobs, response.data]);
@@ -37,14 +42,12 @@ const SContainer = (props: ISContainer) => {
       console.log(err);
     }
   };
-
   useEffect(() => {
-    console.log("jobs", jobs);
-  }, [jobs]);
-
-  const includeJob = (id: string) => {
+    console.log(connection);
+  }, [connection]);
+  const includeJob = (id: number) => {
     let a = false;
-    jobs.map((job: ISContainer) => {
+    jobs.map((job: IJob) => {
       if (job.id === id) {
         a = true;
       }
@@ -63,11 +66,12 @@ const SContainer = (props: ISContainer) => {
       //   if (!includeJob(props.id)) {
       //     createJob();
       //   }
-      const currentValues = connection[selectedJob] || [];
+      const currentValues = connection[selectedJob]?.toString() || [];
+      console.log(currentValues);
       updateJob();
-      setConnection({ ...connection, [selectedJob]: [...currentValues, props.id] });
-      // const currentDeps = depends[props.id] || [];
-      // setDepends({ ...depends, [props.id]: [...currentDeps, selectedJob] });
+      setConnection({ ...connection, [selectedJob?.toString()]: [...currentValues, props.id?.toString()] });
+      const currentDeps = depends[props.id]?.toString() || [];
+      setDepends({ ...depends, [props.id.toString()]: [...currentDeps, selectedJob.toString()] });
 
       setShowMenu("");
     }

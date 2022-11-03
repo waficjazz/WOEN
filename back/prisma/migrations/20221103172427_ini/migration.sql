@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "container" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "commands" TEXT[],
@@ -24,25 +24,26 @@ CREATE TABLE "container" (
 
 -- CreateTable
 CREATE TABLE "job" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'pending',
     "successors" TEXT[],
+    "dependencies" TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "containerId" UUID NOT NULL,
-    "workflowId" UUID,
+    "containerId" INTEGER NOT NULL,
+    "workflowId" INTEGER NOT NULL,
 
     CONSTRAINT "job_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "workflow" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "initJob" TEXT NOT NULL,
+    "initJob" TEXT NOT NULL DEFAULT 'init',
     "status" TEXT NOT NULL DEFAULT 'pending',
 
     CONSTRAINT "workflow_pkey" PRIMARY KEY ("id")
@@ -67,4 +68,4 @@ CREATE UNIQUE INDEX "workflow_name_key" ON "workflow"("name");
 ALTER TABLE "job" ADD CONSTRAINT "job_containerId_fkey" FOREIGN KEY ("containerId") REFERENCES "container"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "job" ADD CONSTRAINT "job_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "workflow"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "job" ADD CONSTRAINT "job_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "workflow"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

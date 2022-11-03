@@ -80,10 +80,10 @@ const CWorkflow = () => {
             {showMenu !== "" && <CMenu />}
             {Object.keys(connection).map((key) => {
               return connection[key].map((value) => {
-                console.log(key, value);
+                let k = Math.random().toString(36).substr(2, 3);
                 return (
                   <Xarrow
-                    key={`key,value`}
+                    key={k}
                     start={key}
                     end={value}
                     curveness={0.5}

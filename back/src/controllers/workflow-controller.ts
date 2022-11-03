@@ -35,7 +35,6 @@ const getWorkflows = async (req: any, res: any, next: any) => {
 
 const createJob = async (req: any, res: any, next: any) => {
   const { name, workflowId, containerId } = req.body;
-  console.log("hhh", name, workflowId, containerId);
   try {
     const job = await prisma.job.create({
       data: {
@@ -65,6 +64,7 @@ const upateJobDependencies = async (req: any, res: any, next: any) => {
       },
       data: {
         successors,
+        dependencies,
       },
     });
     res.status(201).json(job);

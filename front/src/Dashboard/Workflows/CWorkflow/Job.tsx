@@ -78,7 +78,7 @@ const Job = (props: IProps) => {
         onDrag={updateXarrow}
         onStop={calculatePlacement}
         defaultPosition={{ x: props.left, y: props.top }}>
-        <div ref={nodeRef} id={props.id} className="created_job">
+        <div ref={nodeRef} id={props.id.toString()} className="created_job">
           <button onClick={handleConnect}>connect</button>
           <button onClick={handleRemove}>remove</button>
           {props.name}
