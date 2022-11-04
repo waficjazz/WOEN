@@ -23,8 +23,6 @@ const SContainer = (props: ISContainer) => {
       let oldDepends = depends[props.id] || [];
       const response = await Axios.post("/workflow/job/update", { jobId: selectedJob, successors: [...old, props.id.toString()] });
       const response1 = await Axios.post("/workflow/job/update", { jobId: props.id, dependencies: [...oldDepends, selectedJob.toString()] });
-      console.log(response);
-      console.log(response1);
     } catch (err) {
       console.log(err);
     }
@@ -42,9 +40,7 @@ const SContainer = (props: ISContainer) => {
       console.log(err);
     }
   };
-  useEffect(() => {
-    console.log(connection);
-  }, [connection]);
+
   const includeJob = (id: number) => {
     let a = false;
     jobs.map((job: IJob) => {
@@ -66,8 +62,7 @@ const SContainer = (props: ISContainer) => {
       //   if (!includeJob(props.id)) {
       //     createJob();
       //   }
-      const currentValues = connection[selectedJob]?.toString() || [];
-      console.log(currentValues);
+      const currentValues = connection[selectedJob] || [];
       updateJob();
       setConnection({ ...connection, [selectedJob?.toString()]: [...currentValues, props.id?.toString()] });
       const currentDeps = depends[props.id]?.toString() || [];
