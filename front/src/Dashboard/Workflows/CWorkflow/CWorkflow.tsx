@@ -2,11 +2,12 @@ import React, { useRef, useEffect, useState } from "react";
 import "./CWorkflow.css";
 import Job from "./Job";
 import { useParams } from "react-router-dom";
-import { IPlacement } from "../../types";
+import { IConnection, IJob, IPlacement } from "../../types";
 import { useAtom } from "jotai";
-import { aJobs, aShowMenu, aConnect } from "../../../store";
+import { aJobs, aShowMenu, aConnect, aDepends } from "../../../store";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import CMenu from "./CMenu";
+import Axios from "../../../axios";
 
 const CWorkflow = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const CWorkflow = () => {
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
   const [connection, setConnection] = useAtom(aConnect);
+  const [, setDependencies] = useAtom(aDepends);
 
   let biggestY = useRef(-1);
   let x = 0;
@@ -23,6 +25,25 @@ const CWorkflow = () => {
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
 
+  const getWorkflowJobs = async () => {
+    try {
+      const response = await Axios.get(`/workflow/${id}/jobs`);
+      if (response.data) {
+        setJobs(response.data);
+        let jobs: IJob[] = response.data;
+        let tmpConnection: IConnection = {};
+        let tmpDepends: IConnection = {};
+        jobs.map((job) => {
+          tmpConnection[job["id"].toString()] = job["successors"];
+          tmpDepends[job["id"].toString()] = job["dependencies"];
+        });
+        setConnection(tmpConnection);
+        setDependencies(tmpDepends);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const getBiggestY = () => {
     let bY = -1;
     Object.keys(placement.current).forEach((key) => {
@@ -58,6 +79,7 @@ const CWorkflow = () => {
 
   useEffect(() => {
     calculateCenter();
+    getWorkflowJobs();
   }, []);
 
   useEffect(() => {
@@ -79,7 +101,7 @@ const CWorkflow = () => {
           <>
             {showMenu !== "" && <CMenu />}
             {Object.keys(connection).map((key) => {
-              return connection[key].map((value) => {
+              return connection[key]?.map((value) => {
                 let k = Math.random().toString(36).substr(2, 3);
                 return (
                   <Xarrow

@@ -16,7 +16,7 @@ export interface IJob {
 }
 
 export interface IConnection {
-  [key: string]: string[];
+  [key: string]: string[] | undefined;
 }
 
 export interface IWorkflow {

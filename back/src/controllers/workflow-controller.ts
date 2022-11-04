@@ -55,6 +55,21 @@ const createJob = async (req: any, res: any, next: any) => {
   }
 };
 
+const getWorkflowJobs = async (req: any, res: any, next: any) => {
+  const workflowId = req.params.wid;
+  try {
+    const jobs = await prisma.job.findMany({
+      where: {
+        workflowId: parseInt(workflowId),
+      },
+    });
+    res.status(200).json(jobs);
+  } catch (err) {
+    const error = new HttpError("Could not get jobs.", 500);
+    return next(error);
+  }
+};
+
 const upateJobDependencies = async (req: any, res: any, next: any) => {
   const { jobId, successors, dependencies } = req.body;
   try {
@@ -79,4 +94,5 @@ module.exports = {
   createWorkflow,
   getWorkflows,
   upateJobDependencies,
+  getWorkflowJobs,
 };
