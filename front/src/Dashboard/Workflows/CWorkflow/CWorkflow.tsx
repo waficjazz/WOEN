@@ -159,7 +159,7 @@ const CWorkflow = () => {
               let height = initHeight + y * 120;
               let left = center + x * 170;
               if (!placement.current[job.id.toString()]) {
-                placement.current[job.id.toString()] = [height, left];
+                placement.current[job.id.toString()] = [x, y];
               }
               return (
                 <Job

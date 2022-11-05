@@ -41,6 +41,7 @@ model job {
   containerId  Int
   workflow     workflow  @relation(fields: [workflowId], references: [id])
   workflowId   Int
+  // placement    Int[]
 }
 
 model workflow {
