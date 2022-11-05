@@ -24,6 +24,7 @@ const Job = (props: IProps) => {
 
   useEffect(() => {
     props.getBiggestY();
+    console.log(props.top, props.left);
   }, []);
 
   const setInitialCoordinates = (e: DraggableEvent, data: DraggableData) => {

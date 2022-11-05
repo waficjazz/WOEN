@@ -10,8 +10,10 @@ import CMenu from "./CMenu";
 import Axios from "../../../axios";
 
 const CWorkflow = () => {
+  interface Levels {
+    [key: number]: string[];
+  }
   const { id } = useParams();
-  const [mouseHover, setMouseHover] = useState(false);
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
   const [connection, setConnection] = useAtom(aConnect);
@@ -24,6 +26,40 @@ const CWorkflow = () => {
   // const [placement, setPlacement] = useState<IPlacement>({});
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
+  const [jobeLevels, setLevels] = useState("");
+  let initJob = "67";
+
+  let levels: Levels = {};
+  const getJobLevels = (root: string, connections: IConnection) => {
+    if (root === null) return 0;
+    let tmp: string[] = [];
+    let i = 0;
+    levels[0] = [root];
+    let nextLevel: string[] = [];
+    nextLevel = nextLevel.concat([root]);
+    while (nextLevel.length > 0) {
+      tmp = [];
+      i++;
+      nextLevel.forEach((element) => {
+        if (connections === undefined) return 0;
+        if (connections[element] !== undefined) {
+          tmp = tmp.concat(connections[element]!);
+        }
+      });
+      levels[i] = [...new Set(tmp)];
+      nextLevel = tmp;
+    }
+    ///set placement
+    Object.keys(levels).map((key) => {
+      let k = parseInt(key);
+      let i = 0;
+      levels[k].map((job) => {
+        placement.current[job] = [i, k];
+        i++;
+      });
+    });
+    console.log(placement.current);
+  };
 
   const getWorkflowJobs = async () => {
     try {
@@ -37,6 +73,7 @@ const CWorkflow = () => {
           tmpConnection[job["id"].toString()] = job["successors"];
           tmpDepends[job["id"].toString()] = job["dependencies"];
         });
+        getJobLevels(initJob, tmpConnection);
         setConnection(tmpConnection);
         setDependencies(tmpDepends);
       }
@@ -69,11 +106,10 @@ const CWorkflow = () => {
   };
 
   const handleKeyPress = (event: KeyboardEvent) => {
-    if (mouseHover)
-      if (event.code == "Space") {
-        if (showMenu == "") setShowMenu("add");
-        if (showMenu !== "") setShowMenu("");
-      }
+    if (event.code == "Space") {
+      if (showMenu == "") setShowMenu("add");
+      if (showMenu !== "") setShowMenu("");
+    }
     if (event.key == "Escape") setShowMenu("");
   };
 
@@ -96,7 +132,7 @@ const CWorkflow = () => {
   return (
     <>
       <Xwrapper>
-        <div className="jobs_container" id="jobscontainer" onMouseEnter={() => setMouseHover(true)} onMouseLeave={() => setMouseHover(false)}>
+        <div className="jobs_container" id="jobscontainer">
           {id}
           <>
             {showMenu !== "" && <CMenu />}
@@ -122,8 +158,19 @@ const CWorkflow = () => {
               y = biggestY.current + 1;
               let height = initHeight + y * 120;
               let left = center + x * 170;
-              if (!placement.current[job.id]) placement.current[job.id] = [x, y];
-              return <Job {...job} getBiggestY={getBiggestY} placement={placement.current} key={job.id} top={height} left={left} />;
+              if (!placement.current[job.id.toString()]) {
+                placement.current[job.id.toString()] = [height, left];
+              }
+              return (
+                <Job
+                  {...job}
+                  getBiggestY={getBiggestY}
+                  placement={placement.current}
+                  key={job.id}
+                  top={placement.current[job.id.toString()][1] * 120}
+                  left={placement.current[job.id.toString()][0] * 170}
+                />
+              );
             })}
           </>
         </div>
