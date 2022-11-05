@@ -70,6 +70,26 @@ const getWorkflowJobs = async (req: any, res: any, next: any) => {
   }
 };
 
+const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
+  const { placements } = req.body;
+  const workflowId = req.params.wid;
+  console.log(placements);
+  try {
+    const workflow = await prisma.workflow.update({
+      where: {
+        id: parseInt(workflowId),
+      },
+      data: {
+        placements,
+      },
+    });
+    res.status(200).json(workflow);
+  } catch (err) {
+    const error = new HttpError("Could not update workflow.", 500);
+    console.log(error);
+    return next(error);
+  }
+};
 const upateJobDependencies = async (req: any, res: any, next: any) => {
   const { jobId, successors, dependencies } = req.body;
   try {
@@ -95,4 +115,5 @@ module.exports = {
   getWorkflows,
   upateJobDependencies,
   getWorkflowJobs,
+  updateWorkflowPlacements,
 };

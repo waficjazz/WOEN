@@ -4,6 +4,7 @@ const workflowController = require("../controllers/workflow-controller");
 
 const router = express.Router();
 
+router.post("/:wid/placement", workflowController.updateWorkflowPlacements);
 router.get("/:wid/jobs", workflowController.getWorkflowJobs);
 router.post("/create", workflowController.createWorkflow);
 router.get("/list", workflowController.getWorkflows);

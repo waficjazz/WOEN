@@ -41,15 +41,15 @@ model job {
   containerId  Int
   workflow     workflow  @relation(fields: [workflowId], references: [id])
   workflowId   Int
-  // placement    Int[]
 }
 
 model workflow {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  jobs      job[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  initJob   String   @default("init")
-  status    String   @default("pending")
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  jobs       job[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  initJob    String   @default("init")
+  status     String   @default("pending")
+  placements Json?
 }
