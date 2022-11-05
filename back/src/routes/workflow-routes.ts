@@ -4,10 +4,10 @@ const workflowController = require("../controllers/workflow-controller");
 
 const router = express.Router();
 
+router.get("/:wid", workflowController.getWorkflow);
 router.post("/:wid/placement", workflowController.updateWorkflowPlacements);
-router.get("/:wid/jobs", workflowController.getWorkflowJobs);
 router.post("/create", workflowController.createWorkflow);
-router.get("/list", workflowController.getWorkflows);
+router.get("/list/all", workflowController.getWorkflows);
 router.post("/job/create", workflowController.createJob);
 router.post("/job/update", workflowController.upateJobDependencies);
 module.exports = router;

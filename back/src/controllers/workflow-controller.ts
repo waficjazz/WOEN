@@ -3,6 +3,29 @@ const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
 
+const getWorkflow = async (req: any, res: any, next: any) => {
+  const wid = req.params.wid;
+  let workflow;
+  try {
+    workflow = await prisma.workflow.findUnique({
+      where: {
+        id: parseInt(wid),
+      },
+      include: {
+        jobs: true,
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Something went wrong, could not find a workflow.", 500);
+    return next(error);
+  }
+  if (!workflow) {
+    const error = new HttpError("Could not find a workflow for the provided id.", 404);
+    return next(error);
+  }
+  res.json({ workflow: workflow });
+};
+
 const createWorkflow = async (req: any, res: any, next: any) => {
   const { name } = req.body;
   let workflow;
@@ -20,23 +43,26 @@ const createWorkflow = async (req: any, res: any, next: any) => {
 };
 
 const getWorkflows = async (req: any, res: any, next: any) => {
+  let workflows;
   try {
-    const workflows = await prisma.workflow.findMany();
+    workflows = await prisma.workflow.findMany();
     if (workflows.length === 0) {
       const error = new HttpError("Could not find workflows.", 404);
       return next(error);
     }
-    res.status(200).json(workflows);
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Could not get workflows.", 500);
     return next(error);
   }
+  res.status(200).json(workflows);
 };
 
 const createJob = async (req: any, res: any, next: any) => {
   const { name, workflowId, containerId } = req.body;
+  let job;
   try {
-    const job = await prisma.job.create({
+    job = await prisma.job.create({
       data: {
         name,
         workflowId,
@@ -47,27 +73,12 @@ const createJob = async (req: any, res: any, next: any) => {
     //   const error = new HttpError("Could not create job.", 500);
     //   return next(error);
     // }
-    res.status(201).json(job);
   } catch (err) {
     console.log(err);
     const error = new HttpError("Could not create job.", 500);
     return next(error);
   }
-};
-
-const getWorkflowJobs = async (req: any, res: any, next: any) => {
-  const workflowId = req.params.wid;
-  try {
-    const jobs = await prisma.job.findMany({
-      where: {
-        workflowId: parseInt(workflowId),
-      },
-    });
-    res.status(200).json(jobs);
-  } catch (err) {
-    const error = new HttpError("Could not get jobs.", 500);
-    return next(error);
-  }
+  res.status(201).json(job);
 };
 
 const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
@@ -90,6 +101,7 @@ const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
     return next(error);
   }
 };
+
 const upateJobDependencies = async (req: any, res: any, next: any) => {
   const { jobId, successors, dependencies } = req.body;
   try {
@@ -111,9 +123,9 @@ const upateJobDependencies = async (req: any, res: any, next: any) => {
 };
 module.exports = {
   createJob,
+  getWorkflow,
   createWorkflow,
   getWorkflows,
   upateJobDependencies,
-  getWorkflowJobs,
   updateWorkflowPlacements,
 };

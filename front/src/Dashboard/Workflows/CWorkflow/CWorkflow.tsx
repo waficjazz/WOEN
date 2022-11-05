@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./CWorkflow.css";
 import Job from "./Job";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { IConnection, IJob, IPlacement } from "../../types";
 import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aDepends } from "../../../store";
@@ -10,43 +10,44 @@ import CMenu from "./CMenu";
 import Axios from "../../../axios";
 
 const CWorkflow = () => {
-  interface Levels {
-    [key: number]: string[];
-  }
   const { id } = useParams();
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
   const [connection, setConnection] = useAtom(aConnect);
   const [, setDependencies] = useAtom(aDepends);
-
   let biggestY = useRef(-1);
   let x = 0;
   let y = 0;
   const placement = useRef({} as IPlacement);
-  // const [placement, setPlacement] = useState<IPlacement>({});
+  const [plc, setPlc] = useState({} as IPlacement);
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
-  const [jobeLevels, setLevels] = useState("");
 
   const getWorkflowJobs = async () => {
     try {
-      const response = await Axios.get(`/workflow/${id}/jobs`);
+      const response = await Axios.get(`/workflow/${id}`);
       if (response.data) {
-        setJobs(response.data);
-        let jobs: IJob[] = response.data;
+        setJobs(response.data.workflow.jobs);
+        let jobs: IJob[] = response.data.jobs;
         let tmpConnection: IConnection = {};
         let tmpDepends: IConnection = {};
-        jobs.map((job) => {
-          tmpConnection[job["id"].toString()] = job["successors"];
-          tmpDepends[job["id"].toString()] = job["dependencies"];
-        });
+        if (jobs)
+          jobs.map((job) => {
+            tmpConnection[job["id"].toString()] = job["successors"];
+            tmpDepends[job["id"].toString()] = job["dependencies"];
+          });
         setConnection(tmpConnection);
         setDependencies(tmpDepends);
+        placement.current = response.data.workflow.placements;
+        setPlc(response.data.workflow.placements);
       }
     } catch (err) {
       console.log(err);
     }
   };
+  useEffect(() => {
+    console.log(jobs, "seeme");
+  }, [jobs]);
 
   const savePlacement = async () => {
     try {
@@ -61,11 +62,12 @@ const CWorkflow = () => {
 
   const getBiggestY = () => {
     let bY = -1;
-    Object.keys(placement.current).forEach((key) => {
-      if (placement.current[key][1] > bY) {
-        bY = placement.current[key][1];
-      }
-    });
+    if (placement.current)
+      Object.keys(placement.current).forEach((key) => {
+        if (placement.current[key][1] > bY) {
+          bY = placement.current[key][1];
+        }
+      });
     biggestY.current = bY;
   };
 
@@ -92,7 +94,6 @@ const CWorkflow = () => {
   };
 
   useEffect(() => {
-    placement.current = {};
     calculateCenter();
     getWorkflowJobs();
   }, []);
@@ -134,24 +135,20 @@ const CWorkflow = () => {
                 );
               });
             })}
-            {jobs.map((job) => {
-              y = biggestY.current + 1;
-              let height = initHeight + y * 120;
-              let left = center + x * 170;
-              if (!placement.current[job.id.toString()]) {
-                placement.current[job.id.toString()] = [x, y];
-              }
-              return (
-                <Job
-                  {...job}
-                  getBiggestY={getBiggestY}
-                  placement={placement.current}
-                  key={job.id}
-                  top={placement.current[job.id.toString()][1] * 120}
-                  left={placement.current[job.id.toString()][0] * 170}
-                />
-              );
-            })}
+            {jobs.length > 0 &&
+              jobs.map((job) => {
+                y = biggestY.current + 1;
+                let height = initHeight + y * 120;
+                let left = center + x * 170;
+                let t = height;
+                let l = left;
+                if (placement.current)
+                  if (placement.current[job?.id.toString()] !== undefined) {
+                    t = placement.current[job?.id.toString()][0] * 170;
+                    l = placement.current[job?.id.toString()][1] * 120;
+                  }
+                return <Job {...job} getBiggestY={getBiggestY} placement={plc} key={job.id} top={t} left={l} setPlc={setPlc} />;
+              })}
           </>
         </div>
       </Xwrapper>

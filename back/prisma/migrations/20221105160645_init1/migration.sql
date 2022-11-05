@@ -45,6 +45,7 @@ CREATE TABLE "workflow" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "initJob" TEXT NOT NULL DEFAULT 'init',
     "status" TEXT NOT NULL DEFAULT 'pending',
+    "placements" JSONB,
 
     CONSTRAINT "workflow_pkey" PRIMARY KEY ("id")
 );

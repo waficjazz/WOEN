@@ -10,10 +10,9 @@ const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
   const getWorkflow = async () => {
     try {
-      const response = await Axios.get("/workflow/list");
+      const response = await Axios.get("/workflow/list/all");
       if (response.data) {
         setWorkflows(response.data);
-        console.log("seeme", response.data);
       }
     } catch (err) {
       console.log(err);
@@ -36,7 +35,7 @@ const Workflows = () => {
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {
-              return <WorkflowRow key={workflow.id} id={workflow.id} name={workflow.name} />;
+              return <WorkflowRow key={workflow.id} id={workflow.id} name={workflow.name} placements={workflow.placements} />;
             })}
         </div>
       </div>

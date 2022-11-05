@@ -22,6 +22,7 @@ export interface IConnection {
 export interface IWorkflow {
   id: string;
   name: string;
+  placements?: any;
 }
 
 export interface IPlacement {

@@ -43,11 +43,12 @@ const SContainer = (props: ISContainer) => {
 
   const includeJob = (id: number) => {
     let a = false;
-    jobs.map((job: IJob) => {
-      if (job.id === id) {
-        a = true;
-      }
-    });
+    if (jobs.length > 0)
+      jobs.map((job: IJob) => {
+        if (job.id === id) {
+          a = true;
+        }
+      });
     return a;
   };
   const addToWorkflow = () => {
