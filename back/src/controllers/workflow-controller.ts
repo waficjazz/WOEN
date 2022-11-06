@@ -81,6 +81,22 @@ const createJob = async (req: any, res: any, next: any) => {
   res.status(201).json(job);
 };
 
+const deleteJob = async (req: any, res: any, next: any) => {
+  const jobId = req.params.jid;
+  let job;
+  try {
+    job = await prisma.job.delete({
+      where: {
+        id: parseInt(jobId),
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Could not delete job.", 500);
+    return next(error);
+  }
+  res.status(200).json(job);
+};
+
 const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
   const { placements } = req.body;
   const workflowId = req.params.wid;
@@ -128,4 +144,5 @@ module.exports = {
   getWorkflows,
   upateJobDependencies,
   updateWorkflowPlacements,
+  deleteJob,
 };

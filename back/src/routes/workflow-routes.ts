@@ -10,4 +10,5 @@ router.post("/create", workflowController.createWorkflow);
 router.get("/list/all", workflowController.getWorkflows);
 router.post("/job/create", workflowController.createJob);
 router.post("/job/update", workflowController.upateJobDependencies);
+router.delete("/job/:jid", workflowController.deleteJob);
 module.exports = router;
