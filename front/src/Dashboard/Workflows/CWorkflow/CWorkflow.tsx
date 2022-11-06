@@ -141,12 +141,11 @@ const CWorkflow = () => {
                 y = biggestY.current + 1;
                 let height = initHeight + y * 120;
                 let left = center + x * 170;
-                console.log(placement.current);
                 if (placement.current.hasOwnProperty(job.id.toString())) {
-                  height = initHeight + placement.current[job.id.toString()][0] * 120;
-                  left = initHeight + placement.current[job.id.toString()][1] * 170;
+                  height = initHeight + placement.current[job.id.toString()][1] * 120;
+                  left = center + placement.current[job.id.toString()][0] * 170;
                 } else {
-                  placement.current[job?.id?.toString()] = [y, x];
+                  placement.current[job?.id?.toString()] = [x, y];
                 }
                 return <Job {...job} getBiggestY={getBiggestY} placement={placement.current} key={job.id} top={height} left={left} />;
               })}
