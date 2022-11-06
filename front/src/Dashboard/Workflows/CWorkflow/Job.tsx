@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState, useRef } from "react";
 import { useAtom } from "jotai";
 import { IJob, IPlacement } from "../../types";
-import { aShowMenu, aSelectedJob, aPlacement } from "../../../store";
+import { aShowMenu, aSelectedJob } from "../../../store";
 import { useXarrow } from "react-xarrows";
 import { aJobs } from "../../../store";
 
@@ -12,11 +12,10 @@ interface IProps extends IJob {
   getBiggestY: () => void;
   top: number;
   left: number;
-  setPlc: any;
 }
 
 const Job = (props: IProps) => {
-  const coor = useRef([0, 0]);
+  const coor = useRef(props.placement[props.id.toString()]);
   const updateXarrow = useXarrow();
   const [, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
@@ -34,7 +33,6 @@ const Job = (props: IProps) => {
   };
 
   const calculatePlacement = (e: DraggableEvent, data: DraggableData) => {
-    if (props.placement[props.id]) coor.current = props.placement[props.id];
     if (data) {
       let deltaX = data.x - initialCoord.x;
       let deltaY = data.y - initialCoord.y;
@@ -50,7 +48,8 @@ const Job = (props: IProps) => {
       if (deltaY / 120 < -1 || deltaY / 120 === -1) {
         coor.current[1] = Math.ceil(deltaY / 120) + coor.current[1];
       }
-      props.setPlc({ ...props.placement, [props.id.toString()]: coor.current });
+      // props.setPlc({ ...props.placement, [props.id.toString()]: coor.current });
+      props.placement[props.id.toString()] = coor.current;
       props.getBiggestY();
     }
   };
@@ -67,7 +66,7 @@ const Job = (props: IProps) => {
 
   const handleRemove = () => {
     setJobs(jobs.filter((job) => job.id !== props.id));
-    delete props.placement[props.id];
+    delete props.placement[props.id.toString()];
     props.getBiggestY();
   };
   return (
