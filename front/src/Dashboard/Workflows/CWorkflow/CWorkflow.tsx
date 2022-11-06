@@ -23,8 +23,15 @@ const CWorkflow = () => {
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
 
+  useEffect(() => {
+    calculateCenter();
+    getWorkflowJobs();
+    return () => {
+      setJobs([]);
+    };
+  }, []);
+
   const getWorkflowJobs = async () => {
-    console.log(placement.current);
     try {
       const response = await Axios.get(`/workflow/${id}`);
       if (response.data) {
@@ -33,14 +40,12 @@ const CWorkflow = () => {
         let tmpConnection: IConnection = {};
         let tmpDepends: IConnection = {};
         jobs.map((job) => {
-          console.log(job);
           tmpConnection[job["id"].toString()] = job["successors"];
           tmpDepends[job["id"].toString()] = job["dependencies"];
         });
         setConnection(tmpConnection);
         setDependencies(tmpDepends);
         if (response.data.workflow.placements !== null) placement.current = response.data.workflow.placements;
-        console.log(placement.current);
       }
     } catch (err) {
       console.log(err);
@@ -57,9 +62,6 @@ const CWorkflow = () => {
       console.log(err);
     }
   };
-  useEffect(() => {
-    console.log(placement.current);
-  }, []);
 
   const getBiggestY = () => {
     let bY = -1;
@@ -94,11 +96,6 @@ const CWorkflow = () => {
   };
 
   useEffect(() => {
-    calculateCenter();
-    getWorkflowJobs();
-  }, []);
-
-  useEffect(() => {
     document.addEventListener("click", handleClick);
     document.addEventListener("keypress", handleKeyPress);
     document.addEventListener("keyup", handleEscape);
@@ -118,7 +115,6 @@ const CWorkflow = () => {
           <>
             {showMenu !== "" && <CMenu />}
             {Object.keys(connection).map((key) => {
-              console.log(key);
               return connection[key]?.map((value) => {
                 let k = Math.random().toString(36).substr(2, 3);
                 return (
