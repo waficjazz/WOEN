@@ -29,6 +29,12 @@ model container {
   job       job[]
 }
 
+model jobTemplate {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  container container @relation(fields: [containerId], references: [id])
+}
+
 model job {
   id           Int       @id @default(autoincrement())
   name         String    @unique

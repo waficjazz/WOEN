@@ -3,6 +3,8 @@ const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
 
+// const startWorkflow =  async (req: any, res: any, next: any) => {
+
 const getWorkflow = async (req: any, res: any, next: any) => {
   const wid = req.params.wid;
   let workflow;
