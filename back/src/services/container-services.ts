@@ -28,3 +28,38 @@ const createContainer = async (image: string, CMD: string, name: string, hostNam
     // }
   }
 };
+
+const waitContainer = async (containerId: string) => {
+  try {
+    const url = `http://localhost:2375/containers/${containerId}/wait`;
+    const response = await axios.post(url);
+    if (!response || response.status !== 200) {
+      const error = new HttpError("Could not wait for container.", 500);
+      return error;
+    }
+    if (response.data.StatusCode === 0) console.log("finished");
+  } catch (err) {
+    const error = new HttpError("Could not wait for container.", 500);
+    return error;
+  }
+};
+
+const runContainer = async (containerId: string) => {
+  try {
+    const url = `http://localhost:2375/containers/${containerId}/start`;
+    const response = await axios.post(url);
+    if (!response || response.status !== 204) {
+      const error = new HttpError("Could not start container.", 500);
+      return error;
+    }
+    waitContainer(containerId);
+  } catch (err) {
+    const error = new HttpError("Could not start container.", 500);
+    return error;
+  }
+};
+
+module.exports = {
+  runContainer,
+  waitContainer,
+};
