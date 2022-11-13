@@ -20,33 +20,36 @@ model User {
 }
 
 model container {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  image     String
-  commands  String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  job       job[]
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  image        String
+  commands     String[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  jobtemplates jobTemplate[]
+}
+
+model workflowTemplate {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  jobTemplates jobTemplate[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  initJob      String        @default("init")
+  placements   Json?
 }
 
 model jobTemplate {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  container container @relation(fields: [containerId], references: [id])
-}
-
-model job {
-  id           Int       @id @default(autoincrement())
-  name         String    @unique
-  container    container @relation(fields: [containerId], references: [id])
-  status       String    @default("pending")
-  successors   String[]
-  dependencies String[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  containerId  Int
-  workflow     workflow  @relation(fields: [workflowId], references: [id])
-  workflowId   Int
+  id                 Int               @id @default(autoincrement())
+  name               String            @unique
+  container          container?        @relation(fields: [containerId], references: [id])
+  containerId        Int?
+  successors         String[]
+  dependencies       String[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
+  workflowTemplateId Int?
 }
 
 model workflow {
@@ -58,4 +61,16 @@ model workflow {
   initJob    String   @default("init")
   status     String   @default("pending")
   placements Json?
+}
+
+model job {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  status       String   @default("pending")
+  successors   String[]
+  dependencies String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  workflow     workflow @relation(fields: [workflowId], references: [id])
+  workflowId   Int
 }
