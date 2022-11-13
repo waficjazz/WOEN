@@ -27,6 +27,7 @@ model container {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   jobtemplates jobTemplate[]
+  jobs         job[]
 }
 
 model workflowTemplate {
@@ -73,7 +74,7 @@ model workflow {
 
 model job {
   id            Int          @id @default(autoincrement())
-  name          String       @unique
+  name          String
   status        String       @default("pending")
   successors    String[]
   dependencies  String[]
@@ -83,4 +84,6 @@ model job {
   workflowId    Int
   jobTemplate   jobTemplate? @relation(fields: [jobTemplateId], references: [id])
   jobTemplateId Int?
+  container     container?   @relation(fields: [containerId], references: [id])
+  containerId   Int?
 }
