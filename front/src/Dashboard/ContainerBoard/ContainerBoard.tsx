@@ -18,7 +18,6 @@ const ContainerTable = () => {
       const response = await Axios.get("/containers/list");
       if (response.data) {
         setContainers(response.data.containers);
-        console.log(response.data);
       }
     } catch (err) {
       console.log(err);

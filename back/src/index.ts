@@ -4,6 +4,7 @@ const HttpError = require("./utils/http-error");
 const userRoutes = require("./routes/user-routes");
 const workflowRoutes = require("./routes/workflow-routes");
 const containerRoutes = require("./routes/container-routes");
+const wc = require("./controllers/workflow-controller");
 const app = express();
 
 app.use(bodyParser.json());
@@ -31,7 +32,7 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.status(error?.code || 500);
   res.json({ message: error.message || "An unknown error occurred!" });
 });
-
+wc.createJobs();
 app.listen(process.env.PORT || 5001, () => {
   console.log("Server started on port 5000");
 });

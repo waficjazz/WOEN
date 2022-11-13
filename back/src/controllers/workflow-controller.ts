@@ -5,6 +5,39 @@ const prisma = new PrismaClient();
 
 // const startWorkflow =  async (req: any, res: any, next: any) => {
 
+const createWorklow = async () => {
+  const workflow = await prisma.workflow.create({
+    data: {
+      name: "My workflow",
+      workflowTemplateId: 1,
+    },
+  });
+  console.log(workflow);
+};
+interface job {
+  name: string;
+  jobTemplateId: number;
+  workflowId: number;
+}
+const createJobs = async () => {
+  let jobsTemplate;
+  jobsTemplate = await prisma.jobTemplate.findMany({
+    where: {
+      workflowTemplateId: 1,
+    },
+  });
+  console.log(jobsTemplate);
+  let jobs: job[] = [];
+  if (jobsTemplate.length > 0)
+    jobsTemplate?.map((jt, i) => {
+      let jobTemplateId = jt["id"];
+      let workflowId = 1;
+      let name = jt["name"];
+      jobs.push({ jobTemplateId, workflowId, name });
+    });
+  let response = await prisma.job.createMany({ data: jobs });
+};
+
 const getWorkflowTemplate = async (req: any, res: any, next: any) => {
   const wid = req.params.wid;
   let workflow;
@@ -140,6 +173,8 @@ const upateJobDependencies = async (req: any, res: any, next: any) => {
   }
 };
 module.exports = {
+  createJobs,
+  createWorklow,
   createJobTemplate,
   getWorkflowTemplate,
   createWorkflowTemplate,

@@ -56,7 +56,7 @@ const CWorkflow = () => {
     try {
       const response = await Axios.post(`/workflow/${id}/placement`, { placements: placement.current });
       if (response.data) {
-        console.log(response.data);
+        // console.log(response.data);
       }
     } catch (err) {
       console.log(err);

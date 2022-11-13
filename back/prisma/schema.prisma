@@ -37,6 +37,7 @@ model workflowTemplate {
   updatedAt    DateTime      @updatedAt
   initJob      String        @default("init")
   placements   Json?
+  workflows    workflow[]
 
   @@map("workflow_template")
 }
@@ -52,29 +53,34 @@ model jobTemplate {
   updatedAt          DateTime          @updatedAt
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
   workflowTemplateId Int?
+  jobs               job[]
 
   @@map("job_template")
 }
 
 model workflow {
-  id         Int      @id @default(autoincrement())
-  name       String   @unique
-  jobs       job[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  initJob    String   @default("init")
-  status     String   @default("pending")
-  placements Json?
+  id                 Int               @id @default(autoincrement())
+  name               String            @unique
+  jobs               job[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  initJob            String            @default("init")
+  status             String            @default("pending")
+  placements         Json?
+  workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
+  workflowTemplateId Int?
 }
 
 model job {
-  id           Int      @id @default(autoincrement())
-  name         String   @unique
-  status       String   @default("pending")
-  successors   String[]
-  dependencies String[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  workflow     workflow @relation(fields: [workflowId], references: [id])
-  workflowId   Int
+  id            Int          @id @default(autoincrement())
+  name          String       @unique
+  status        String       @default("pending")
+  successors    String[]
+  dependencies  String[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  workflow      workflow     @relation(fields: [workflowId], references: [id])
+  workflowId    Int
+  jobTemplate   jobTemplate? @relation(fields: [jobTemplateId], references: [id])
+  jobTemplateId Int?
 }
