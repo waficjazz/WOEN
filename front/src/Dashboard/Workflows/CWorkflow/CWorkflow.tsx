@@ -35,8 +35,8 @@ const CWorkflow = () => {
     try {
       const response = await Axios.get(`/workflow/${id}`);
       if (response.data) {
-        setJobs(response.data.workflow.jobs);
-        let jobs: IJob[] = response.data.workflow.jobs;
+        setJobs(response.data.workflow.jobTemplates);
+        let jobs: IJob[] = response.data.workflow.jobTemplates;
         let tmpConnection: IConnection = {};
         let tmpDepends: IConnection = {};
         jobs.map((job) => {

@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model user {
   id        Int      @id @default(autoincrement())
   username  String   @unique
   email     String   @unique
@@ -37,6 +37,8 @@ model workflowTemplate {
   updatedAt    DateTime      @updatedAt
   initJob      String        @default("init")
   placements   Json?
+
+  @@map("workflow_template")
 }
 
 model jobTemplate {
@@ -50,6 +52,8 @@ model jobTemplate {
   updatedAt          DateTime          @updatedAt
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
   workflowTemplateId Int?
+
+  @@map("job_template")
 }
 
 model workflow {

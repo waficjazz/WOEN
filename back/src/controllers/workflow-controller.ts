@@ -44,7 +44,7 @@ const createWorkflowTemplate = async (req: any, res: any, next: any) => {
   res.status(201).json(workflow);
 };
 
-const getWorkflowsTemplate = async (req: any, res: any, next: any) => {
+const getAllWorkflowsTemplates = async (req: any, res: any, next: any) => {
   let workflows;
   try {
     workflows = await prisma.workflowTemplate.findMany();
@@ -123,7 +123,7 @@ const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
 const upateJobDependencies = async (req: any, res: any, next: any) => {
   const { jobId, successors, dependencies } = req.body;
   try {
-    const job = await prisma.job.update({
+    const job = await prisma.jobTemplate.update({
       where: {
         id: jobId,
       },
@@ -143,7 +143,7 @@ module.exports = {
   createJobTemplate,
   getWorkflowTemplate,
   createWorkflowTemplate,
-  getWorkflowsTemplate,
+  getAllWorkflowsTemplates,
   upateJobDependencies,
   updateWorkflowPlacements,
   deleteJobTemplate,
