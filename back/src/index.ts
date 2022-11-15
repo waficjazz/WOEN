@@ -32,7 +32,9 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.status(error?.code || 500);
   res.json({ message: error.message || "An unknown error occurred!" });
 });
-wc.runContainer("07f97e08378f");
+wc.createWorkflowContainer("alpine:latest", ["sh", "-c", "sleep 40"], "testh111");
+wc.createWorkflowContainer("alpine:latest", ["sh", "-c", "sleep 50"], "testh12");
+wc.createWorkflowContainer("alpine:latest", ["sh", "-c", "sleep 60"], "testh122");
 // wc.waitContainer("07f97e08378f");
 app.listen(process.env.PORT || 5001, () => {
   console.log("Server started on port 5000");

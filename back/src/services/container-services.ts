@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 const prisma = new PrismaClient();
 
-const createContainer = async (image: string, CMD: string, name: string, hostName: string, domainName: string) => {
+const createWorkflowContainer = async (image: string, CMD: string, name: string, hostName: string, domainName: string) => {
   const url = `http://localhost:2375/images/create?fromImage=${image}`;
   const response = await axios.post(url);
   if (!response || response.status !== 200) {
@@ -21,6 +21,7 @@ const createContainer = async (image: string, CMD: string, name: string, hostNam
         const error = new HttpError("Could not create container.", 500);
         return error;
       }
+      runWorkflowContainer(response.data.Id);
     } catch (err) {
       const error = new HttpError("Could not create container.", 500);
       return error;
@@ -44,7 +45,7 @@ const waitContainer = async (containerId: string) => {
   }
 };
 
-const runContainer = async (containerId: string) => {
+const runWorkflowContainer = async (containerId: string) => {
   try {
     const url = `http://localhost:2375/containers/${containerId}/start`;
     const response = await axios.post(url);
@@ -60,6 +61,7 @@ const runContainer = async (containerId: string) => {
 };
 
 module.exports = {
-  runContainer,
+  createWorkflowContainer,
+  runWorkflowContainer,
   waitContainer,
 };
