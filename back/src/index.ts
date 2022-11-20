@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import { createClient } from "redis";
 const HttpError = require("./utils/http-error");
 const userRoutes = require("./routes/user-routes");
 const workflowRoutes = require("./routes/workflow-routes");
@@ -34,10 +35,14 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
+// ww.createWorklow();
 // ww.createJobsFromTemplate();
-// ww.test1();
 ww.runJob(1, 1, 0);
-// wc.createWorkflowContainer("alpine:latest", ["sh", "-c", "sleep 40"], "testh111");
+
 app.listen(process.env.PORT || 5001, () => {
   console.log("Server started on port 5000");
 });
+
+export const redisc = createClient();
+
+redisc.on("error", (err) => console.log("Redis Client Error", err));

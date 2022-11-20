@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { join } from "path";
 import ws from "./wokflow-services";
+import { redisc } from "..";
 const prisma = new PrismaClient();
 
 const createWorkflowContainer = async (
@@ -14,7 +15,6 @@ const createWorkflowContainer = async (
   domainName?: string
 ) => {
   const url = `http://localhost:2375/images/create?fromImage=${image}`;
-  console.log("aaa");
   const response = await axios.post(url);
   if (!response || response.status !== 200) {
     const error = new HttpError("Could not pull image.", 500);
@@ -32,19 +32,16 @@ const createWorkflowContainer = async (
         const error = new HttpError("Could not create container.", 500);
         return error;
       }
-      console.log("posted");
       runWorkflowContainer(response.data.Id, wid, jid);
     } catch (err) {
       const error = new HttpError("Could not create container.", 500);
       return error;
     }
-    // }
   }
 };
 
 const waitContainer = async (containerId: string, wid: number, jid: number) => {
   try {
-    console.log("waiting", jid);
     const url = `http://localhost:2375/containers/${containerId}/wait`;
     const response = await axios.post(url);
     if (!response || response.status !== 200) {
@@ -60,11 +57,14 @@ const waitContainer = async (containerId: string, wid: number, jid: number) => {
           },
         });
         if (job && job.successors.length > 0) {
+          await redisc.connect();
           await Promise.all(
             job.successors.map(async (j) => {
+              await redisc.lPush(`${j}${wid}`, jid.toString());
               await ws.runJob(parseInt(j), wid, 0);
             })
           );
+          await redisc.disconnect();
         } else {
           console.log("done");
         }

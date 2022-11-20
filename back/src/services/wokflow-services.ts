@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
 import wc from "./container-services";
+import { redisc } from "..";
+
 const prisma = new PrismaClient();
 // const containerS = require("./container-services");
 interface job {
@@ -12,6 +14,7 @@ interface job {
   dependencies: string[];
 }
 
+//create workflow jobs from job template
 const createJobsFromTemplate = async () => {
   let jobsTemplate;
   try {
@@ -39,8 +42,6 @@ const createJobsFromTemplate = async () => {
 };
 
 const runJob = async (jtid: number, wid: number, jid: number) => {
-  //// get job container
-  console.log("enter run job", jtid, wid, jid);
   let job;
   try {
     if (jid > 0) {
@@ -53,7 +54,6 @@ const runJob = async (jtid: number, wid: number, jid: number) => {
         },
       });
     } else {
-      console.log("enter else in job");
       job = await prisma.job.findFirst({
         where: {
           workflowId: wid,
@@ -63,6 +63,13 @@ const runJob = async (jtid: number, wid: number, jid: number) => {
           container: true,
         },
       });
+    }
+    console.log("enter test");
+    if (job) {
+      if (job.dependencies.length !== 0) {
+        let l = await redisc.lLen(`${jtid}${wid}`);
+        if (job.dependencies.length != l) return;
+      }
     }
     if (job) {
       let container = job.container;
@@ -74,7 +81,18 @@ const runJob = async (jtid: number, wid: number, jid: number) => {
   }
 };
 
+const createWorklow = async () => {
+  const workflow = await prisma.workflow.create({
+    data: {
+      name: "My workflow",
+      workflowTemplateId: 1,
+    },
+  });
+  console.log(workflow);
+};
+
 export default module.exports = {
-  createJobsFromTemplate,
+  createWorklow,
+  createJobsFromTemplate: createJobsFromTemplate,
   runJob: runJob,
 };
