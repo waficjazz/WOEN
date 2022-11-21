@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 import wc from "./container-services";
 import { redisc } from "..";
@@ -91,8 +91,52 @@ const createWorklow = async () => {
   console.log(workflow);
 };
 
+const setworkflowPlacemet = async (wid: number, wtid: number) => {
+  interface IPlacement {
+    [key: string]: [number, number];
+  }
+  let jobs;
+
+  let placments: IPlacement = {};
+  try {
+    let workflowTemplate = await prisma.workflowTemplate.findUnique({
+      where: {
+        id: wtid,
+      },
+    });
+
+    jobs = await prisma.job.findMany({
+      where: {
+        workflowId: wid,
+      },
+    });
+    if (workflowTemplate != null && jobs) {
+      let placmentTemplate: IPlacement = workflowTemplate.placements as IPlacement;
+      jobs.map((j) => {
+        let jtid;
+        if (j.jobTemplateId != null) {
+          jtid = j.jobTemplateId;
+        }
+        if (jtid) placments[j.id] = placmentTemplate[jtid.toString()];
+      });
+    }
+    //update workflow with placement
+    let updatedJob = await prisma.workflow.update({
+      where: {
+        id: wid,
+      },
+      data: {
+        placements: placments,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export default module.exports = {
   createWorklow,
   createJobsFromTemplate: createJobsFromTemplate,
   runJob: runJob,
+  setworkflowPlacemet: setworkflowPlacemet,
 };
