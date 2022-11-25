@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import Button from "../../shared/Buttons/Button";
-import WorkflowRow from "./WorkflowRow";
-import "./Workflows.css";
+import CFrom from "./CTemplate/CFrom";
+import WorkflowRow from "./WTemplateRow";
+import "./WTemplates.css";
 import Axios from "../../axios";
 import { IWorkflow } from "../types";
-import WTemplateRow from "./WorkflowRow";
+import WTemplateRow from "./WTemplateRow";
 
-const Workflows = () => {
+const WTemplates = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
   const getWorkflow = async () => {
     try {
@@ -28,19 +29,20 @@ const Workflows = () => {
     <>
       <div className="workflow_board">
         <div className="workflow_board_header">
-          <p>Workflows</p>
+          <p>Workflows Templates</p>
           <Button onClick={() => setShowForm(true)}>Create</Button>
         </div>
         <div className="workflow_table">
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {
-              return <WorkflowRow key={workflow.id} id={workflow.id} name={workflow.name} placements={workflow.placements} />;
+              return <WTemplateRow key={workflow.id} id={workflow.id} name={workflow.name} placements={workflow.placements} />;
             })}
         </div>
       </div>
+      {showForm && <CFrom setShow={setShowForm} addWorkflow={setWorkflows} />}
     </>
   );
 };
 
-export default Workflows;
+export default WTemplates;

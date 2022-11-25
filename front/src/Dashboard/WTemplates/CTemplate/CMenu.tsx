@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ISContainer } from "../../types";
 import Axios from "../../../axios";
-import "./CWorkflow.css";
+import "./CTemplate.css";
 import SContainer from "./SContainer";
 import { aJobs, aShowMenu } from "../../../store";
 import { useAtom } from "jotai";

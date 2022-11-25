@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import "./CWorkflow.css";
+import "./CTemplate.css";
 import Job from "./Job";
 import { useParams, useLocation } from "react-router-dom";
 import { IConnection, IJob, IPlacement } from "../../types";
