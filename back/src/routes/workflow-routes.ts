@@ -5,6 +5,7 @@ const workflowController = require("../controllers/workflow-controller");
 const router = express.Router();
 
 router.get("/all", workflowController.getAllWorkflows);
+router.get("/one/:wid", workflowController.getWorkflow);
 router.get("/template/:wid", workflowController.getWorkflowTemplate);
 router.get("/all/templates", workflowController.getAllWorkflowsTemplates);
 

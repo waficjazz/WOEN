@@ -40,10 +40,44 @@ export const createWorkflow = async (name: string, templateId: number): Promise<
   } catch (err) {
     console.log(err);
   }
+  await setJobsMapping(workflow.id);
   await setworkflowPlacemet(workflow.id, templateId);
   if (workflow !== undefined) return workflow;
 };
 
+export const setJobsMapping = async (wid: number) => {
+  let jobs: any[];
+  let idMap: { [x: string]: any } = {};
+  let tids: string[] = [];
+  try {
+    jobs = await prisma.job.findMany({
+      where: {
+        workflowId: wid,
+      },
+    });
+    jobs.map((job) => {
+      let tmp = [...tids];
+      tids = [...tmp, ...job.dependencies, ...job.successors];
+    });
+    tids.map((id) => {
+      jobs.map((job) => {
+        if (job.jobTemplateId == id) idMap[id] = job.id;
+      });
+    });
+    await prisma.workflow.update({
+      where: {
+        id: wid,
+      },
+      data: {
+        jidsMap: idMap,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+///check if it possible to update this function to use ids mapping
 const setworkflowPlacemet = async (wid: number, wtid: number) => {
   interface IPlacement {
     [key: string]: [number, number];

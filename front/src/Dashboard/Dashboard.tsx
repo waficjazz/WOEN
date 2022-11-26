@@ -9,6 +9,7 @@ import CWorkflow from "./WTemplates/CTemplate/CTemplate";
 import WTemplates from "./WTemplates/WTemplates";
 import Workflows from "./Workflows/Workflows";
 import CTemplate from "./WTemplates/CTemplate/CTemplate";
+import OneWorkflow from "./Workflows/OneWorkflow";
 const Dashboard = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   return (
@@ -19,6 +20,7 @@ const Dashboard = () => {
           <Route path="containers" element={<ContainerBoard />} />
           <Route path="w-templates" element={<WTemplates />} />
           <Route path="workflows" element={<Workflows />} />
+          <Route path="one-workflow/:wid" element={<OneWorkflow />} />
           <Route path="cw-template/:id" element={<CTemplate />} />
         </Routes>
       </div>

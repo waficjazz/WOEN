@@ -46,16 +46,34 @@ const getWorkflowTemplate = async (req: any, res: any, next: any) => {
       },
     });
   } catch (err) {
-    const error = new HttpError("Something went wrong, could not find a workflow.", 500);
+    const error = new HttpError("Something went wrong, could not find a workflow template.", 500);
     return next(error);
   }
   if (!workflow) {
-    const error = new HttpError("Could not find a workflow for the provided id.", 404);
+    const error = new HttpError("Could not find a workflow template for the provided id.", 404);
     return next(error);
   }
   res.json({ workflow: workflow });
 };
 
+const getWorkflow = async (req: any, res: any, next: any) => {
+  const wid = req.params.wid;
+  let workflow;
+  try {
+    workflow = await prisma.workflow.findUnique({
+      where: {
+        id: parseInt(wid),
+      },
+      include: {
+        jobs: true,
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Could not find a workflow for the provided id.", 404);
+    return next(error);
+  }
+  res.json(workflow);
+};
 const createWorkflowTemplate = async (req: any, res: any, next: any) => {
   const { name } = req.body;
   let workflow;
@@ -195,6 +213,7 @@ const initWorkflow = async (req: any, res: any, next: any) => {
 };
 
 module.exports = {
+  getWorkflow,
   createWorklow,
   createJobTemplate,
   getWorkflowTemplate,

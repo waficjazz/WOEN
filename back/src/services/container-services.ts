@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { runJob } from "./wokflow-services";
 import { redisc } from "..";
+const HttpError = require("../utils/http-error");
+
 const prisma = new PrismaClient();
 
 const createWorkflowContainer = async (

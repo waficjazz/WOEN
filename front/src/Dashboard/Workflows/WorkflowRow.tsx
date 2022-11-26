@@ -13,7 +13,7 @@ interface Props {
 const WorkflowRow = ({ id, name, placements }: Props) => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(`/cworkflow/${id}`);
+    navigate(`/one-workflow/${id}`);
   };
   const [logs, setLogs] = useState("");
   const [hover, setHover] = useState(false);

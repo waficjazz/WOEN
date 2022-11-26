@@ -15,6 +15,19 @@ export interface IJob {
   status?: string;
 }
 
+export interface IWJob {
+  id: number;
+  name: string;
+  dependencies?: string[];
+  successors?: string[];
+  status?: string;
+  createdAt: string;
+  updatedAt: string;
+  containerId: number;
+  workflowId: number;
+  jobTemplateId: number;
+}
+
 export interface IConnection {
   [key: string]: string[] | undefined;
 }

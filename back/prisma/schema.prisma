@@ -70,6 +70,7 @@ model workflow {
   placements         Json?
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
   workflowTemplateId Int?
+  jidsMap            Json?
 }
 
 model job {
