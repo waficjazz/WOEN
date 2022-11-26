@@ -5,7 +5,7 @@ import { IJob, IWorkflow } from "../types";
 
 const prisma = new PrismaClient();
 
-const createWorkflow = async (name: string, templateId: number) => {
+export const createWorkflow = async (name: string, templateId: number) => {
   let workflow: IWorkflow;
   try {
     workflow = await prisma.workflow.create({
@@ -87,7 +87,7 @@ const setworkflowPlacemet = async (wid: number, wtid: number) => {
   }
 };
 
-const getFirstJobs = async (wid: number) => {
+export const getFirstJobs = async (wid: number) => {
   let jobs;
   try {
     jobs = await prisma.job.findMany({
@@ -106,7 +106,7 @@ const getFirstJobs = async (wid: number) => {
   }
 };
 
-const runJob = async (jtid: number, wid: number, jid: number) => {
+export const runJob = async (jtid: number, wid: number, jid: number) => {
   let job;
   try {
     if (jid > 0) {
@@ -143,10 +143,4 @@ const runJob = async (jtid: number, wid: number, jid: number) => {
   } catch (err) {
     return err;
   }
-};
-
-export default module.exports = {
-  createWorkflow,
-  runJob: runJob,
-  getFirstJobs: getFirstJobs,
 };

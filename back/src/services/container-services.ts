@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
-import { join } from "path";
-import ws from "./wokflow-services";
+import { runJob } from "./wokflow-services";
 import { redisc } from "..";
 const prisma = new PrismaClient();
 
@@ -61,7 +60,7 @@ const waitContainer = async (containerId: string, wid: number, jid: number) => {
           await Promise.all(
             job.successors.map(async (j) => {
               await redisc.lPush(`${j}${wid}`, jid.toString());
-              await ws.runJob(parseInt(j), wid, 0);
+              await runJob(parseInt(j), wid, 0);
             })
           );
           await redisc.disconnect();

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { createWorkflow } from "../services/wokflow-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -165,6 +166,16 @@ const upateJobDependencies = async (req: any, res: any, next: any) => {
     return next(error);
   }
 };
+
+const initWorkflow = async (req: any, res: any, next: any) => {
+  const { name, templateId } = req.body;
+  try {
+    await createWorkflow(name, templateId);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   createWorklow,
   createJobTemplate,
@@ -175,4 +186,5 @@ module.exports = {
   updateWorkflowPlacements,
   deleteJobTemplate,
   getAllWorkflows,
+  initWorkflow,
 };
