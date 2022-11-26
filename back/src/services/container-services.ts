@@ -14,13 +14,12 @@ const createWorkflowContainer = async (
   domainName?: string
 ) => {
   const url = `http://localhost:2375/images/create?fromImage=${image}`;
-  const response = await axios.post(url);
-  if (!response || response.status !== 200) {
-    const error = new HttpError("Could not pull image.", 500);
-    return error;
-  } else {
-    const url = `http://localhost:2375/containers/create?name=${name}`;
-    try {
+  try {
+    const response = await axios.post(url);
+    if (!response || response.status !== 200) {
+      console.log("err");
+    } else {
+      const url = `http://localhost:2375/containers/create?name=${name}`;
       const response = await axios.post(url, {
         Hostname: hostName,
         Domainname: domainName,
@@ -28,14 +27,12 @@ const createWorkflowContainer = async (
         Cmd: CMD,
       });
       if (!response || response.status !== 201) {
-        const error = new HttpError("Could not create container.", 500);
-        return error;
+        console.log("error2");
       }
       runWorkflowContainer(response.data.Id, wid, jid);
-    } catch (err) {
-      const error = new HttpError("Could not create container.", 500);
-      return error;
     }
+  } catch (err) {
+    console.log(err);
   }
 };
 

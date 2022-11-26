@@ -5,7 +5,7 @@ import { IJob, IWorkflow } from "../types";
 
 const prisma = new PrismaClient();
 
-export const createWorkflow = async (name: string, templateId: number) => {
+export const createWorkflow = async (name: string, templateId: number): Promise<IWorkflow | undefined> => {
   let workflow: IWorkflow;
   try {
     workflow = await prisma.workflow.create({
@@ -15,7 +15,7 @@ export const createWorkflow = async (name: string, templateId: number) => {
       },
     });
   } catch (err) {
-    return err;
+    return err as undefined;
   }
   let jobsTemplate;
   try {
@@ -40,7 +40,8 @@ export const createWorkflow = async (name: string, templateId: number) => {
   } catch (err) {
     console.log(err);
   }
-  setworkflowPlacemet(workflow.id, templateId);
+  await setworkflowPlacemet(workflow.id, templateId);
+  return workflow;
 };
 
 const setworkflowPlacemet = async (wid: number, wtid: number) => {
@@ -99,7 +100,6 @@ export const getFirstJobs = async (wid: number) => {
     jobs.map((job) => {
       if (job.dependencies.length == 0) firstJobsId.push(job.id);
     });
-    console.log(firstJobsId);
     return firstJobsId;
   } catch (err) {
     console.log(err);

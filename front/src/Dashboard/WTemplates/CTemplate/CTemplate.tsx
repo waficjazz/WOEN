@@ -9,7 +9,7 @@ import CMenu from "./CMenu";
 import Axios from "../../../axios";
 import Job from "./Job";
 
-const CWorkflow = () => {
+const CTemplate = () => {
   const { id } = useParams();
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
@@ -33,7 +33,7 @@ const CWorkflow = () => {
 
   const getWorkflowJobs = async () => {
     try {
-      const response = await Axios.get(`/workflow/${id}`);
+      const response = await Axios.get(`/workflow/template/${id}`);
       if (response.data) {
         setJobs(response.data.workflow.jobTemplates);
         let jobs: IJob[] = response.data.workflow.jobTemplates;
@@ -153,4 +153,4 @@ const CWorkflow = () => {
   );
 };
 
-export default CWorkflow;
+export default CTemplate;

@@ -14,7 +14,7 @@ interface Props {
 const WTemplateRow = ({ id, name, placements }: Props) => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(`/cworkflow/${id}`);
+    navigate(`/cw-template/${id}`);
   };
   const [logs, setLogs] = useState("");
   const [hover, setHover] = useState(false);
@@ -32,7 +32,7 @@ const WTemplateRow = ({ id, name, placements }: Props) => {
 
   return (
     <>
-      <div className="workflow_row">
+      <div className="workflow_row" onClick={handleClick}>
         <div>
           <p>{name}</p>
           <button onClick={initWorkflow}>init</button>

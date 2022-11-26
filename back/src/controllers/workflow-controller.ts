@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { createWorkflow } from "../services/wokflow-services";
+import { createWorkflow, getFirstJobs, runJob } from "../services/wokflow-services";
+import { IWorkflow } from "../types";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -168,10 +169,24 @@ const upateJobDependencies = async (req: any, res: any, next: any) => {
 };
 
 const initWorkflow = async (req: any, res: any, next: any) => {
-  let workflow;
+  let workflow: IWorkflow | undefined;
+  let firstJobsId: number[] | undefined;
   const { name, templateId } = req.body;
   try {
     workflow = await createWorkflow(name, templateId);
+    if (workflow !== undefined) {
+      firstJobsId = await getFirstJobs(workflow.id);
+    }
+    if (firstJobsId !== undefined)
+      // await Promise.all(
+      firstJobsId.map(
+        async (id) => {
+          if (workflow !== undefined) {
+            await runJob(templateId, workflow.id, id);
+          }
+        }
+        // )
+      );
   } catch (err) {
     console.log(err);
     const error = new HttpError("Could not update job.", 500);
