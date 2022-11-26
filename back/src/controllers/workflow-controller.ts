@@ -178,14 +178,12 @@ const initWorkflow = async (req: any, res: any, next: any) => {
       firstJobsId = await getFirstJobs(workflow.id);
     }
     if (firstJobsId !== undefined)
-      // await Promise.all(
-      firstJobsId.map(
-        async (id) => {
+      await Promise.all(
+        firstJobsId.map(async (id) => {
           if (workflow !== undefined) {
             await runJob(templateId, workflow.id, id);
           }
-        }
-        // )
+        })
       );
   } catch (err) {
     console.log(err);

@@ -41,7 +41,7 @@ export const createWorkflow = async (name: string, templateId: number): Promise<
     console.log(err);
   }
   await setworkflowPlacemet(workflow.id, templateId);
-  return workflow;
+  if (workflow !== undefined) return workflow;
 };
 
 const setworkflowPlacemet = async (wid: number, wtid: number) => {

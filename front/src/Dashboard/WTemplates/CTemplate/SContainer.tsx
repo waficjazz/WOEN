@@ -31,7 +31,7 @@ const SContainer = (props: ISContainer) => {
     try {
       // random 4 letter name
       let name = Math.random().toString(36).substring(2, 6);
-      const response = await Axios.post("/workflow/job/create", { workflowTemplateId: parseInt(id), name: name, containerId: props.id });
+      const response = await Axios.post("/workflow/job/create", { workflowTemplateId: parseInt(id), name: props.name + name, containerId: props.id });
       if (response.status === 201) {
         newJob.current = response.data;
         setJobs([...jobs, response.data]);

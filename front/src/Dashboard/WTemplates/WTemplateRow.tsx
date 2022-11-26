@@ -21,7 +21,8 @@ const WTemplateRow = ({ id, name, placements }: Props) => {
 
   const initWorkflow = async () => {
     try {
-      const response = await Axios.post("/workflow/init", { name: name + "aa", templateId: id });
+      let rand = Math.random().toString(36).substring(2, 6);
+      const response = await Axios.post("/workflow/init", { name: name + rand, templateId: id });
       if (response.data) {
         console.log(response.data);
       }
