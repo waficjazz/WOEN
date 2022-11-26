@@ -168,12 +168,17 @@ const upateJobDependencies = async (req: any, res: any, next: any) => {
 };
 
 const initWorkflow = async (req: any, res: any, next: any) => {
+  let workflow;
   const { name, templateId } = req.body;
   try {
-    await createWorkflow(name, templateId);
+    workflow = await createWorkflow(name, templateId);
   } catch (err) {
     console.log(err);
+    const error = new HttpError("Could not update job.", 500);
+    return next(error);
   }
+
+  res.status(201).json(workflow);
 };
 
 module.exports = {
