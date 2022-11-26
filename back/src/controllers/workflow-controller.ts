@@ -5,6 +5,22 @@ const prisma = new PrismaClient();
 
 // const startWorkflow =  async (req: any, res: any, next: any) => {
 
+const getAllWorkflows = async (req: any, res: any, next: any) => {
+  let workflows;
+  try {
+    workflows = await prisma.workflow.findMany();
+    if (workflows.length === 0) {
+      const error = new HttpError("Could not find workflows.", 404);
+      return next(error);
+    }
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Could not get workflows.", 500);
+    return next(error);
+  }
+  res.status(200).json(workflows);
+};
+
 const createWorklow = async () => {
   const workflow = await prisma.workflow.create({
     data: {
@@ -158,4 +174,5 @@ module.exports = {
   upateJobDependencies,
   updateWorkflowPlacements,
   deleteJobTemplate,
+  getAllWorkflows,
 };

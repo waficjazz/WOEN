@@ -8,7 +8,7 @@ interface Props {
   setShow: any;
   addWorkflow: any;
 }
-const CFrom = (props: Props) => {
+const CForm = (props: Props) => {
   const [wfName, setWfName] = useState("");
 
   const handleSubmit = async () => {
@@ -31,4 +31,4 @@ const CFrom = (props: Props) => {
   );
 };
 
-export default CFrom;
+export default CForm;

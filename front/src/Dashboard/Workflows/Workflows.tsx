@@ -4,13 +4,12 @@ import WorkflowRow from "./WorkflowRow";
 import "./Workflows.css";
 import Axios from "../../axios";
 import { IWorkflow } from "../types";
-import WTemplateRow from "./WorkflowRow";
 
 const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
   const getWorkflow = async () => {
     try {
-      const response = await Axios.get("/workflow/list/all");
+      const response = await Axios.get("/workflow/all");
       if (response.data) {
         setWorkflows(response.data);
       }

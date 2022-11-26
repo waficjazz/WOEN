@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import Button from "../../shared/Buttons/Button";
-import CFrom from "./CTemplate/CFrom";
 import WorkflowRow from "./WTemplateRow";
 import "./WTemplates.css";
 import Axios from "../../axios";
 import { IWorkflow } from "../types";
 import WTemplateRow from "./WTemplateRow";
+import CForm from "./CTemplate/CForm";
 
 const WTemplates = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
   const getWorkflow = async () => {
     try {
-      const response = await Axios.get("/workflow/list/all");
+      const response = await Axios.get("/workflow/all/templates");
       if (response.data) {
         setWorkflows(response.data);
       }
@@ -40,7 +40,7 @@ const WTemplates = () => {
             })}
         </div>
       </div>
-      {showForm && <CFrom setShow={setShowForm} addWorkflow={setWorkflows} />}
+      {showForm && <CForm setShow={setShowForm} addWorkflow={setWorkflows} />}
     </>
   );
 };

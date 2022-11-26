@@ -35,10 +35,7 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-// ww.createWorklow();
-// ww.createJobsFromTemplate();
-// ww.runJob(1, 1, 0);
-// ww.setworkflowPlacemet(1, 1);
+ww.getFirstJobs(1);
 
 app.listen(process.env.PORT || 5001, () => {
   console.log("Server started on port 5000");

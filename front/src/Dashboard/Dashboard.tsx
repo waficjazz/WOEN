@@ -5,9 +5,9 @@ import ContainerBoard from "./ContainerBoard/ContainerBoard";
 import "./Dashboard.css";
 import { useAtom } from "jotai";
 import { aJobs } from "../store";
-import Workflows from "./WTemplates/WTemplates";
 import CWorkflow from "./WTemplates/CTemplate/CTemplate";
 import WTemplates from "./WTemplates/WTemplates";
+import Workflows from "./Workflows/Workflows";
 const Dashboard = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   return (
