@@ -7,6 +7,16 @@ import { IWorkflow } from "../types";
 
 const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
+
+  async function removeWorkflow(e: MouseEvent, id: string) {
+    try {
+      e.stopPropagation();
+      const response = await Axios.delete(`/workflow/one/${id}`);
+      setWorkflows((prev) => prev?.filter((w) => w.id !== id));
+    } catch (err) {
+      console.log(err);
+    }
+  }
   const getWorkflow = async () => {
     try {
       const response = await Axios.get("/workflow/all");
@@ -34,7 +44,7 @@ const Workflows = () => {
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {
-              return <WorkflowRow key={workflow.id} id={workflow.id} name={workflow.name} placements={workflow.placements} />;
+              return <WorkflowRow key={workflow.id} id={workflow.id} name={workflow.name} placements={workflow.placements} remove={removeWorkflow} />;
             })}
         </div>
       </div>

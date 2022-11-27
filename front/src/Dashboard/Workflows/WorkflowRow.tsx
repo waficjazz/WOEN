@@ -4,13 +4,15 @@ import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import "./Workflows.css";
+import "../ContainerBoard/ContainerBoard.css";
 interface Props {
   id: string;
   name: string;
   placements: any;
+  remove: any;
 }
 
-const WorkflowRow = ({ id, name, placements }: Props) => {
+const WorkflowRow = ({ id, name, remove }: Props) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);
@@ -22,7 +24,7 @@ const WorkflowRow = ({ id, name, placements }: Props) => {
     <>
       <div className="workflow_row" onClick={handleClick}>
         <p>{name}</p>
-        <FontAwesomeIcon icon={faTrashCan} />
+        <FontAwesomeIcon icon={faTrashCan} className="action_icon" size="lg" onClick={(e) => remove(e, id)} />
       </div>
     </>
   );

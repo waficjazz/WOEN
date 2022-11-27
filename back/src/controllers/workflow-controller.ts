@@ -25,11 +25,12 @@ const deleteWorkflow = async (req: any, res: any, next: any) => {
   try {
     await prisma.workflow.delete({
       where: {
-        id: wid,
+        id: parseInt(wid),
       },
     });
     res.status(200).json({ message: "Workflow deleted." });
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Could not delete workflos.", 500);
     return next(error);
   }
