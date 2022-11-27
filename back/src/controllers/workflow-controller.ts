@@ -5,7 +5,35 @@ const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
 
-// const startWorkflow =  async (req: any, res: any, next: any) => {
+const deleteWorkflowTemplate = async (req: any, res: any, next: any) => {
+  const tid = req.params.tid;
+  try {
+    await prisma.workflowTemplate.delete({
+      where: {
+        id: tid,
+      },
+    });
+    res.status(200).json({ message: "Template deleted." });
+  } catch (err) {
+    const error = new HttpError("Could not delete template.", 500);
+    return next(error);
+  }
+};
+
+const deleteWorkflow = async (req: any, res: any, next: any) => {
+  const wid = req.params.wid;
+  try {
+    await prisma.workflow.delete({
+      where: {
+        id: wid,
+      },
+    });
+    res.status(200).json({ message: "Workflow deleted." });
+  } catch (err) {
+    const error = new HttpError("Could not delete workflos.", 500);
+    return next(error);
+  }
+};
 
 const getAllWorkflows = async (req: any, res: any, next: any) => {
   let workflows;
@@ -224,4 +252,6 @@ module.exports = {
   deleteJobTemplate,
   getAllWorkflows,
   initWorkflow,
+  deleteWorkflow,
+  deleteWorkflowTemplate,
 };

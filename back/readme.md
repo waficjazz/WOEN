@@ -4,6 +4,9 @@ export DATABASE_URL=postgresql://1234:1234@localhost:5432/public
 
 npx prisma migrate dev --name init
 
+##push changes to database
+npx prisma db push
+
 npx prisma generate
 
 const client = createClient();

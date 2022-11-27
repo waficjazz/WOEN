@@ -21,9 +21,8 @@ const WorkflowRow = ({ id, name, placements }: Props) => {
   return (
     <>
       <div className="workflow_row" onClick={handleClick}>
-        <div>
-          <p>{name}</p>
-        </div>
+        <p>{name}</p>
+        <FontAwesomeIcon icon={faTrashCan} />
       </div>
     </>
   );

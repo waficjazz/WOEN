@@ -52,7 +52,7 @@ model jobTemplate {
   dependencies       String[]
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
-  workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
+  workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id], onDelete: Cascade)
   workflowTemplateId Int?
   jobs               job[]
 
@@ -80,7 +80,7 @@ model job {
   dependencies  String[]     @default([])
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  workflow      workflow     @relation(fields: [workflowId], references: [id])
+  workflow      workflow     @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   workflowId    Int
   jobTemplate   jobTemplate? @relation(fields: [jobTemplateId], references: [id])
   jobTemplateId Int?
