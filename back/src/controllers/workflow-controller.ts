@@ -10,7 +10,7 @@ const deleteWorkflowTemplate = async (req: any, res: any, next: any) => {
   try {
     await prisma.workflowTemplate.delete({
       where: {
-        id: tid,
+        id: parseInt(tid),
       },
     });
     res.status(200).json({ message: "Template deleted." });
