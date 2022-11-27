@@ -54,10 +54,10 @@ CREATE TABLE "workflow" (
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "initJob" TEXT NOT NULL DEFAULT 'init',
     "status" TEXT NOT NULL DEFAULT 'pending',
     "placements" JSONB,
     "workflowTemplateId" INTEGER,
+    "jidsMap" JSONB,
 
     CONSTRAINT "workflow_pkey" PRIMARY KEY ("id")
 );

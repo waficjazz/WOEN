@@ -56,6 +56,7 @@ const waitContainer = async (containerId: string, wid: number, jid: number) => {
         });
         if (job && job.successors.length > 0) {
           await redisc.connect();
+          console.log("connect redis");
           await Promise.all(
             job.successors.map(async (j) => {
               await redisc.lPush(`${j}${wid}`, jid.toString());

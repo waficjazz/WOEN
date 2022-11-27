@@ -65,7 +65,6 @@ model workflow {
   jobs               job[]
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
-  initJob            String            @default("init")
   status             String            @default("pending")
   placements         Json?
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
