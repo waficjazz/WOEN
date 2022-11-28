@@ -16,8 +16,6 @@ const WTemplateRow = ({ id, name, placements }: Props) => {
   const handleClick = () => {
     navigate(`/cw-template/${id}`);
   };
-  const [logs, setLogs] = useState("");
-  const [hover, setHover] = useState(false);
 
   const initWorkflow = async () => {
     try {
@@ -25,6 +23,7 @@ const WTemplateRow = ({ id, name, placements }: Props) => {
       const response = await Axios.post("/workflow/init", { name: name + rand, templateId: id });
       if (response.data) {
         console.log(response.data);
+        navigate(`/one-workflow/${response.data.id}`);
       }
     } catch (err) {
       console.log(err);
@@ -36,7 +35,13 @@ const WTemplateRow = ({ id, name, placements }: Props) => {
       <div className="workflow_row" onClick={handleClick}>
         <div>
           <p>{name}</p>
-          <button onClick={initWorkflow}>init</button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              initWorkflow();
+            }}>
+            init
+          </button>
         </div>
       </div>
     </>
