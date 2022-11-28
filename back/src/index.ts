@@ -1,12 +1,19 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { createClient } from "redis";
+const { Server } = require("socket.io");
+const http = require("http");
 const HttpError = require("./utils/http-error");
 const userRoutes = require("./routes/user-routes");
 const workflowRoutes = require("./routes/workflow-routes");
 const containerRoutes = require("./routes/container-routes");
 const app = express();
-
+const server = http.createServer(app);
+export const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+  },
+});
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -32,9 +39,26 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.status(error?.code || 500);
   res.json({ message: error.message || "An unknown error occurred!" });
 });
-app.listen(process.env.PORT || 5001, () => {
+
+server.listen(process.env.PORT || 5001, () => {
   console.log("Server started on port 5000");
 });
+
+let interval: any;
+
+io.on("connection", (socket: any) => {
+  console.log("New client connected");
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
+
+const getApiAndEmit = (socket: any) => {
+  const response = new Date();
+  console.log("emit");
+  // Emitting a new message. Will be consumed by the client
+  socket.emit("test", response);
+};
 
 export const redisc = createClient();
 
