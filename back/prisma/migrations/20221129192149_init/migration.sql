@@ -6,8 +6,19 @@ CREATE TABLE "user" (
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "groupId" INTEGER,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "group" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "group_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -18,6 +29,8 @@ CREATE TABLE "container" (
     "commands" TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "owner" TEXT,
+    "group" TEXT,
 
     CONSTRAINT "container_pkey" PRIMARY KEY ("id")
 );
@@ -30,6 +43,8 @@ CREATE TABLE "workflow_template" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "initJob" TEXT NOT NULL DEFAULT 'init',
     "placements" JSONB,
+    "owner" TEXT,
+    "group" TEXT,
 
     CONSTRAINT "workflow_template_pkey" PRIMARY KEY ("id")
 );
@@ -58,6 +73,8 @@ CREATE TABLE "workflow" (
     "placements" JSONB,
     "workflowTemplateId" INTEGER,
     "jidsMap" JSONB,
+    "owner" TEXT,
+    "group" TEXT,
 
     CONSTRAINT "workflow_pkey" PRIMARY KEY ("id")
 );
@@ -74,6 +91,8 @@ CREATE TABLE "job" (
     "workflowId" INTEGER NOT NULL,
     "jobTemplateId" INTEGER,
     "containerId" INTEGER,
+    "owner" TEXT,
+    "group" TEXT,
 
     CONSTRAINT "job_pkey" PRIMARY KEY ("id")
 );
@@ -83,6 +102,9 @@ CREATE UNIQUE INDEX "user_username_key" ON "user"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "group_name_key" ON "group"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "container_name_key" ON "container"("name");
@@ -97,16 +119,19 @@ CREATE UNIQUE INDEX "job_template_name_key" ON "job_template"("name");
 CREATE UNIQUE INDEX "workflow_name_key" ON "workflow"("name");
 
 -- AddForeignKey
+ALTER TABLE "user" ADD CONSTRAINT "user_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "group"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "job_template" ADD CONSTRAINT "job_template_containerId_fkey" FOREIGN KEY ("containerId") REFERENCES "container"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "job_template" ADD CONSTRAINT "job_template_workflowTemplateId_fkey" FOREIGN KEY ("workflowTemplateId") REFERENCES "workflow_template"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "job_template" ADD CONSTRAINT "job_template_workflowTemplateId_fkey" FOREIGN KEY ("workflowTemplateId") REFERENCES "workflow_template"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "workflow" ADD CONSTRAINT "workflow_workflowTemplateId_fkey" FOREIGN KEY ("workflowTemplateId") REFERENCES "workflow_template"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "job" ADD CONSTRAINT "job_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "workflow"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "job" ADD CONSTRAINT "job_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "workflow"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "job" ADD CONSTRAINT "job_jobTemplateId_fkey" FOREIGN KEY ("jobTemplateId") REFERENCES "job_template"("id") ON DELETE SET NULL ON UPDATE CASCADE;

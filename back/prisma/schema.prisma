@@ -17,6 +17,16 @@ model user {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  group     group?   @relation(fields: [groupId], references: [id])
+  groupId   Int?
+}
+
+model group {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     user[]
 }
 
 model container {
@@ -28,6 +38,8 @@ model container {
   updatedAt    DateTime      @updatedAt
   jobtemplates jobTemplate[]
   jobs         job[]
+  owner        String?
+  group        String?
 }
 
 model workflowTemplate {
@@ -39,6 +51,8 @@ model workflowTemplate {
   initJob      String        @default("init")
   placements   Json?
   workflows    workflow[]
+  owner        String?
+  group        String?
 
   @@map("workflow_template")
 }
@@ -70,6 +84,8 @@ model workflow {
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
   workflowTemplateId Int?
   jidsMap            Json?
+  owner              String?
+  group              String?
 }
 
 model job {
@@ -86,4 +102,6 @@ model job {
   jobTemplateId Int?
   container     container?   @relation(fields: [containerId], references: [id])
   containerId   Int?
+  owner         String?
+  group         String?
 }

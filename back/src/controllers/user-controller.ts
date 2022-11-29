@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
 const HttpError = require("../utils/http-error");
 import bcrypt from "bcrypt";
 
@@ -6,6 +7,7 @@ const prisma = new PrismaClient();
 
 const signup = async (req: any, res: any, next: any) => {
   const { username, email, password } = req.body;
+  let user;
   let existingUser;
   try {
     existingUser = await prisma.user.findUnique({
@@ -43,7 +45,7 @@ const signup = async (req: any, res: any, next: any) => {
     return next(error);
   }
   try {
-    await prisma.user.create({
+    user = await prisma.user.create({
       data: {
         username: username,
         email: email,
@@ -54,7 +56,16 @@ const signup = async (req: any, res: any, next: any) => {
     const error = new HttpError("Signing up failed, please try again later.", 500);
     return next(error);
   }
-  res.status(201).json({ user: "created" });
+  let token;
+  try {
+    token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
+  } catch (err) {
+    const error = new HttpError("Invalid credentials, could not log you in.", 401);
+    return next(error);
+  }
+  res.status(201).json({
+    token: token,
+  });
 };
 
 const login = async (req: any, res: any, next: any) => {
@@ -85,7 +96,16 @@ const login = async (req: any, res: any, next: any) => {
         const error = new HttpError("Invalid credentials, could not log you in.", 401);
         return next(error);
       }
-      res.json({ message: "Logged in!" });
+      let token;
+      try {
+        token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
+      } catch (err) {
+        const error = new HttpError("Invalid credentials, could not log you in.", 401);
+        return next(error);
+      }
+      res.status(201).json({
+        token: token,
+      });
     } catch (err) {
       const error = new HttpError("Logging in failed, please try again later.", 500);
       return next(error);
