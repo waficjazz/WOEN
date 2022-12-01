@@ -11,22 +11,32 @@ datasource db {
 }
 
 model user {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  group     group?   @relation(fields: [groupId], references: [id])
-  groupId   Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  group     group[]
+  project   project[]
 }
 
 model group {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      user[]
+  project   project[]
+}
+
+model project {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  users     user[]
+  user      user[]
+  group     group[]
 }
 
 model container {

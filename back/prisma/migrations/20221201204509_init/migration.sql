@@ -6,7 +6,6 @@ CREATE TABLE "user" (
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "groupId" INTEGER,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 );
@@ -19,6 +18,16 @@ CREATE TABLE "group" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "group_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "project" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "project_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -97,6 +106,24 @@ CREATE TABLE "job" (
     CONSTRAINT "job_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "_groupTouser" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_groupToproject" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_projectTouser" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "user_username_key" ON "user"("username");
 
@@ -105,6 +132,9 @@ CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "group_name_key" ON "group"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "project_name_key" ON "project"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "container_name_key" ON "container"("name");
@@ -118,8 +148,23 @@ CREATE UNIQUE INDEX "job_template_name_key" ON "job_template"("name");
 -- CreateIndex
 CREATE UNIQUE INDEX "workflow_name_key" ON "workflow"("name");
 
--- AddForeignKey
-ALTER TABLE "user" ADD CONSTRAINT "user_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "group"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "_groupTouser_AB_unique" ON "_groupTouser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_groupTouser_B_index" ON "_groupTouser"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_groupToproject_AB_unique" ON "_groupToproject"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_groupToproject_B_index" ON "_groupToproject"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_projectTouser_AB_unique" ON "_projectTouser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_projectTouser_B_index" ON "_projectTouser"("B");
 
 -- AddForeignKey
 ALTER TABLE "job_template" ADD CONSTRAINT "job_template_containerId_fkey" FOREIGN KEY ("containerId") REFERENCES "container"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -138,3 +183,21 @@ ALTER TABLE "job" ADD CONSTRAINT "job_jobTemplateId_fkey" FOREIGN KEY ("jobTempl
 
 -- AddForeignKey
 ALTER TABLE "job" ADD CONSTRAINT "job_containerId_fkey" FOREIGN KEY ("containerId") REFERENCES "container"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_groupTouser" ADD CONSTRAINT "_groupTouser_A_fkey" FOREIGN KEY ("A") REFERENCES "group"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_groupTouser" ADD CONSTRAINT "_groupTouser_B_fkey" FOREIGN KEY ("B") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_groupToproject" ADD CONSTRAINT "_groupToproject_A_fkey" FOREIGN KEY ("A") REFERENCES "group"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_groupToproject" ADD CONSTRAINT "_groupToproject_B_fkey" FOREIGN KEY ("B") REFERENCES "project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_projectTouser" ADD CONSTRAINT "_projectTouser_A_fkey" FOREIGN KEY ("A") REFERENCES "project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_projectTouser" ADD CONSTRAINT "_projectTouser_B_fkey" FOREIGN KEY ("B") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
