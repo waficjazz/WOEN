@@ -2,8 +2,9 @@
   color: white;
   background-color: transparent;
   width: 20rem;
+  /* border-bottom: 2px solid rgb(0, 81, 255) !important; */
+  border-bottom: 2px solid rgb(255, 255, 255) !important;
   height: 30px;
-  border-bottom: 2px solid rgb(0, 81, 255) !important;
   border: none;
 }
 

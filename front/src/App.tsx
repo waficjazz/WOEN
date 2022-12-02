@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
 import Graph from "./graph/Graph";
 import { Provider } from "jotai";
+import SignUp from "./auth/SignUp/SignUp";
 function App() {
   return (
     <Provider>
@@ -11,7 +12,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/*" element={<Dashboard />} />
-            <Route path="/auth" element={<Graph />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/graph" element={<Graph />} />
           </Routes>
         </BrowserRouter>
