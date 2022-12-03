@@ -3,7 +3,7 @@ import Button from "../../shared/Buttons/Button";
 import WorkflowRow from "./WTemplateRow";
 import "./WTemplates.css";
 import Axios from "../../axios";
-import { IWorkflow } from "../types";
+import { IWorkflow } from "../../types";
 import WTemplateRow from "./WTemplateRow";
 import CForm from "./CTemplate/CForm";
 

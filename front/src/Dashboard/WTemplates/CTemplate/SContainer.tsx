@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "./CTemplate.css";
-import { ISContainer, IJob } from "../../types";
+import { ISContainer, IJob } from "../../../types";
 import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aSelectedJob, aDepends } from "../../../store";
 import Axios from "../../../axios";

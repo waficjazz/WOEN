@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/v1/containers", containerRoutes);
-app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/workflow", workflowRoutes);
 
 app.use((req: any, res: any, next: any) => {

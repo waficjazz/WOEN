@@ -1,9 +1,11 @@
 .p_input {
+  /* color: rgb(255, 208, 0); */
   color: white;
   background-color: transparent;
   width: 100%;
   /* border-bottom: 2px solid rgb(0, 81, 255) !important; */
   border-bottom: 2px solid rgb(255, 255, 255) !important;
+  /* border-bottom: 2px solid rgb(255, 208, 0) !important; */
   height: 30px;
   border: none;
   font-size: medium;
@@ -26,4 +28,5 @@
   margin: 0;
   font-size: small;
   color: rgb(255, 255, 255, 0.5);
+  /* color: rgb(255, 208, 0); */
 }

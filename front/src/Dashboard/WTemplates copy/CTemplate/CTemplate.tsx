@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./CWorkflow.css";
 import { useParams, useLocation } from "react-router-dom";
-import { IConnection, IJob, IPlacement } from "../../types";
+import { IConnection, IJob, IPlacement } from "../../../types";
 import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aDepends } from "../../../store";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";

@@ -1,3 +1,5 @@
+export type InputEvent = React.ChangeEvent<HTMLInputElement>;
+
 export interface ISContainer {
   id: number;
   name: string;
@@ -40,4 +42,13 @@ export interface IWorkflow {
 
 export interface IPlacement {
   [key: string]: [number, number];
+}
+
+export interface IUser {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password?: string;
+  confirmPassword?: string;
 }

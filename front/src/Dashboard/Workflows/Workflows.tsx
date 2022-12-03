@@ -3,7 +3,7 @@ import Button from "../../shared/Buttons/Button";
 import WorkflowRow from "./WorkflowRow";
 import "./Workflows.css";
 import Axios from "../../axios";
-import { IWorkflow } from "../types";
+import { IWorkflow } from "../../types";
 
 const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);

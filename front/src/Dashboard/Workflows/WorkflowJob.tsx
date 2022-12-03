@@ -1,5 +1,5 @@
 import React from "react";
-import { IPlacement, IWJob } from "../types";
+import { IPlacement, IWJob } from "../../types";
 import "./Workflows.css";
 
 interface IProps extends IWJob {

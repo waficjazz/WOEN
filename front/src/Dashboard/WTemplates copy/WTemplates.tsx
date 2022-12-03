@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Button from "../../shared/Buttons/Button";
 import "./Workflows.css";
 import Axios from "../../axios";
-import { IWorkflow } from "../types";
+import { IWorkflow } from "../../types";
 import CForm from "../WTemplates/CTemplate/CForm";
 import WTemplateRow from "../WTemplates/WTemplateRow";
 

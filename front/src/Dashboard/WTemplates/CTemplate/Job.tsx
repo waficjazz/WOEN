@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState, useRef } from "react";
 import { useAtom } from "jotai";
-import { IJob, IPlacement } from "../../types";
+import { IJob, IPlacement } from "../../../types";
 import { aShowMenu, aSelectedJob } from "../../../store";
 import { useXarrow } from "react-xarrows";
 import { aJobs } from "../../../store";

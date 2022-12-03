@@ -4,13 +4,13 @@ import Axios from "../../axios";
 import Button from "../../shared/Buttons/Button";
 import Input from "../../shared/Inputs/Input";
 import CTextArea from "../../shared/TextAreas/CTextArea";
+import { InputEvent } from "../../types";
 
 interface Props {
   show: boolean;
   close: any;
 }
 const ContainerForm = ({ show, close }: Props) => {
-  type InputEvent = React.ChangeEvent<HTMLInputElement>;
   type TextAreaEvent = React.ChangeEvent<HTMLTextAreaElement>;
   type KeyUpEvent = React.KeyboardEvent<HTMLTextAreaElement>;
   interface Container {
