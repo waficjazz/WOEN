@@ -69,12 +69,12 @@ button {
   width: 100%;
 }
 
-.input_container {
+/* .input_container {
   resize: both;
   overflow: auto;
   border: 1px solid #ccc;
   width: 20%;
-}
+} */
 
 .contextMenu {
   height: 50px;

@@ -5,10 +5,17 @@ interface Props {
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   placeholder?: string;
   name?: string;
+  className?: string;
+  label?: string;
 }
 
-const Input = ({ onChange, name, placeholder }: Props) => {
-  return <input name={name} className="p_input" onChange={onChange} placeholder={placeholder} />;
+const Input = ({ onChange, name, placeholder, className, label }: Props) => {
+  return (
+    <div className={"input_container " + className}>
+      <label className="input_label">{label}</label>
+      <input name={name} className="p_input " onChange={onChange} placeholder={placeholder} />
+    </div>
+  );
 };
 
 export default Input;

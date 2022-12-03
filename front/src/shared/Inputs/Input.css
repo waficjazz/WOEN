@@ -1,14 +1,29 @@
 .p_input {
   color: white;
   background-color: transparent;
-  width: 20rem;
+  width: 100%;
   /* border-bottom: 2px solid rgb(0, 81, 255) !important; */
   border-bottom: 2px solid rgb(255, 255, 255) !important;
   height: 30px;
   border: none;
+  font-size: medium;
 }
 
 .p_input:focus {
   outline: none;
   border: none;
+}
+
+.input_container {
+  margin: 10px;
+  /* background-color: red; */
+  display: flex;
+  flex-direction: column;
+}
+
+.input_label {
+  padding: 0;
+  margin: 0;
+  font-size: small;
+  color: rgb(255, 255, 255, 0.5);
 }

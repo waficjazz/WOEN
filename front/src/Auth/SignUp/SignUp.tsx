@@ -4,7 +4,11 @@ import "./SignUp.css";
 const SignUp = () => {
   return (
     <div className="signup_container">
-      <Input />
+      <Input className="signup_input" label="First Name" />
+      <Input className="signup_input" label="Last Name" />
+      <Input className="signup_input_lg" label="Email" />
+      <Input className="signup_input_lg" label="Password" />
+      <Input className="signup_input_lg" label="Confirm Password" />
     </div>
   );
 };

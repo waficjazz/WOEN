@@ -4,7 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
 import Graph from "./graph/Graph";
 import { Provider } from "jotai";
-import SignUp from "./auth/SignUp/SignUp";
+import SignUp from "./Auth/SignUp/SignUp";
+import Auth from "./Auth/Auth";
 function App() {
   return (
     <Provider>
