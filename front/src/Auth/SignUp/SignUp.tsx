@@ -20,6 +20,7 @@ const SignUp = () => {
       console.log(err);
     }
   };
+
   return (
     <div className="signup_container">
       <Input className="signup_input" label="First Name" name="firstName" onChange={handleChange} />
