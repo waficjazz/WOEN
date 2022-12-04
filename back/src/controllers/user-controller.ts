@@ -67,12 +67,16 @@ const signup = async (req: any, res: any, next: any) => {
     const error = new HttpError("Invalid credentials, could not log you in.", 401);
     return next(error);
   }
+
   res.status(201).json({
     token: token,
-    username: user.username,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    createdAt: user.createdAt,
+    user: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      createdAt: user.createdAt,
+    },
   });
 };
 

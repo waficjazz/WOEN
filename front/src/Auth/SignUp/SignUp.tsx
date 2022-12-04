@@ -4,6 +4,7 @@ import Input from "../../shared/Inputs/Input";
 import "./SignUp.css";
 import Axios from "../../axios";
 import Button from "../../shared/Buttons/Button";
+import { updateUser } from "../../utils/auth";
 const SignUp = () => {
   const [user, setUser] = useState<IUser>({} as IUser);
   const handleChange = (e: InputEvent) => {
@@ -14,8 +15,10 @@ const SignUp = () => {
   const signUp = async () => {
     try {
       console.log(user);
-      const response = await Axios.post("/user/signup", user);
-      if (response.status === 201) console.log(response);
+      const { data, status } = await Axios.post("/user/signup", user);
+      if (status === 201) {
+        updateUser(data.token, data.user);
+      }
     } catch (err) {
       console.log(err);
     }
