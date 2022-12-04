@@ -5,7 +5,9 @@ import "./SignUp.css";
 import Axios from "../../axios";
 import Button from "../../shared/Buttons/Button";
 import { updateUser } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
 const SignUp = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<IUser>({} as IUser);
   const handleChange = (e: InputEvent) => {
     const { name, value } = e.target;
@@ -14,10 +16,10 @@ const SignUp = () => {
 
   const signUp = async () => {
     try {
-      console.log(user);
       const { data, status } = await Axios.post("/user/signup", user);
       if (status === 201) {
         updateUser(data.token, data.user);
+        navigate("/a");
       }
     } catch (err) {
       console.log(err);

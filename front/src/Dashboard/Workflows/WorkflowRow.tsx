@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useAtom } from "jotai";
 import "./Workflows.css";
 import "../ContainerBoard/ContainerBoard.css";
 import { Manager } from "socket.io-client";
