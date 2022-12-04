@@ -56,7 +56,7 @@ io.on("connection", (socket: any) => {
 const getApiAndEmit = (socket: any) => {
   const response = new Date();
   console.log("emit");
-  // Emitting a new message. Will be consumed by the client
+  // Emitting a new message. Will be consumed by the client..
   socket.emit("test", response);
 };
 
