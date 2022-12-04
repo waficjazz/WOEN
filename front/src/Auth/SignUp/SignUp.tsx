@@ -15,7 +15,7 @@ const SignUp = () => {
     try {
       console.log(user);
       const response = await Axios.post("/user/signup", user);
-      if (response) console.log(response);
+      if (response.status === 201) console.log(response);
     } catch (err) {
       console.log(err);
     }

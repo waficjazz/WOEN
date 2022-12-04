@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 
 const signup = async (req: any, res: any, next: any) => {
   const { firstName, lastName, username, email, password } = req.body;
-  console.log(req.body);
   let user;
   let existingUser;
   try {
@@ -63,13 +62,17 @@ const signup = async (req: any, res: any, next: any) => {
   }
   let token;
   try {
-    token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
+    token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "15m" });
   } catch (err) {
     const error = new HttpError("Invalid credentials, could not log you in.", 401);
     return next(error);
   }
   res.status(201).json({
     token: token,
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    createdAt: user.createdAt,
   });
 };
 
