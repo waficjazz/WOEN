@@ -23,19 +23,9 @@ function App() {
       <div className="App">
         <BrowserRouter>
           <Routes>
-            {isLoggedIn && (
-              <>
-                <Route path="/a" element={<Dashboard />} />
-                <Route path="/*" element={<Dashboard />} />
-                <Route path="/graph" element={<Graph />} />
-              </>
-            )}
-            {!isLoggedIn && (
-              <>
-                <Route path="/*" element={<Navigate to="/auth" />} />
-                <Route path="/auth" element={<Auth />} />
-              </>
-            )}
+            <Route path="/*" element={<Dashboard />} />
+            <Route path="/graph" element={<Graph />} />
+            <Route path="/auth" element={<Auth />} />
           </Routes>
         </BrowserRouter>
       </div>
