@@ -37,6 +37,7 @@ const deleteWorkflow = async (req: any, res: any, next: any) => {
 };
 
 const getAllWorkflows = async (req: any, res: any, next: any) => {
+  console.log(req.headers.authorization);
   let workflows;
   try {
     workflows = await prisma.workflow.findMany();
@@ -50,16 +51,6 @@ const getAllWorkflows = async (req: any, res: any, next: any) => {
     return next(error);
   }
   res.status(200).json(workflows);
-};
-
-const createWorklow = async () => {
-  const workflow = await prisma.workflow.create({
-    data: {
-      name: "My workflow",
-      workflowTemplateId: 1,
-    },
-  });
-  console.log(workflow);
 };
 
 const getWorkflowTemplate = async (req: any, res: any, next: any) => {
@@ -243,7 +234,6 @@ const initWorkflow = async (req: any, res: any, next: any) => {
 
 module.exports = {
   getWorkflow,
-  createWorklow,
   createJobTemplate,
   getWorkflowTemplate,
   createWorkflowTemplate,

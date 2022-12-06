@@ -18,6 +18,7 @@ const SignUp = () => {
     try {
       const { data, status } = await Axios.post("/user/signup", user);
       if (status === 201) {
+        Axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         updateUser(data.token, data.user);
         navigate("/a");
       }
