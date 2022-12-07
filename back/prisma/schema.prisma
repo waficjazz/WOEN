@@ -11,25 +11,31 @@ datasource db {
 }
 
 model user {
-  id        Int       @id @default(autoincrement())
-  firstName String
-  lastName  String
-  username  String    @unique
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  group     group[]
-  project   project[]
+  id               Int                @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  username         String             @unique
+  email            String             @unique
+  password         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  group            group[]
+  project          project[]
+  container        container[]
+  workflowTemplate workflowTemplate[]
+  workflow         workflow[]
 }
 
 model group {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  user      user[]
-  project   project[]
+  id               Int                @id @default(autoincrement())
+  name             String             @unique
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  user             user[]
+  project          project[]
+  workflowTemplate workflowTemplate[]
+  container        container[]
+  workflow         workflow[]
 }
 
 model project {
@@ -50,8 +56,10 @@ model container {
   updatedAt    DateTime      @updatedAt
   jobtemplates jobTemplate[]
   jobs         job[]
-  owner        String?
-  group        String?
+  owner        user?         @relation(fields: [userId], references: [id])
+  group        group?        @relation(fields: [groupId], references: [id])
+  userId       Int?
+  groupId      Int?
 }
 
 model workflowTemplate {
@@ -63,8 +71,10 @@ model workflowTemplate {
   initJob      String        @default("init")
   placements   Json?
   workflows    workflow[]
-  owner        String?
-  group        String?
+  owner        user?         @relation(fields: [userId], references: [id])
+  group        group?        @relation(fields: [groupId], references: [id])
+  userId       Int?
+  groupId      Int?
 
   @@map("workflow_template")
 }
@@ -96,8 +106,10 @@ model workflow {
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
   workflowTemplateId Int?
   jidsMap            Json?
-  owner              String?
-  group              String?
+  owner              user?             @relation(fields: [userId], references: [id])
+  group              group?            @relation(fields: [groupId], references: [id])
+  userId             Int?
+  groupId            Int?
 }
 
 model job {
@@ -114,6 +126,4 @@ model job {
   jobTemplateId Int?
   container     container?   @relation(fields: [containerId], references: [id])
   containerId   Int?
-  owner         String?
-  group         String?
 }
