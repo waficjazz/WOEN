@@ -14,6 +14,7 @@ const CForm = (props: Props) => {
   const handleSubmit = async () => {
     let obj = { name: wfName };
     try {
+      console.log(Axios.defaults.headers.common["Authorization"]);
       const response = await Axios.post("/workflow/create", obj);
       if (response.status === 201) {
         props.addWorkflow((prev: IWorkflow[]) => [...prev, response.data]);
