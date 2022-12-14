@@ -1,4 +1,5 @@
 import express from "express";
+const { auth } = require("../middleware/auth");
 
 const workflowController = require("../controllers/workflow-controller");
 
@@ -7,7 +8,7 @@ const router = express.Router();
 router.get("/all", workflowController.getAllWorkflows);
 router.get("/one/:wid", workflowController.getWorkflow);
 router.get("/template/:wid", workflowController.getWorkflowTemplate);
-router.get("/all/templates", workflowController.getAllWorkflowsTemplates);
+router.get("/all/templates", auth, workflowController.getAllWorkflowsTemplates);
 
 router.delete("/job/:jid", workflowController.deleteJobTemplate);
 router.delete("/template/:tid", workflowController.deleteWorkflowTemplate);

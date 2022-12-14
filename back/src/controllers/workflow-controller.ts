@@ -95,6 +95,8 @@ const getWorkflow = async (req: any, res: any, next: any) => {
   res.json(workflow);
 };
 const createWorkflowTemplate = async (req: any, res: any, next: any) => {
+  //get user id for jwt token
+
   const { name } = req.body;
   let workflow;
   try {
@@ -111,6 +113,7 @@ const createWorkflowTemplate = async (req: any, res: any, next: any) => {
 };
 
 const getAllWorkflowsTemplates = async (req: any, res: any, next: any) => {
+  console.log("seeme", req.id);
   let workflows;
   try {
     workflows = await prisma.workflowTemplate.findMany();
