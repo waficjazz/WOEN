@@ -163,6 +163,7 @@ const saveContainer = async (req: any, res: any, next: any) => {
 
     const savedContainer = await prisma.container.create({
       data: {
+        userId: req.userId,
         name: name,
         image: Image,
         commands: Cmd,
@@ -181,7 +182,11 @@ const saveContainer = async (req: any, res: any, next: any) => {
 
 const getSavedContainers = async (req: any, res: any, next: any) => {
   try {
-    const savedContainers = await prisma.container.findMany();
+    const savedContainers = await prisma.container.findMany({
+      where: {
+        userId: req.userId,
+      },
+    });
     if (!savedContainers) {
       const error = new HttpError("Could not get saved containers.", 500);
       return next(error);

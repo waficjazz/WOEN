@@ -19,7 +19,7 @@ const auth = (req: any, res: any, next: any) => {
         if (err) {
           return next(new Error("You are not authorized to perform this action"));
         }
-        req.id = decodedToken.userId;
+        req.userId = decodedToken.userId;
         next();
       }
     );

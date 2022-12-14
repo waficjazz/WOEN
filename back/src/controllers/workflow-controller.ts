@@ -37,10 +37,13 @@ const deleteWorkflow = async (req: any, res: any, next: any) => {
 };
 
 const getAllWorkflows = async (req: any, res: any, next: any) => {
-  console.log(req.headers.authorization);
   let workflows;
   try {
-    workflows = await prisma.workflow.findMany();
+    workflows = await prisma.workflow.findMany({
+      where: {
+        userId: req.userId,
+      },
+    });
     if (workflows.length === 0) {
       const error = new HttpError("Could not find workflows.", 404);
       return next(error);
@@ -102,6 +105,7 @@ const createWorkflowTemplate = async (req: any, res: any, next: any) => {
   try {
     workflow = await prisma.workflowTemplate.create({
       data: {
+        userId: req.userId,
         name,
       },
     });
@@ -113,10 +117,13 @@ const createWorkflowTemplate = async (req: any, res: any, next: any) => {
 };
 
 const getAllWorkflowsTemplates = async (req: any, res: any, next: any) => {
-  console.log("seeme", req.id);
   let workflows;
   try {
-    workflows = await prisma.workflowTemplate.findMany();
+    workflows = await prisma.workflowTemplate.findMany({
+      where: {
+        userId: req.userId,
+      },
+    });
     if (workflows.length === 0) {
       const error = new HttpError("Could not find workflows.", 404);
       return next(error);
@@ -214,7 +221,7 @@ const initWorkflow = async (req: any, res: any, next: any) => {
   let firstJobsId: number[] | undefined;
   const { name, templateId } = req.body;
   try {
-    workflow = await createWorkflow(name, templateId);
+    workflow = await createWorkflow(req.userId, name, templateId);
     if (workflow !== undefined) {
       firstJobsId = await getFirstJobs(workflow.id);
     }

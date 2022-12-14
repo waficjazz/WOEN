@@ -5,11 +5,12 @@ import { IJob, IWorkflow } from "../types";
 
 const prisma = new PrismaClient();
 
-export const createWorkflow = async (name: string, templateId: number): Promise<IWorkflow | undefined> => {
+export const createWorkflow = async (userId: number, name: string, templateId: number): Promise<IWorkflow | undefined> => {
   let workflow: IWorkflow;
   try {
     workflow = await prisma.workflow.create({
       data: {
+        userId: userId,
         name,
         workflowTemplateId: templateId,
       },

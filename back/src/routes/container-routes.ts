@@ -1,15 +1,15 @@
 import express from "express";
-
+const { auth } = require("../middleware/auth");
 const userController = require("../controllers/container-controller");
 
 const router = express.Router();
 
-router.get("/images", userController.listImages);
-router.post("/create", userController.createContainer);
-router.post("/run", userController.runContainer);
-router.get("/list", userController.listContainers);
-router.delete("/remove", userController.removeContainer);
-router.post("/logs", userController.getContainerLogs);
-router.post("/save", userController.saveContainer);
-router.get("/saved", userController.getSavedContainers);
+router.get("/images", auth, userController.listImages);
+router.post("/create", auth, userController.createContainer);
+router.post("/run", auth, userController.runContainer);
+router.get("/list", auth, userController.listContainers);
+router.delete("/remove", auth, userController.removeContainer);
+router.post("/logs", auth, userController.getContainerLogs);
+router.post("/save", auth, userController.saveContainer);
+router.get("/saved", auth, userController.getSavedContainers);
 module.exports = router;
