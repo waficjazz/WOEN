@@ -5,19 +5,19 @@ const workflowController = require("../controllers/workflow-controller");
 
 const router = express.Router();
 
-router.get("/all", workflowController.getAllWorkflows);
-router.get("/one/:wid", workflowController.getWorkflow);
-router.get("/template/:wid", workflowController.getWorkflowTemplate);
+router.get("/all", auth, workflowController.getAllWorkflows);
+router.get("/one/:wid", auth, workflowController.getWorkflow);
+router.get("/template/:wid", auth, workflowController.getWorkflowTemplate);
 router.get("/all/templates", auth, workflowController.getAllWorkflowsTemplates);
 
-router.delete("/job/:jid", workflowController.deleteJobTemplate);
-router.delete("/template/:tid", workflowController.deleteWorkflowTemplate);
-router.delete("/one/:wid", workflowController.deleteWorkflow);
+router.delete("/job/:jid", auth, workflowController.deleteJobTemplate);
+router.delete("/template/:tid", auth, workflowController.deleteWorkflowTemplate);
+router.delete("/one/:wid", auth, workflowController.deleteWorkflow);
 
-router.post("/job/update", workflowController.upateJobDependencies);
-router.post("/job/create", workflowController.createJobTemplate);
-router.post("/:wid/placement", workflowController.updateWorkflowPlacements);
-router.post("/create", workflowController.createWorkflowTemplate);
+router.post("/job/update", auth, workflowController.upateJobDependencies);
+router.post("/job/create", auth, workflowController.createJobTemplate);
+router.post("/:wid/placement", auth, workflowController.updateWorkflowPlacements);
+router.post("/create", auth, workflowController.createWorkflowTemplate);
 
-router.post("/init", workflowController.initWorkflow);
+router.post("/init", auth, workflowController.initWorkflow);
 module.exports = router;
