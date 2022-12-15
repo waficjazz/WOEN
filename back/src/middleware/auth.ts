@@ -6,6 +6,8 @@ const auth = (req: any, res: any, next: any) => {
   if (Token === undefined) {
     return res.status(401).json({ message: "Not authorized" });
   }
+
+  //// use util function instsead
   if (Token !== undefined) {
     jwt.verify(
       Token,

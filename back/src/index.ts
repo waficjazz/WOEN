@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { createClient } from "redis";
+import { getTokenId } from "./utils/decode-token";
 const { Server } = require("socket.io");
 const http = require("http");
 const HttpError = require("./utils/http-error");
@@ -9,6 +10,7 @@ const workflowRoutes = require("./routes/workflow-routes");
 const containerRoutes = require("./routes/container-routes");
 const app = express();
 const server = http.createServer(app);
+export const redisc = createClient();
 export const io = new Server(server, {
   cors: {
     origin: "http://127.0.0.1:5173",
@@ -48,13 +50,16 @@ let interval: any;
 
 io.on("connection", (socket: any) => {
   socket.on("addUser", (data: any) => {
-    console.log(data, socket.id);
+    (async () => {
+      console.log(getTokenId(data), "id");
+      await redisc.connect();
+      await redisc.set(getTokenId(data), socket.id);
+      await redisc.disconnect();
+    })();
   });
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
 });
-
-export const redisc = createClient();
 
 redisc.on("error", (err) => console.log("Redis Client Error", err));
