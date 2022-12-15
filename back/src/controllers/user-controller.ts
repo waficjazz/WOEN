@@ -62,7 +62,7 @@ const signup = async (req: any, res: any, next: any) => {
   }
   let token;
   try {
-    token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "15m" });
+    token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
   } catch (err) {
     const error = new HttpError("Invalid credentials, could not log you in.", 401);
     return next(error);

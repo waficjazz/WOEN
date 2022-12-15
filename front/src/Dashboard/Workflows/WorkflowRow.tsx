@@ -4,8 +4,6 @@ import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid
 import { useNavigate } from "react-router-dom";
 import "./Workflows.css";
 import "../ContainerBoard/ContainerBoard.css";
-import { Manager } from "socket.io-client";
-const ENDPOINT = "http://127.0.0.1:5001";
 
 interface Props {
   id: string;
@@ -15,14 +13,6 @@ interface Props {
 }
 
 const WorkflowRow = ({ id, name, remove }: Props) => {
-  const manager = new Manager("http://127.0.0.1:5001");
-
-  const socket = manager.socket("/");
-  useEffect(() => {
-    socket.on("test", (data) => {
-      console.log(data);
-    });
-  }, []);
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);

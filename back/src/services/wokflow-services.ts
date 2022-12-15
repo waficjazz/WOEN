@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import wc from "./container-services";
 import { redisc } from "..";
 import { IJob, IWorkflow } from "../types";
-
+import { io } from "../index";
 const prisma = new PrismaClient();
 
 export const createWorkflow = async (userId: number, name: string, templateId: number): Promise<IWorkflow | undefined> => {

@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { runJob } from "./wokflow-services";
 import { redisc } from "..";
+import { io } from "../index";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -78,6 +79,7 @@ const waitContainer = async (containerId: string, wid: number, jid: number) => {
 
 const runWorkflowContainer = async (containerId: string, wid: number, jid: number) => {
   try {
+    io.emit(`wj${jid.toString()}`, { status: "running" });
     const url = `http://localhost:2375/containers/${containerId}/start`;
     const response = await axios.post(url);
     if (!response || response.status !== 204) {

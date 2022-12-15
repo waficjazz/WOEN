@@ -47,7 +47,7 @@ server.listen(process.env.PORT || 5001, () => {
 let interval: any;
 
 io.on("connection", (socket: any) => {
-  console.log("New client connected");
+  console.log(socket.id);
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

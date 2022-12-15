@@ -9,6 +9,7 @@ import { useAtom } from "jotai";
 import { aIsLoggedIn } from "./store";
 import Auth from "./Auth/Auth";
 import Axios from "./axios";
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useAtom(aIsLoggedIn);
   useEffect(() => {
