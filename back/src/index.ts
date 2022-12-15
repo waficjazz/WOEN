@@ -47,18 +47,13 @@ server.listen(process.env.PORT || 5001, () => {
 let interval: any;
 
 io.on("connection", (socket: any) => {
-  console.log(socket.id);
+  socket.on("addUser", (data: any) => {
+    console.log(data, socket.id);
+  });
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
 });
-
-const getApiAndEmit = (socket: any) => {
-  const response = new Date();
-  console.log("emit");
-  // Emitting a new message. Will be consumed by the client..
-  socket.emit("test", response);
-};
 
 export const redisc = createClient();
 
