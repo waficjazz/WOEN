@@ -3,6 +3,7 @@ import axios from "axios";
 import { runJob } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
+import { updateJobStatus } from "./job-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -60,11 +61,15 @@ const waitContainer = async (containerId: string, wid: number, jid: number) => {
           await Promise.all(
             job.successors.map(async (j) => {
               await redisc.lPush(`${j}${wid}`, jid.toString());
+              let job = await updateJobStatus(jid, "finished");
+              io.emit(`w${wid.toString()}`, job);
               await runJob(parseInt(j), wid, 0);
             })
           );
           await redisc.disconnect();
         } else {
+          let job = await updateJobStatus(jid, "finished");
+          io.emit(`w${wid.toString()}`, job);
           console.log("done");
         }
       } catch (err) {
@@ -79,7 +84,8 @@ const waitContainer = async (containerId: string, wid: number, jid: number) => {
 
 const runWorkflowContainer = async (containerId: string, wid: number, jid: number) => {
   try {
-    io.emit(`wj${jid.toString()}`, { status: "running" });
+    let job = await updateJobStatus(jid, "running");
+    io.emit(`w${wid.toString()}`, job);
     const url = `http://localhost:2375/containers/${containerId}/start`;
     const response = await axios.post(url);
     if (!response || response.status !== 204) {

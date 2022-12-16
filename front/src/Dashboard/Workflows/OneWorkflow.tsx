@@ -6,6 +6,7 @@ import { useAtom } from "jotai";
 import { aConnect, aDepends } from "../../store";
 import WorkflowJob from "./WorkflowJob";
 import Xarrow, { Xwrapper } from "react-xarrows";
+import { socket } from "../../Socket";
 
 const OneWorkflow = () => {
   let x = 0;
@@ -17,10 +18,28 @@ const OneWorkflow = () => {
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
   const { wid } = useParams();
+
+  useEffect(() => {
+    socket.on(`w${wid}`, (job) => {
+      updateWorkflowJob(job);
+    });
+  }, [jobs]);
+
   useEffect(() => {
     calculateCenter();
     getWorkflowJobs();
   }, []);
+
+  const updateWorkflowJob = (uJob: IWJob) => {
+    const newJobs = jobs.map((job) => {
+      if (job.id === uJob.id) {
+        return uJob;
+      }
+      return job;
+    });
+    setJobs(newJobs);
+  };
+
   const getWorkflowJobs = async () => {
     try {
       const response = await Axios.get(`/workflow/one/${wid}`);
@@ -72,7 +91,7 @@ const OneWorkflow = () => {
                   endAnchor={"top"}
                   color={"red"}
                   strokeWidth={2}
-                  animateDrawing={0.5}
+                  // animateDrawing={0.5}
                 />
               );
             });
