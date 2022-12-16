@@ -51,8 +51,7 @@ let interval: any;
 io.on("connection", (socket: any) => {
   socket.on("addUser", (data: any) => {
     (async () => {
-      console.log(getTokenId(data), "id");
-      await redisc.connect();
+      if (!redisc.isOpen) await redisc.connect();
       await redisc.set(getTokenId(data), socket.id);
       await redisc.disconnect();
     })();

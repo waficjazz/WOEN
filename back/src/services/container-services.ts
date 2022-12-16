@@ -3,12 +3,14 @@ import axios from "axios";
 import { runJob } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
+import { messageOneUser } from "../utils/socket";
 import { updateJobStatus } from "./job-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
 
 const createWorkflowContainer = async (
+  uid: number,
   image: string,
   CMD: string[],
   name: string,
@@ -33,14 +35,14 @@ const createWorkflowContainer = async (
       if (!response || response.status !== 201) {
         console.log("error2");
       }
-      runWorkflowContainer(response.data.Id, wid, jid);
+      runWorkflowContainer(uid, response.data.Id, wid, jid);
     }
   } catch (err) {
     console.log(err);
   }
 };
 
-const waitContainer = async (containerId: string, wid: number, jid: number) => {
+const waitContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
   try {
     const url = `http://localhost:2375/containers/${containerId}/wait`;
     const response = await axios.post(url);
@@ -62,14 +64,16 @@ const waitContainer = async (containerId: string, wid: number, jid: number) => {
             job.successors.map(async (j) => {
               await redisc.lPush(`${j}${wid}`, jid.toString());
               let job = await updateJobStatus(jid, "finished");
-              io.emit(`w${wid.toString()}`, job);
-              await runJob(parseInt(j), wid, 0);
+              messageOneUser(uid, `w${wid.toString()}`, job);
+              // io.emit(`w${wid.toString()}`, job);
+              await runJob(uid, parseInt(j), wid, 0);
             })
           );
           await redisc.disconnect();
         } else {
           let job = await updateJobStatus(jid, "finished");
-          io.emit(`w${wid.toString()}`, job);
+          // io.emit(`w${wid.toString()}`, job);
+          messageOneUser(uid, `w${wid.toString()}`, job);
           console.log("done");
         }
       } catch (err) {
@@ -82,17 +86,19 @@ const waitContainer = async (containerId: string, wid: number, jid: number) => {
   }
 };
 
-const runWorkflowContainer = async (containerId: string, wid: number, jid: number) => {
+const runWorkflowContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
   try {
-    let job = await updateJobStatus(jid, "running");
-    io.emit(`w${wid.toString()}`, job);
+    // io.emit(`w${wid.toString()}`, job);
     const url = `http://localhost:2375/containers/${containerId}/start`;
     const response = await axios.post(url);
     if (!response || response.status !== 204) {
       const error = new HttpError("Could not start container.", 500);
       return error;
     }
-    waitContainer(containerId, wid, jid);
+    console.log("enter runWorkflowContainer");
+    let job = await updateJobStatus(jid, "running");
+    messageOneUser(uid, `w${wid.toString()}`, job);
+    waitContainer(uid, containerId, wid, jid);
   } catch (err) {
     const error = new HttpError("Could not start container.", 500);
     return error;

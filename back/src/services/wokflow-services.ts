@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import wc from "./container-services";
 import { redisc } from "..";
 import { IJob, IWorkflow } from "../types";
-import { io } from "../index";
+
 const prisma = new PrismaClient();
 
 export const createWorkflow = async (userId: number, name: string, templateId: number): Promise<IWorkflow | undefined> => {
@@ -141,7 +141,7 @@ export const getFirstJobs = async (wid: number) => {
   }
 };
 
-export const runJob = async (jtid: number, wid: number, jid: number) => {
+export const runJob = async (uid: number, jtid: number, wid: number, jid: number) => {
   let job;
   try {
     if (jid > 0) {
@@ -166,14 +166,16 @@ export const runJob = async (jtid: number, wid: number, jid: number) => {
     }
     if (job) {
       if (job.dependencies.length !== 0) {
+        if (!redisc.isOpen) await redisc.connect();
         let l = await redisc.lLen(`${jtid}${wid}`);
+        await redisc.disconnect();
         if (job.dependencies.length != l) return;
       }
     }
     if (job) {
       let container = job.container;
       let cname = container?.name + Math.random().toString(36).substring(2, 6);
-      wc.createWorkflowContainer(container!!.image, container!!.commands, cname, wid, job.id);
+      wc.createWorkflowContainer(uid, container!!.image, container!!.commands, cname, wid, job.id);
     }
   } catch (err) {
     return err;
