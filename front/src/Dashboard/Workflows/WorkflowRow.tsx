@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faTrashCan, faClock } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./Workflows.css";
 import "../ContainerBoard/ContainerBoard.css";
+import { IWorkflow } from "../../types";
+import { ColorRing } from "react-loader-spinner";
 
-interface Props {
-  id: string;
-  name: string;
+interface IProps extends IWorkflow {
   placements: any;
   remove: any;
 }
 
-const WorkflowRow = ({ id, name, remove }: Props) => {
+const WorkflowRow = ({ id, name, remove, owner, status }: IProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);
@@ -20,10 +20,35 @@ const WorkflowRow = ({ id, name, remove }: Props) => {
   const [logs, setLogs] = useState("");
   const [hover, setHover] = useState(false);
 
+  const IconStatus = () => {
+    return (
+      <>
+        {status === "pending" && <FontAwesomeIcon icon={faClock} size="sm" />}
+        {status === "success" && <FontAwesomeIcon icon={faCircleCheck} size="sm" color="green" />}
+        {status === "running" && (
+          <ColorRing
+            visible={true}
+            height="20"
+            width="20"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{}}
+            wrapperClass="blocks-wrapper"
+            colors={["green", "green", "green", "green", "green"]}
+          />
+        )}
+      </>
+    );
+  };
+
   return (
     <>
       <div className="workflow_row" onClick={handleClick}>
+        <IconStatus />
         <p>{name}</p>
+        <p>
+          {owner?.firstName} {owner?.lastName}
+        </p>
+        1/2
         <FontAwesomeIcon icon={faTrashCan} className="action_icon" size="lg" onClick={(e) => remove(e, id)} />
       </div>
     </>

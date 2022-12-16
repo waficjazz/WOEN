@@ -22,6 +22,7 @@ const Workflows = () => {
       const response = await Axios.get("/workflow/all");
       if (response.data) {
         setWorkflows(response.data);
+        console.log(response.data);
       }
     } catch (err) {
       console.log(err);
@@ -44,7 +45,7 @@ const Workflows = () => {
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {
-              return <WorkflowRow key={workflow.id} id={workflow.id} name={workflow.name} placements={workflow.placements} remove={removeWorkflow} />;
+              return <WorkflowRow key={workflow.id} {...workflow} placements={workflow.placements} remove={removeWorkflow} />;
             })}
         </div>
       </div>

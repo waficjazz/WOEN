@@ -37,6 +37,8 @@ export interface IConnection {
 export interface IWorkflow {
   id: string;
   name: string;
+  owner: any;
+  status: string;
   placements?: any;
 }
 

@@ -43,6 +43,15 @@ const getAllWorkflows = async (req: any, res: any, next: any) => {
       where: {
         userId: req.userId,
       },
+      include: {
+        owner: {
+          select: {
+            username: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
     });
     if (workflows.length === 0) {
       const error = new HttpError("Could not find workflows.", 404);
@@ -230,6 +239,14 @@ const initWorkflow = async (req: any, res: any, next: any) => {
         firstJobsId.map(async (id) => {
           if (workflow !== undefined) {
             await runJob(req.userId, templateId, workflow.id, id);
+            await prisma.workflow.update({
+              where: {
+                id: workflow.id,
+              },
+              data: {
+                status: "running",
+              },
+            });
           }
         })
       );
