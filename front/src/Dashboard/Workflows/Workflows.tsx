@@ -11,9 +11,20 @@ const Workflows = () => {
 
   useEffect(() => {
     socket.on("wfs", (workflow) => {
-      console.log(workflow);
+      console.log("wfs", workflow);
+      updateWorkflows(workflow);
     });
   }, [workflows]);
+
+  const updateWorkflows = (uWorkflow: IWorkflow) => {
+    const newWorkflows = workflows.map((workflow) => {
+      if (workflow.id === uWorkflow.id) {
+        return uWorkflow;
+      }
+      return workflow;
+    });
+    setWorkflows(newWorkflows);
+  };
 
   async function removeWorkflow(e: MouseEvent, id: string) {
     try {

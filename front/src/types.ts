@@ -41,6 +41,7 @@ export interface IWorkflow {
   status: string;
   placements?: any;
   totalJobs: number;
+  completedJobs: number;
 }
 
 export interface IPlacement {

@@ -163,8 +163,6 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
           container: true,
         },
       });
-      let updatedWorkflow = await updateWorkflowStatus(wid, "running");
-      messageOneUser(uid, "wfs", updatedWorkflow);
     }
     if (job) {
       if (job.dependencies.length !== 0) {
@@ -184,14 +182,21 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
   }
 };
 
-export const updateWorkflowStatus = async (wid: number, status: string) => {
+export const updateWorkflowStatus = async (wid: number, data: any) => {
   try {
     let workflow = await prisma.workflow.update({
       where: {
         id: wid,
       },
-      data: {
-        status,
+      data,
+      include: {
+        owner: {
+          select: {
+            username: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
     });
     return workflow;

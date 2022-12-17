@@ -12,7 +12,7 @@ interface IProps extends IWorkflow {
   remove: any;
 }
 
-const WorkflowRow = ({ id, name, remove, owner, status, totalJobs }: IProps) => {
+const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs }: IProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);
@@ -24,7 +24,7 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs }: IProps) => 
     return (
       <>
         {status === "pending" && <FontAwesomeIcon icon={faClock} size="sm" />}
-        {status === "success" && <FontAwesomeIcon icon={faCircleCheck} size="sm" color="green" />}
+        {status === "finished" && <FontAwesomeIcon icon={faCircleCheck} size="sm" color="green" />}
         {status === "running" && (
           <ColorRing
             visible={true}
@@ -48,7 +48,7 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs }: IProps) => 
         <p>
           {owner?.firstName} {owner?.lastName}
         </p>
-        1/{totalJobs}
+        {completedJobs}/{totalJobs}
         <FontAwesomeIcon icon={faTrashCan} className="action_icon" size="lg" onClick={(e) => remove(e, id)} />
       </div>
     </>
