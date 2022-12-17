@@ -19,7 +19,10 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);
   };
+  const startWorkflow = dayjs(startedAt);
+  const endWorkflow = dayjs(finishedAt);
 
+  const duration = endWorkflow.diff(startWorkflow, "m", true);
   const IconStatus = () => {
     return (
       <>
@@ -44,14 +47,19 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
   return (
     <>
       <div className="workflow_row" onClick={handleClick}>
-        <IconStatus />
-        <p>{name}</p>
-        <p>
+        <div style={{ width: "5%" }}>
+          <IconStatus />
+        </div>
+        <div style={{ width: "15%" }}>{name}</div>
+        <div style={{ width: "15%" }}>
           {owner?.firstName} {owner?.lastName}
-        </p>
-        <p>{(startedAt && dayjs(startedAt).fromNow()) || "-"} </p>
-        <p>{(finishedAt && dayjs(finishedAt).fromNow()) || "-"} </p>
-        {completedJobs}/{totalJobs}
+        </div>
+        <div style={{ width: "15%" }}>{(startedAt && dayjs(startedAt).fromNow()) || "-"} </div>
+        <div style={{ width: "15%" }}>{(finishedAt && dayjs(finishedAt).fromNow()) || "-"} </div>
+        <div style={{ width: "10%" }}>{duration || "-"}</div>
+        <div style={{ width: "10%" }}>
+          {completedJobs}/{totalJobs}
+        </div>
         <FontAwesomeIcon icon={faTrashCan} className="action_icon" size="lg" onClick={(e) => remove(e, id)} />
       </div>
     </>

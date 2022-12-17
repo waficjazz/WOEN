@@ -65,6 +65,15 @@ const Workflows = () => {
           <Button onClick={() => setShowForm(true)}>Create</Button>
         </div>
         <div className="workflow_table" ref={workflowRef}>
+          <div className="workflow_table_header ">
+            <div style={{ width: "5%" }}></div>
+            <div style={{ width: "15%" }}>NAME</div>
+            <div style={{ width: "15%" }}>USER</div>
+            <div style={{ width: "15%" }}>STARTED</div>
+            <div style={{ width: "15%" }}>FINISHED</div>
+            <div style={{ width: "10%" }}>DURATION</div>
+            <div style={{ width: "10%" }}>PROGRESS</div>
+          </div>
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {
