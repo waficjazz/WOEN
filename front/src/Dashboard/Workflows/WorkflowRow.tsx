@@ -6,19 +6,19 @@ import "./Workflows.css";
 import "../ContainerBoard/ContainerBoard.css";
 import { IWorkflow } from "../../types";
 import { ColorRing } from "react-loader-spinner";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 interface IProps extends IWorkflow {
   placements: any;
   remove: any;
 }
 
-const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs }: IProps) => {
+const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs, startedAt, finishedAt }: IProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);
   };
-  const [logs, setLogs] = useState("");
-  const [hover, setHover] = useState(false);
 
   const IconStatus = () => {
     return (
@@ -39,6 +39,7 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
       </>
     );
   };
+  dayjs.extend(relativeTime);
 
   return (
     <>
@@ -48,6 +49,8 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
         <p>
           {owner?.firstName} {owner?.lastName}
         </p>
+        <p>{(startedAt && dayjs(startedAt).fromNow()) || "-"} </p>
+        <p>{(finishedAt && dayjs(finishedAt).fromNow()) || "-"} </p>
         {completedJobs}/{totalJobs}
         <FontAwesomeIcon icon={faTrashCan} className="action_icon" size="lg" onClick={(e) => remove(e, id)} />
       </div>

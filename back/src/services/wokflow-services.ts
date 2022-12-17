@@ -153,6 +153,7 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
           container: true,
         },
       });
+      updateWorkflowStatus(wid, { startedAt: new Date() });
     } else {
       job = await prisma.job.findFirst({
         where: {

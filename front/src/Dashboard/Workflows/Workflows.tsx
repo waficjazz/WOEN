@@ -14,21 +14,20 @@ const Workflows = () => {
 
   useEffect(() => {
     socket.on("wfs", (workflow) => {
-      console.log("wfs", workflow);
       updateWorkflows(workflow);
     });
   }, [workflows]);
 
   const updateWorkflows = (uWorkflow: IWorkflow) => {
-    let exist = true;
+    // let exist = true;
     const newWorkflows = workflows.map((workflow) => {
       if (workflow.id === uWorkflow.id) {
-        exist = false;
+        // exist = false;
         return uWorkflow;
       }
       return workflow;
     });
-    if (!exist) newWorkflows.push(uWorkflow);
+    // if (!exist) newWorkflows.push(uWorkflow);
     setWorkflows(newWorkflows);
   };
 
