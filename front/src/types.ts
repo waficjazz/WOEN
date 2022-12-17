@@ -40,6 +40,7 @@ export interface IWorkflow {
   owner: any;
   status: string;
   placements?: any;
+  totalJobs: number;
 }
 
 export interface IPlacement {

@@ -2,22 +2,11 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import wc from "./container-services";
 import { redisc } from "..";
 import { IJob, IWorkflow } from "../types";
-
+import { messageOneUser } from "../utils/socket";
 const prisma = new PrismaClient();
 
 export const createWorkflow = async (userId: number, name: string, templateId: number): Promise<IWorkflow | undefined> => {
   let workflow: IWorkflow;
-  try {
-    workflow = await prisma.workflow.create({
-      data: {
-        userId: userId,
-        name,
-        workflowTemplateId: templateId,
-      },
-    });
-  } catch (err) {
-    return err as undefined;
-  }
   let jobsTemplate;
   try {
     jobsTemplate = await prisma.jobTemplate.findMany({
@@ -25,7 +14,18 @@ export const createWorkflow = async (userId: number, name: string, templateId: n
         workflowTemplateId: templateId,
       },
     });
-
+    workflow = await prisma.workflow.create({
+      data: {
+        userId: userId,
+        name,
+        workflowTemplateId: templateId,
+        totalJobs: jobsTemplate.length,
+      },
+    });
+  } catch (err) {
+    return err as undefined;
+  }
+  try {
     let jobs: IJob[] = [];
     if (jobsTemplate.length > 0)
       jobsTemplate?.map((jt, i) => {
@@ -163,6 +163,8 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
           container: true,
         },
       });
+      let updatedWorkflow = await updateWorkflowStatus(wid, "running");
+      messageOneUser(uid, "wfs", updatedWorkflow);
     }
     if (job) {
       if (job.dependencies.length !== 0) {
@@ -179,5 +181,21 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
     }
   } catch (err) {
     return err;
+  }
+};
+
+export const updateWorkflowStatus = async (wid: number, status: string) => {
+  try {
+    let workflow = await prisma.workflow.update({
+      where: {
+        id: wid,
+      },
+      data: {
+        status,
+      },
+    });
+    return workflow;
+  } catch (err) {
+    console.log(err);
   }
 };

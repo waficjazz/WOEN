@@ -4,9 +4,16 @@ import WorkflowRow from "./WorkflowRow";
 import "./Workflows.css";
 import Axios from "../../axios";
 import { IWorkflow } from "../../types";
+import { socket } from "../../Socket";
 
 const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
+
+  useEffect(() => {
+    socket.on("wfs", (workflow) => {
+      console.log(workflow);
+    });
+  }, [workflows]);
 
   async function removeWorkflow(e: MouseEvent, id: string) {
     try {

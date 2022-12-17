@@ -12,7 +12,7 @@ interface IProps extends IWorkflow {
   remove: any;
 }
 
-const WorkflowRow = ({ id, name, remove, owner, status }: IProps) => {
+const WorkflowRow = ({ id, name, remove, owner, status, totalJobs }: IProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);
@@ -48,7 +48,7 @@ const WorkflowRow = ({ id, name, remove, owner, status }: IProps) => {
         <p>
           {owner?.firstName} {owner?.lastName}
         </p>
-        1/2
+        1/{totalJobs}
         <FontAwesomeIcon icon={faTrashCan} className="action_icon" size="lg" onClick={(e) => remove(e, id)} />
       </div>
     </>

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { createWorkflow, getFirstJobs, runJob } from "../services/wokflow-services";
+import { createWorkflow, getFirstJobs, runJob, updateWorkflowStatus } from "../services/wokflow-services";
+import { messageOneUser } from "../utils/socket";
 import { IWorkflow } from "../types";
 const HttpError = require("../utils/http-error");
 
@@ -239,14 +240,6 @@ const initWorkflow = async (req: any, res: any, next: any) => {
         firstJobsId.map(async (id) => {
           if (workflow !== undefined) {
             await runJob(req.userId, templateId, workflow.id, id);
-            await prisma.workflow.update({
-              where: {
-                id: workflow.id,
-              },
-              data: {
-                status: "running",
-              },
-            });
           }
         })
       );
