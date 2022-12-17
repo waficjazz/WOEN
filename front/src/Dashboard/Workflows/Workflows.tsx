@@ -1,13 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Button from "../../shared/Buttons/Button";
 import WorkflowRow from "./WorkflowRow";
 import "./Workflows.css";
 import Axios from "../../axios";
 import { IWorkflow } from "../../types";
 import { socket } from "../../Socket";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
+  const parent = useRef(null);
+  const [workflowRef] = useAutoAnimate<HTMLDivElement>();
 
   useEffect(() => {
     socket.on("wfs", (workflow) => {
@@ -17,12 +20,15 @@ const Workflows = () => {
   }, [workflows]);
 
   const updateWorkflows = (uWorkflow: IWorkflow) => {
+    let exist = true;
     const newWorkflows = workflows.map((workflow) => {
       if (workflow.id === uWorkflow.id) {
+        exist = false;
         return uWorkflow;
       }
       return workflow;
     });
+    if (!exist) newWorkflows.push(uWorkflow);
     setWorkflows(newWorkflows);
   };
 
@@ -59,7 +65,7 @@ const Workflows = () => {
           <p>Workflows</p>
           <Button onClick={() => setShowForm(true)}>Create</Button>
         </div>
-        <div className="workflow_table">
+        <div className="workflow_table" ref={workflowRef}>
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {

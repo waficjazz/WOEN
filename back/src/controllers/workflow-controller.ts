@@ -231,6 +231,7 @@ const initWorkflow = async (req: any, res: any, next: any) => {
   const { name, templateId } = req.body;
   try {
     workflow = await createWorkflow(req.userId, name, templateId);
+    messageOneUser(req.userId, "wfs", workflow);
     if (workflow !== undefined) {
       firstJobsId = await getFirstJobs(workflow.id);
     }
