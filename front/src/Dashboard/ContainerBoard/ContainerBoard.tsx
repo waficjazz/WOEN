@@ -4,6 +4,7 @@ import "./ContainerBoard.css";
 import ContainerRow from "./ContainerRow";
 import ContainerForm from "./ContainerForm";
 import Button from "../../shared/Buttons/Button";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const ContainerTable = () => {
   interface Container {
@@ -13,6 +14,8 @@ const ContainerTable = () => {
     Names: string[];
   }
   const [containers, setContainers] = useState<Container[]>();
+
+  const [containerRef] = useAutoAnimate<HTMLDivElement>();
   const getContainers = async () => {
     try {
       const response = await Axios.get("/containers/list");
@@ -40,7 +43,7 @@ const ContainerTable = () => {
   }, []);
 
   return (
-    <div className="container_table">
+    <div className="container_table" ref={containerRef}>
       {containers &&
         containers.length > 0 &&
         containers.map((container) => {

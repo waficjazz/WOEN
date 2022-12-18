@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
-import { runJob } from "./wokflow-services";
+import { runJob, updateWorkflowStatus } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
 import { messageOneUser } from "../utils/socket";
@@ -51,6 +51,21 @@ const waitContainer = async (uid: number, containerId: string, wid: number, jid:
       return error;
     }
     if (response.data.StatusCode === 0) {
+      /// add redis check if job is retry
+      let workflow = await prisma.workflow.findUnique({
+        where: {
+          id: wid,
+        },
+      });
+      let completed = workflow!!.completedJobs + 1;
+      let updatedWorkflow = await updateWorkflowStatus(wid, { completedJobs: completed });
+      if (updatedWorkflow)
+        if (updatedWorkflow.totalJobs === completed) {
+          let finishedWorkflow = await updateWorkflowStatus(wid, { status: "finished", finishedAt: new Date() });
+          messageOneUser(uid, "wfs", finishedWorkflow);
+        } else {
+          messageOneUser(uid, "wfs", updatedWorkflow);
+        }
       let job;
       try {
         job = await prisma.job.findUnique({
@@ -59,7 +74,7 @@ const waitContainer = async (uid: number, containerId: string, wid: number, jid:
           },
         });
         if (job && job.successors.length > 0) {
-          await redisc.connect();
+          if (!redisc.isOpen) await redisc.connect();
           await Promise.all(
             job.successors.map(async (j) => {
               await redisc.lPush(`${j}${wid}`, jid.toString());
@@ -95,7 +110,6 @@ const runWorkflowContainer = async (uid: number, containerId: string, wid: numbe
       const error = new HttpError("Could not start container.", 500);
       return error;
     }
-    console.log("enter runWorkflowContainer");
     let job = await updateJobStatus(jid, "running");
     messageOneUser(uid, `w${wid.toString()}`, job);
     waitContainer(uid, containerId, wid, jid);

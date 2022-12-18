@@ -38,8 +38,22 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  /* justify-content: space-between; */
 }
 
+.workflow_row:hover {
+  cursor: pointer;
+  background-color: rgb(255, 255, 255, 0.1);
+}
+.workflow_table_header {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+  /* justify-content: space-between; */
+}
+.workflow_table_header > div {
+  color: rgb(255, 255, 255, 0.5);
+}
 .workflow_job {
   color: white;
   width: 140px;

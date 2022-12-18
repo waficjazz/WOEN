@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { createWorkflow, getFirstJobs, runJob } from "../services/wokflow-services";
+import { createWorkflow, getFirstJobs, runJob, updateWorkflowStatus } from "../services/wokflow-services";
+import { messageOneUser } from "../utils/socket";
 import { IWorkflow } from "../types";
 const HttpError = require("../utils/http-error");
 
@@ -42,6 +43,18 @@ const getAllWorkflows = async (req: any, res: any, next: any) => {
     workflows = await prisma.workflow.findMany({
       where: {
         userId: req.userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        owner: {
+          select: {
+            username: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
     });
     if (workflows.length === 0) {
@@ -123,6 +136,9 @@ const getAllWorkflowsTemplates = async (req: any, res: any, next: any) => {
       where: {
         userId: req.userId,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     if (workflows.length === 0) {
       const error = new HttpError("Could not find workflows.", 404);
@@ -178,7 +194,6 @@ const deleteJobTemplate = async (req: any, res: any, next: any) => {
 const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
   const { placements } = req.body;
   const workflowId = req.params.wid;
-  console.log(placements);
   try {
     const workflow = await prisma.workflowTemplate.update({
       where: {
@@ -222,6 +237,7 @@ const initWorkflow = async (req: any, res: any, next: any) => {
   const { name, templateId } = req.body;
   try {
     workflow = await createWorkflow(req.userId, name, templateId);
+    messageOneUser(req.userId, "wfs", workflow);
     if (workflow !== undefined) {
       firstJobsId = await getFirstJobs(workflow.id);
     }
@@ -233,6 +249,8 @@ const initWorkflow = async (req: any, res: any, next: any) => {
           }
         })
       );
+    let updatedWorkflow = await updateWorkflowStatus(workflow!!.id, { status: "running" });
+    messageOneUser(req.userId, "wfs", updatedWorkflow);
   } catch (err) {
     console.log(err);
     const error = new HttpError("Could not update job.", 500);
