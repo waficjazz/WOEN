@@ -44,6 +44,9 @@ const getAllWorkflows = async (req: any, res: any, next: any) => {
       where: {
         userId: req.userId,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         owner: {
           select: {
@@ -132,6 +135,9 @@ const getAllWorkflowsTemplates = async (req: any, res: any, next: any) => {
     workflows = await prisma.workflowTemplate.findMany({
       where: {
         userId: req.userId,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
     if (workflows.length === 0) {
