@@ -59,10 +59,10 @@ const Workflows = () => {
   const [showForm, setShowForm] = useState(false);
   return (
     <>
-      <div className="workflow_board">
-        <div className="workflow_board_header">
+      <div className="table_board">
+        <div className="table_board_header">
           <p>Workflows</p>
-          <Button onClick={() => setShowForm(true)}>Create</Button>
+          {/* <Button onClick={() => setShowForm(true)}>Create</Button> */}
         </div>
         <div className="workflow_table" ref={workflowRef}>
           <div className="workflow_table_header ">
