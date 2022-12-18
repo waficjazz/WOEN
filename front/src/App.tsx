@@ -12,13 +12,11 @@ import Axios from "./axios";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useAtom(aIsLoggedIn);
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-      Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    }
-  }, []);
+  const token = localStorage.getItem("token");
+  if (token) {
+    setIsLoggedIn(true);
+    Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
 
   return (
     <Provider>
