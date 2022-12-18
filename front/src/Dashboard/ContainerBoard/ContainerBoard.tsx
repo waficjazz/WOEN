@@ -66,8 +66,8 @@ const ContainerBoard = () => {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <div className="container_board">
-      <div className="container_board_header">
+    <div className="table_board">
+      <div className="table_board_header">
         <p>Containers</p>
         {!showForm && <Button onClick={() => setShowForm(true)}>Create</Button>}
       </div>
