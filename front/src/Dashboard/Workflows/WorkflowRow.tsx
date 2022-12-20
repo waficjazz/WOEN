@@ -6,9 +6,7 @@ import "./Workflows.css";
 import "../ContainerBoard/ContainerBoard.css";
 import { IWorkflow } from "../../types";
 import { ColorRing } from "react-loader-spinner";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-
+import { timeAgo, dateStyle, getDuration } from "../../utils/time-format";
 interface IProps extends IWorkflow {
   placements: any;
   remove: any;
@@ -19,10 +17,7 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);
   };
-  const startWorkflow = dayjs(startedAt);
-  const endWorkflow = dayjs(finishedAt);
 
-  const duration = endWorkflow.diff(startWorkflow, "m", true);
   const IconStatus = () => {
     return (
       <>
@@ -42,7 +37,6 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
       </>
     );
   };
-  dayjs.extend(relativeTime);
 
   return (
     <>
@@ -54,9 +48,9 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
         <div style={{ width: "15%" }}>
           {owner?.firstName} {owner?.lastName}
         </div>
-        <div style={{ width: "15%" }}>{(startedAt && dayjs(startedAt).fromNow()) || "-"} </div>
-        <div style={{ width: "15%" }}>{(finishedAt && dayjs(finishedAt).fromNow()) || "-"} </div>
-        <div style={{ width: "10%" }}>{duration || "-"}</div>
+        <div style={{ width: "15%" }}>{(startedAt && timeAgo.format(new Date(startedAt), dateStyle)) || "-"} </div>
+        <div style={{ width: "15%" }}>{(finishedAt && timeAgo.format(new Date(finishedAt), dateStyle)) || "-"} </div>
+        <div style={{ width: "10%" }}>{(finishedAt && startedAt && getDuration(new Date(startedAt), new Date(finishedAt))) || "-"}</div>
         <div style={{ width: "10%" }}>
           {completedJobs}/{totalJobs}
         </div>

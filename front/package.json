@@ -16,6 +16,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "axios": "^0.27.2",
     "dayjs": "^1.11.7",
+    "javascript-time-ago": "^2.5.9",
     "jotai": "^1.8.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
