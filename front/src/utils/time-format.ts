@@ -1,6 +1,6 @@
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
-import { round } from "javascript-time-ago/steps";
+import round from "javascript-time-ago/steps";
 
 const customLabels = {
   second: {
@@ -82,7 +82,6 @@ TimeAgo.addDefaultLocale(en);
 export const timeAgo = new TimeAgo("en-US");
 export const dateStyle = {
   steps: round,
-
   labels: "custom",
 };
 
