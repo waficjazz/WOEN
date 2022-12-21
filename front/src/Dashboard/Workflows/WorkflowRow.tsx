@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faTrashCan, faClock } from "@fortawesome/free-solid-svg-icons";
+import { ColorRing } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import "./Workflows.css";
 import "../ContainerBoard/ContainerBoard.css";
 import { IWorkflow } from "../../types";
-import { ColorRing } from "react-loader-spinner";
 import { getDuration, dateStyle } from "../../utils/time-format";
 import ReactTimeAgo from "react-time-ago";
 

@@ -62,10 +62,15 @@
 .workflow_job {
   color: white;
   width: 140px;
-  height: 5rem;
-  border: 1px solid rgba(255, 255, 255);
+  height: 4.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 5px;
   position: absolute;
+  font-size: 0.98rem;
+  cursor: pointer;
+}
+.workflow_job_selected {
+  border-color: yellow;
 }
 
 .wjobs_container {
@@ -73,4 +78,19 @@
   height: 100%;
   position: relative;
   overflow: auto;
+}
+
+.workflow_job_icon {
+  position: absolute;
+  left: -5px;
+  top: -6px;
+  /* background-color: white;
+  border-radius: 50%; */
+}
+
+.workflow_job > div {
+  border-bottom: 2px solid;
+  padding-left: 15%;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }

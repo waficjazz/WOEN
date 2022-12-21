@@ -164,7 +164,7 @@ const saveContainer = async (req: any, res: any, next: any) => {
     const savedContainer = await prisma.container.create({
       data: {
         userId: req.userId,
-        name: name,
+        name: name.slice(1),
         image: Image,
         commands: Cmd,
       },
