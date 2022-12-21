@@ -5,7 +5,9 @@ import "./Workflows.css";
 import "../ContainerBoard/ContainerBoard.css";
 import { IWorkflow } from "../../types";
 import { ColorRing } from "react-loader-spinner";
-import { timeAgo, dateStyle, getDuration } from "../../utils/time-format";
+import { getDuration, dateStyle } from "../../utils/time-format";
+import ReactTimeAgo from "react-time-ago";
+
 interface IProps extends IWorkflow {
   placements: any;
   remove: any;
@@ -47,8 +49,8 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
         <div style={{ width: "15%" }}>
           {owner?.firstName} {owner?.lastName}
         </div>
-        <div style={{ width: "15%" }}>{(startedAt && timeAgo.format(new Date(startedAt), dateStyle)) || "-"} </div>
-        <div style={{ width: "15%" }}>{(finishedAt && timeAgo.format(new Date(finishedAt), dateStyle)) || "-"} </div>
+        <div style={{ width: "15%" }}>{(startedAt && <ReactTimeAgo date={new Date(startedAt)} locale="en-US" timeStyle={dateStyle} />) || "-"}</div>
+        <div style={{ width: "15%" }}>{(finishedAt && <ReactTimeAgo date={new Date(finishedAt)} locale="en-US" timeStyle={dateStyle} />) || "-"}</div>
         <div style={{ width: "10%" }}>{(finishedAt && startedAt && getDuration(new Date(startedAt), new Date(finishedAt))) || "-"}</div>
         <div style={{ width: "10%" }}>
           {completedJobs}/{totalJobs}

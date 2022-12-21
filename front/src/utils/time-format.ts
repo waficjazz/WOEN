@@ -1,6 +1,35 @@
-import TimeAgo from "javascript-time-ago";
+import TimeAgo, { Unit } from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
-import round from "javascript-time-ago/steps";
+const round = [
+  {
+    formatAs: "second" as Unit,
+    minTime: 0,
+  },
+  {
+    minTime: 60,
+    formatAs: "minute" as Unit,
+  },
+  {
+    minTime: 60 * 60,
+    formatAs: "hour" as Unit,
+  },
+  {
+    minTime: 24 * 60 * 60,
+    formatAs: "day" as Unit,
+  },
+  {
+    minTime: 7 * 24 * 60 * 60,
+    formatAs: "week" as Unit,
+  },
+  {
+    minTime: 30 * 24 * 60 * 60,
+    formatAs: "month" as Unit,
+  },
+  {
+    minTime: 365 * 24 * 60 * 60,
+    formatAs: "year" as Unit,
+  },
+];
 
 const customLabels = {
   second: {
@@ -79,7 +108,6 @@ TimeAgo.addLabels("en", "custom", customLabels);
 
 TimeAgo.addDefaultLocale(en);
 
-export const timeAgo = new TimeAgo("en-US");
 export const dateStyle = {
   steps: round,
   labels: "custom",
