@@ -9,7 +9,7 @@ const SideBar = () => {
       <SideTile txt="Containers" route="/containers" />
       <SideTile txt="Templates" route="/w-templates" />
       <SideTile txt="Workflows" route="/workflows" />
-      <SideTile txt="Graph" route="/graph" />
+      <SideTile txt="Graph" route="/auth" />
     </div>
   );
 };
