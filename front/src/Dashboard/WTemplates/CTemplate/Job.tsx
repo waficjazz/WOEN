@@ -6,6 +6,7 @@ import { useXarrow } from "react-xarrows";
 import { aJobs } from "../../../store";
 
 import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from "react-draggable";
+import Axios from "../../../axios";
 
 interface IProps extends IJob {
   placement: IPlacement;
@@ -66,20 +67,30 @@ const Job = (props: IProps) => {
     setShowMenu("connect");
   };
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
+    try {
+      const response = await Axios.delete(`/workflow/template/${props.id}`);
+      if (response.status === 200) {
+        console.log("Job deleted");
+      }
+    } catch (error) {
+      console.log(error);
+    }
     setJobs(jobs.filter((job) => job.id !== props.id));
     delete props.placement[props.id.toString()];
     let jobConnections = connections[props.id.toString()];
     let jobDependencies = dependencies[props.id.toString()];
     if (jobConnections) {
-      jobConnections.forEach((connection) => {
+      jobConnections.forEach(async (connection) => {
         let newDep = { [connection]: dependencies[connection]?.filter((job) => job !== props.id.toString()) };
+        await Axios.post("/workflow/job/update", { jobId: parseInt(connection), successors: newDep[connection] });
         setDependencies({ ...dependencies, ...newDep });
       });
     }
     if (jobDependencies) {
-      jobDependencies.forEach((dependency) => {
+      jobDependencies.forEach(async (dependency) => {
         let newConnection = { [dependency]: connections[dependency]?.filter((job) => job !== props.id.toString()) };
+        await Axios.post("/workflow/job/update", { jobId: parseInt(dependency), successors: newConnection[dependency] });
         setConnections({ ...connections, ...newConnection });
       });
     }

@@ -10,7 +10,7 @@ router.get("/one/:wid", auth, workflowController.getWorkflow);
 router.get("/template/:wid", auth, workflowController.getWorkflowTemplate);
 router.get("/all/templates", auth, workflowController.getAllWorkflowsTemplates);
 
-router.delete("/job/:jid", auth, workflowController.deleteJobTemplate);
+router.delete("/template/:jid", auth, workflowController.deleteJobTemplate);
 router.delete("/template/:tid", auth, workflowController.deleteWorkflowTemplate);
 router.delete("/one/:wid", auth, workflowController.deleteWorkflow);
 

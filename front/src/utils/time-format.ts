@@ -94,7 +94,6 @@ export function getDuration(startDate: Date, endDate: Date): string {
 
   let hours = Math.floor(diff / (1000 * 60 * 60));
   diff -= hours * (1000 * 60 * 60);
-  console.log(diff, hours);
   let minutes = Math.floor(diff / (1000 * 60));
   diff -= minutes * (1000 * 60);
 
