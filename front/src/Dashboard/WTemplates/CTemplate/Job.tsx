@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState, useRef } from "react";
 import { useAtom } from "jotai";
 import { IJob, IPlacement } from "../../../types";
-import { aShowMenu, aSelectedJob } from "../../../store";
+import { aShowMenu, aSelectedJob, aConnect, aDepends } from "../../../store";
 import { useXarrow } from "react-xarrows";
 import { aJobs } from "../../../store";
 
@@ -15,6 +15,8 @@ interface IProps extends IJob {
 }
 
 const Job = (props: IProps) => {
+  const [connections, setConnections] = useAtom(aConnect);
+  const [dependencies, setDependencies] = useAtom(aDepends);
   const coor = useRef(props.placement[props.id.toString()]);
   const updateXarrow = useXarrow();
   const [, setShowMenu] = useAtom(aShowMenu);
@@ -67,6 +69,29 @@ const Job = (props: IProps) => {
   const handleRemove = () => {
     setJobs(jobs.filter((job) => job.id !== props.id));
     delete props.placement[props.id.toString()];
+    let jobConnections = connections[props.id.toString()];
+    let jobDependencies = dependencies[props.id.toString()];
+    if (jobConnections) {
+      jobConnections.forEach((connection) => {
+        let newDep = { [connection]: dependencies[connection]?.filter((job) => job !== props.id.toString()) };
+        setDependencies({ ...dependencies, ...newDep });
+      });
+    }
+    if (jobDependencies) {
+      jobDependencies.forEach((dependency) => {
+        let newConnection = { [dependency]: connections[dependency]?.filter((job) => job !== props.id.toString()) };
+        setConnections({ ...connections, ...newConnection });
+      });
+    }
+    delete connections[props.id.toString()];
+    setConnections((current) => {
+      const { [props.id.toString()]: value, ...rest } = current;
+      return rest;
+    });
+    setDependencies((current) => {
+      const { [props.id.toString()]: value, ...rest } = current;
+      return rest;
+    });
     props.getBiggestY();
   };
   return (
@@ -83,6 +108,7 @@ const Job = (props: IProps) => {
           <button onClick={handleConnect}>connect</button>
           <button onClick={handleRemove}>remove</button>
           {props.name}
+          {props.id}
         </div>
       </Draggable>
     </>

@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faTrashCan, faClock } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +30,7 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
             ariaLabel="blocks-loading"
             wrapperStyle={{}}
             wrapperClass="blocks-wrapper"
-            colors={["green", "green", "green", "green", "green"]}
+            colors={["blue", "blue", "blue", "blue", "blue"]}
           />
         )}
       </>
