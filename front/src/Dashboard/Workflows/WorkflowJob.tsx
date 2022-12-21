@@ -15,9 +15,15 @@ const WorkflowJob = (props: IProps) => {
   const IconStatus = () => {
     return (
       <>
-        {props.status === "pending" && <FontAwesomeIcon fill="white" icon={faClock} size="lg" color="yellow" className="workflow_job_icon" />}
-        {props.status === "finished" && <FontAwesomeIcon icon={faCircleCheck} size="lg" color="green" className="workflow_job_icon" />}
-        {props.status === "running" && <FontAwesomeIcon icon={faGear} fill="white" size="lg" color="blue" className="workflow_job_icon " spin />}
+        {props.status === "pending" && (
+          <FontAwesomeIcon fill="white" icon={faClock} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
+        )}
+        {props.status === "finished" && (
+          <FontAwesomeIcon icon={faCircleCheck} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
+        )}
+        {props.status === "running" && (
+          <FontAwesomeIcon icon={faGear} fill="white" size="lg" color={statusColor(props.status)} className="workflow_job_icon " spin />
+        )}
       </>
     );
   };
@@ -31,7 +37,7 @@ const WorkflowJob = (props: IProps) => {
       case "running":
         return "blue";
       case "pending":
-        return "yellow";
+        return "rgb(255, 174, 0)";
       default:
         return "white";
     }
@@ -44,7 +50,7 @@ const WorkflowJob = (props: IProps) => {
       onClick={props.onClick}>
       <IconStatus />
       <div style={{ borderColor: statusColor(props.status) }}>{props.name}</div>
-      {props.status}
+      {props.startedAt}
     </div>
   );
 };

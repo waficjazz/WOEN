@@ -89,7 +89,7 @@ const OneWorkflow = () => {
                   curveness={0.5}
                   startAnchor={"bottom"}
                   endAnchor={"top"}
-                  color={"red"}
+                  color={"rgb(255,255,255 , 0.9)"}
                   strokeWidth={2}
                   // animateDrawing={0.5}
                 />
