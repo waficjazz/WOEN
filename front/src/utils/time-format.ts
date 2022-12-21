@@ -1,5 +1,6 @@
-import TimeAgo, { DateInput } from "javascript-time-ago";
+import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
+import round from "javascript-time-ago/steps";
 
 const customLabels = {
   second: {
@@ -80,6 +81,7 @@ TimeAgo.addDefaultLocale(en);
 
 export const timeAgo = new TimeAgo("en-US");
 export const dateStyle = {
+  steps: round,
   labels: "custom",
 };
 
@@ -91,7 +93,6 @@ export function getDuration(startDate: Date, endDate: Date): string {
 
   let hours = Math.floor(diff / (1000 * 60 * 60));
   diff -= hours * (1000 * 60 * 60);
-  console.log(diff, hours);
   let minutes = Math.floor(diff / (1000 * 60));
   diff -= minutes * (1000 * 60);
 

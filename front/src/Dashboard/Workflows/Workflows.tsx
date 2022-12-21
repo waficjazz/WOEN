@@ -45,7 +45,6 @@ const Workflows = () => {
       const response = await Axios.get("/workflow/all");
       if (response.data) {
         setWorkflows(response.data);
-        console.log(response.data);
       }
     } catch (err) {
       console.log(err);
