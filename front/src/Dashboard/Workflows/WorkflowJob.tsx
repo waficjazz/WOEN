@@ -49,8 +49,12 @@ const WorkflowJob = (props: IProps) => {
       id={props.id.toString()}
       onClick={props.onClick}>
       <IconStatus />
-      <div style={{ borderColor: statusColor(props.status) }}>{props.name}</div>
-      {props.startedAt}
+      <div className="job_name" style={{ borderColor: statusColor(props.status) }}>
+        {props.name}
+      </div>
+      <div className="job_timing">
+        {props.startedAt?.slice(11, 16)} {props.startedAt && "-"} {props.finishedAt?.slice(11, 16) || ""}
+      </div>
     </div>
   );
 };

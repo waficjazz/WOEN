@@ -90,7 +90,7 @@ const OneWorkflow = () => {
                   startAnchor={"bottom"}
                   endAnchor={"top"}
                   color={"rgb(255,255,255 , 0.9)"}
-                  strokeWidth={2}
+                  strokeWidth={1.5}
                   // animateDrawing={0.5}
                 />
               );

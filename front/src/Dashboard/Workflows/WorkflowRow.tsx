@@ -51,7 +51,11 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
         </div>
         <div style={{ width: "15%" }}>{(startedAt && <ReactTimeAgo date={new Date(startedAt)} locale="en-US" timeStyle={dateStyle} />) || "-"}</div>
         <div style={{ width: "15%" }}>{(finishedAt && <ReactTimeAgo date={new Date(finishedAt)} locale="en-US" timeStyle={dateStyle} />) || "-"}</div>
-        <div style={{ width: "10%" }}>{(finishedAt && startedAt && getDuration(new Date(startedAt), new Date(finishedAt))) || "-"}</div>
+        <div style={{ width: "10%" }}>
+          {(finishedAt && startedAt && getDuration(new Date(startedAt), new Date(finishedAt))) ||
+            (startedAt && <ReactTimeAgo date={new Date(startedAt)} locale="en-US" timeStyle="mini" />) ||
+            "-"}
+        </div>
         <div style={{ width: "10%" }}>
           {completedJobs}/{totalJobs}
         </div>
