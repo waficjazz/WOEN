@@ -78,12 +78,13 @@ const waitContainer = async (uid: number, containerId: string, wid: number, jid:
         });
         if (job && job.successors.length > 0) {
           if (!redisc.isOpen) await redisc.connect();
-          let uJob = await updateJob(jid, { status: "finished" });
-          messageOneUser(uid, `w${wid.toString()}`, uJob);
+
           await Promise.all(
             job.successors.map(async (j) => {
               await redisc.lPush(`${j}${wid}`, jid.toString());
-              // io.emit(`w${wid.toString()}`, job);
+              //// check below two line if moved outside loop parallele job does not update
+              let uJob = await updateJob(jid, { status: "finished" });
+              messageOneUser(uid, `w${wid.toString()}`, uJob);
               await runJob(uid, parseInt(j), wid, 0);
             })
           );
