@@ -13,6 +13,8 @@ interface IProps extends IJob {
   getBiggestY: () => void;
   top: number;
   left: number;
+  isSelected: boolean;
+  onClick: any;
 }
 
 const Job = (props: IProps) => {
@@ -115,7 +117,11 @@ const Job = (props: IProps) => {
         onDrag={updateXarrow}
         onStop={calculatePlacement}
         defaultPosition={{ x: props.left, y: props.top }}>
-        <div ref={nodeRef} id={props.id.toString()} className="created_job">
+        <div
+          ref={nodeRef}
+          id={props.id.toString()}
+          className={props.isSelected ? "created_job created_job_selected" : "created_job"}
+          onClick={props.onClick}>
           <button onClick={handleConnect}>connect</button>
           <button onClick={handleRemove}>remove</button>
           {props.name}

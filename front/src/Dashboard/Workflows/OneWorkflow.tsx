@@ -18,7 +18,7 @@ const OneWorkflow = () => {
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
   const { wid } = useParams();
-  const [selectedWorkflow, setSelectedWorkflow] = useState<number | undefined>();
+  const [selectedJob, setSelectedJob] = useState<number | undefined>();
   useEffect(() => {
     socket.on(`w${wid}`, (job) => {
       updateWorkflowJob(job);
@@ -112,13 +112,13 @@ const OneWorkflow = () => {
                 }
                 return (
                   <WorkflowJob
-                    isSelected={selectedWorkflow === job.id}
+                    isSelected={selectedJob === job.id}
                     {...job}
                     placement={placement.current}
                     key={job.id}
                     top={height}
                     left={left}
-                    onClick={() => setSelectedWorkflow(job.id)}
+                    onClick={() => setSelectedJob(job.id)}
                   />
                 );
               })}

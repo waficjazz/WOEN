@@ -8,6 +8,7 @@ import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import CMenu from "./CMenu";
 import Axios from "../../../axios";
 import Job from "./Job";
+import Button from "../../../shared/Buttons/Button";
 
 const CTemplate = () => {
   const { id } = useParams();
@@ -22,6 +23,7 @@ const CTemplate = () => {
   // const [plc, setPlc] = useState({} as IPlacement);
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
+  const [selectedJob, setSelectedJob] = useState<number | undefined>();
 
   useEffect(() => {
     calculateCenter();
@@ -113,7 +115,9 @@ const CTemplate = () => {
           <div className="one_workflow_header">
             <p>Workflow Template</p>
           </div>
-          <button onClick={savePlacement}>save</button>
+          <div className="one_workflow_header">
+            <Button onClick={savePlacement}>save</Button>
+          </div>
           <div className="jobs_container" id="jobscontainer">
             <>
               {showMenu !== "" && <CMenu />}
@@ -128,9 +132,9 @@ const CTemplate = () => {
                       curveness={0.5}
                       startAnchor={"bottom"}
                       endAnchor={"top"}
-                      color={"red"}
-                      strokeWidth={2}
-                      animateDrawing={0.5}
+                      color={"rgb(255,255,255 , 0.2)"}
+                      strokeWidth={1.5}
+                      // animateDrawing={0.5}
                     />
                   );
                 });
@@ -146,7 +150,18 @@ const CTemplate = () => {
                   } else {
                     placement.current[job?.id?.toString()] = [x, y];
                   }
-                  return <Job {...job} getBiggestY={getBiggestY} placement={placement.current} key={job.id} top={height} left={left} />;
+                  return (
+                    <Job
+                      onClick={() => setSelectedJob(job.id)}
+                      isSelected={selectedJob === job.id}
+                      {...job}
+                      getBiggestY={getBiggestY}
+                      placement={placement.current}
+                      key={job.id}
+                      top={height}
+                      left={left}
+                    />
+                  );
                 })}
             </>
           </div>
