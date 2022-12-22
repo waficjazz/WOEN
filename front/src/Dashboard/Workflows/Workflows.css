@@ -90,9 +90,13 @@
   border-radius: 50%; */
 }
 
-.workflow_job > div {
+.job_name {
   border-bottom: 2px solid;
   padding-left: 15%;
   padding-top: 2px;
   padding-bottom: 2px;
+}
+
+.job_timing {
+  font-size: 0.88rem;
 }
