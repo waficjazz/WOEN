@@ -1,15 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export const updateJobStatus = async (jid: number, status: string) => {
+export const updateJob = async (jid: number, data: any) => {
   try {
     let job = await prisma.job.update({
       where: {
         id: jid,
       },
-      data: {
-        status: status,
-      },
+      data,
     });
     return job;
   } catch (err) {

@@ -28,6 +28,8 @@ export interface IWJob {
   containerId: number;
   workflowId: number;
   jobTemplateId: number;
+  startedAt?: string;
+  finishedAt?: string;
 }
 
 export interface IConnection {

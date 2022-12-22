@@ -124,6 +124,8 @@ model job {
   dependencies  String[]     @default([])
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+  startedAt     DateTime?
+  finishedAt    DateTime?
   workflow      workflow     @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   workflowId    Int
   jobTemplate   jobTemplate? @relation(fields: [jobTemplateId], references: [id])

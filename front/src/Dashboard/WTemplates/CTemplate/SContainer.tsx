@@ -79,7 +79,7 @@ const SContainer = (props: ISContainer) => {
 
   return (
     <div className="scontainer" onClick={addToWorkflow}>
-      {props.name.substring(1)}
+      {props.name}
     </div>
   );
 };

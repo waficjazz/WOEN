@@ -3,6 +3,7 @@ import wc from "./container-services";
 import { redisc } from "..";
 import { IJob, IWorkflow } from "../types";
 import { messageOneUser } from "../utils/socket";
+import { updateJob } from "./job-services";
 const prisma = new PrismaClient();
 
 export const createWorkflow = async (userId: number, name: string, templateId: number): Promise<IWorkflow | undefined> => {
@@ -153,7 +154,7 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
           container: true,
         },
       });
-      updateWorkflowStatus(wid, { startedAt: new Date() });
+      updateWorkflow(wid, { startedAt: new Date() });
     } else {
       job = await prisma.job.findFirst({
         where: {
@@ -183,7 +184,7 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
   }
 };
 
-export const updateWorkflowStatus = async (wid: number, data: any) => {
+export const updateWorkflow = async (wid: number, data: any) => {
   try {
     let workflow = await prisma.workflow.update({
       where: {

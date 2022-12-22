@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
-import { runJob, updateWorkflowStatus } from "./wokflow-services";
+import { runJob, updateWorkflow } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
 import { messageOneUser } from "../utils/socket";
-import { updateJobStatus } from "./job-services";
+import { updateJob } from "./job-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -50,6 +50,9 @@ const waitContainer = async (uid: number, containerId: string, wid: number, jid:
       const error = new HttpError("Could not wait for container.", 500);
       return error;
     }
+    if (response.data) {
+      await updateJob(jid, { finishedAt: new Date() });
+    }
     if (response.data.StatusCode === 0) {
       /// add redis check if job is retry
       let workflow = await prisma.workflow.findUnique({
@@ -58,10 +61,10 @@ const waitContainer = async (uid: number, containerId: string, wid: number, jid:
         },
       });
       let completed = workflow!!.completedJobs + 1;
-      let updatedWorkflow = await updateWorkflowStatus(wid, { completedJobs: completed });
+      let updatedWorkflow = await updateWorkflow(wid, { completedJobs: completed });
       if (updatedWorkflow)
         if (updatedWorkflow.totalJobs === completed) {
-          let finishedWorkflow = await updateWorkflowStatus(wid, { status: "finished", finishedAt: new Date() });
+          let finishedWorkflow = await updateWorkflow(wid, { status: "finished", finishedAt: new Date() });
           messageOneUser(uid, "wfs", finishedWorkflow);
         } else {
           messageOneUser(uid, "wfs", updatedWorkflow);
@@ -75,18 +78,19 @@ const waitContainer = async (uid: number, containerId: string, wid: number, jid:
         });
         if (job && job.successors.length > 0) {
           if (!redisc.isOpen) await redisc.connect();
+
           await Promise.all(
             job.successors.map(async (j) => {
               await redisc.lPush(`${j}${wid}`, jid.toString());
-              let job = await updateJobStatus(jid, "finished");
-              messageOneUser(uid, `w${wid.toString()}`, job);
-              // io.emit(`w${wid.toString()}`, job);
+              //// check below two line if moved outside loop parallele job does not update
+              let uJob = await updateJob(jid, { status: "finished" });
+              messageOneUser(uid, `w${wid.toString()}`, uJob);
               await runJob(uid, parseInt(j), wid, 0);
             })
           );
           await redisc.disconnect();
         } else {
-          let job = await updateJobStatus(jid, "finished");
+          let job = await updateJob(jid, { status: "finished" });
           // io.emit(`w${wid.toString()}`, job);
           messageOneUser(uid, `w${wid.toString()}`, job);
           console.log("done");
@@ -110,7 +114,7 @@ const runWorkflowContainer = async (uid: number, containerId: string, wid: numbe
       const error = new HttpError("Could not start container.", 500);
       return error;
     }
-    let job = await updateJobStatus(jid, "running");
+    let job = await updateJob(jid, { status: "running", startedAt: new Date() });
     messageOneUser(uid, `w${wid.toString()}`, job);
     waitContainer(uid, containerId, wid, jid);
   } catch (err) {
