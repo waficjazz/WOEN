@@ -71,3 +71,26 @@
 .created_job_selected {
   border-color: yellow;
 }
+
+.job_link_icon {
+  visibility: hidden;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  font-size: 12px;
+  position: absolute;
+}
+.created_job:hover .job_link_icon {
+  visibility: visible;
+}
+
+.job_link_icon:hover {
+  color: red;
+  font-size: medium;
+}
+.job_link_icon_top {
+  top: -10%;
+}
+
+.job_link_icon_bottom {
+  top: 91%;
+}

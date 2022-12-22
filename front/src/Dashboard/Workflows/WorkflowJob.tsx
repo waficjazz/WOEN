@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faGear, faClock } from "@fortawesome/free-solid-svg-icons";
-import { ColorRing } from "react-loader-spinner";
 import { IPlacement, IWJob } from "../../types";
 import "./Workflows.css";
 interface IProps extends IWJob {

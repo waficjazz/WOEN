@@ -4,7 +4,8 @@ import { IJob, IPlacement } from "../../../types";
 import { aShowMenu, aSelectedJob, aConnect, aDepends } from "../../../store";
 import { useXarrow } from "react-xarrows";
 import { aJobs } from "../../../store";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark, faCircle } from "@fortawesome/free-solid-svg-icons";
 import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from "react-draggable";
 import Axios from "../../../axios";
 
@@ -122,10 +123,12 @@ const Job = (props: IProps) => {
           id={props.id.toString()}
           className={props.isSelected ? "created_job created_job_selected" : "created_job"}
           onClick={props.onClick}>
-          <button onClick={handleConnect}>connect</button>
-          <button onClick={handleRemove}>remove</button>
-          {props.name}
-          {props.id}
+          <div>{props.name}</div>
+          <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_top " />
+          <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_bottom " />
+          <FontAwesomeIcon icon={faXmark} size="lg" />
+          {/* <button onClick={handleConnect}>connect</button> */}
+          {/* <button onClick={handleRemove}>remove</button> */}
         </div>
       </Draggable>
     </>

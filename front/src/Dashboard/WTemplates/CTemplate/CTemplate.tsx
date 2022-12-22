@@ -115,8 +115,10 @@ const CTemplate = () => {
           <div className="one_workflow_header">
             <p>Workflow Template</p>
           </div>
-          <div className="one_workflow_header">
-            <Button onClick={savePlacement}>save</Button>
+          <div className="one_workflow_tools">
+            <Button onClick={savePlacement} style={{ height: "30px" }}>
+              SAVE
+            </Button>
           </div>
           <div className="jobs_container" id="jobscontainer">
             <>
