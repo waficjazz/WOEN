@@ -108,44 +108,48 @@ const CTemplate = () => {
 
   return (
     <>
-      <button onClick={savePlacement}>save</button>
       <Xwrapper>
-        <div className="jobs_container" id="jobscontainer">
-          {id}
-          <>
-            {showMenu !== "" && <CMenu />}
-            {Object.keys(connection).map((key) => {
-              return connection[key]?.map((value) => {
-                let k = Math.random().toString(36).substr(2, 3);
-                return (
-                  <Xarrow
-                    key={k}
-                    start={key}
-                    end={value}
-                    curveness={0.5}
-                    startAnchor={"bottom"}
-                    endAnchor={"top"}
-                    color={"red"}
-                    strokeWidth={2}
-                    animateDrawing={0.5}
-                  />
-                );
-              });
-            })}
-            {jobs.length > 0 &&
-              jobs.map((job) => {
-                y = biggestY.current + 1;
-                let height = initHeight + y * 120;
-                let left = center + x * 170;
-                if (placement.current.hasOwnProperty(job.id.toString())) {
-                  height = initHeight + placement.current[job.id.toString()][1] * 120;
-                  left = center + placement.current[job.id.toString()][0] * 170;
-                } else {
-                  placement.current[job?.id?.toString()] = [x, y];
-                }
-                return <Job {...job} getBiggestY={getBiggestY} placement={placement.current} key={job.id} top={height} left={left} />;
+        <div className="one_workflow_page">
+          <div className="one_workflow_header">
+            <p>Workflow Template</p>
+          </div>
+          <button onClick={savePlacement}>save</button>
+          <div className="jobs_container" id="jobscontainer">
+            <>
+              {showMenu !== "" && <CMenu />}
+              {Object.keys(connection).map((key) => {
+                return connection[key]?.map((value) => {
+                  let k = Math.random().toString(36).substr(2, 3);
+                  return (
+                    <Xarrow
+                      key={k}
+                      start={key}
+                      end={value}
+                      curveness={0.5}
+                      startAnchor={"bottom"}
+                      endAnchor={"top"}
+                      color={"red"}
+                      strokeWidth={2}
+                      animateDrawing={0.5}
+                    />
+                  );
+                });
               })}
-          </>
+              {jobs.length > 0 &&
+                jobs.map((job) => {
+                  y = biggestY.current + 1;
+                  let height = initHeight + y * 120;
+                  let left = center + x * 170;
+                  if (placement.current.hasOwnProperty(job.id.toString())) {
+                    height = initHeight + placement.current[job.id.toString()][1] * 120;
+                    left = center + placement.current[job.id.toString()][0] * 170;
+                  } else {
+                    placement.current[job?.id?.toString()] = [x, y];
+                  }
+                  return <Job {...job} getBiggestY={getBiggestY} placement={placement.current} key={job.id} top={height} left={left} />;
+                })}
+            </>
+          </div>
         </div>
       </Xwrapper>
       {/* <div className="tools_list"></div> */}

@@ -76,49 +76,54 @@ const OneWorkflow = () => {
 
   return (
     <Xwrapper>
-      <div className="wjobs_container" id="wjobscontainer">
-        <>
-          {Object.keys(connection).map((key) => {
-            return connection[key]?.map((value) => {
-              let k = Math.random().toString(36).substr(2, 3);
-              return (
-                <Xarrow
-                  key={k}
-                  start={key.toString()}
-                  end={value.toString()}
-                  curveness={0.5}
-                  startAnchor={"bottom"}
-                  endAnchor={"top"}
-                  color={"rgb(255,255,255 , 0.9)"}
-                  strokeWidth={1.5}
-                  // animateDrawing={0.5}
-                />
-              );
-            });
-          })}
-          {jobs.length > 0 &&
-            jobs.map((job) => {
-              let height = initHeight + y * 120;
-              let left = center + x * 170;
-              if (placement.current.hasOwnProperty(job.id.toString())) {
-                height = initHeight + placement.current[job.id.toString()][1] * 120;
-                left = center + placement.current[job.id.toString()][0] * 170;
-              } else {
-                placement.current[job?.id?.toString()] = [x, y];
-              }
-              return (
-                <WorkflowJob
-                  isSelected={selectedWorkflow === job.id}
-                  {...job}
-                  placement={placement.current}
-                  key={job.id}
-                  top={height}
-                  left={left}
-                  onClick={() => setSelectedWorkflow(job.id)}
-                />
-              );
+      <div className="one_workflow_page">
+        <div className="one_workflow_header">
+          <p>Workflow</p>
+        </div>
+        <div className="wjobs_container" id="wjobscontainer">
+          <>
+            {Object.keys(connection).map((key) => {
+              return connection[key]?.map((value) => {
+                let k = Math.random().toString(36).slice(2, 3);
+                return (
+                  <Xarrow
+                    key={k}
+                    start={key.toString()}
+                    end={value.toString()}
+                    curveness={0.5}
+                    startAnchor={"bottom"}
+                    endAnchor={"top"}
+                    color={"rgb(255,255,255 , 0.2)"}
+                    strokeWidth={1.5}
+                    // animateDrawing={0.5}
+                  />
+                );
+              });
             })}
-        </>
+            {jobs.length > 0 &&
+              jobs.map((job) => {
+                let height = initHeight + y * 120;
+                let left = center + x * 170;
+                if (placement.current.hasOwnProperty(job.id.toString())) {
+                  height = initHeight + placement.current[job.id.toString()][1] * 120;
+                  left = center + placement.current[job.id.toString()][0] * 170;
+                } else {
+                  placement.current[job?.id?.toString()] = [x, y];
+                }
+                return (
+                  <WorkflowJob
+                    isSelected={selectedWorkflow === job.id}
+                    {...job}
+                    placement={placement.current}
+                    key={job.id}
+                    top={height}
+                    left={left}
+                    onClick={() => setSelectedWorkflow(job.id)}
+                  />
+                );
+              })}
+          </>
+        </div>
       </div>
     </Xwrapper>
   );
