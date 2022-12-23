@@ -124,9 +124,9 @@ const Job = (props: IProps) => {
           className={props.isSelected ? "created_job created_job_selected" : "created_job"}
           onClick={props.onClick}>
           <div>{props.name}</div>
-          <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_top " />
-          <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_bottom " />
-          <FontAwesomeIcon icon={faXmark} size="lg" />
+          <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_top " onClick={handleConnect} />
+          <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_bottom " onClick={handleConnect} />
+          <FontAwesomeIcon icon={faXmark} size="lg" onClick={handleRemove} />
           {/* <button onClick={handleConnect}>connect</button> */}
           {/* <button onClick={handleRemove}>remove</button> */}
         </div>
