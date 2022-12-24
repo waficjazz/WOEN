@@ -75,13 +75,6 @@
   border-color: rgb(255, 255, 0, 0.8);
 }
 
-.wjobs_container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: auto;
-}
-
 .workflow_job_icon {
   position: absolute;
   left: -5px;
@@ -131,4 +124,24 @@
 .one_workflow_page {
   width: 100%;
   height: 100%;
+}
+
+.wjobs_container {
+  position: relative;
+  overflow: auto;
+  height: 96%;
+  flex: 1;
+}
+
+.one_workflow_content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.job_details_container {
+  left: 70%;
+  height: 100vh;
+  width: 30vw;
+  background-color: rgb(255, 255, 255, 0.8);
 }
