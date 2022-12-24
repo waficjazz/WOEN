@@ -8,6 +8,7 @@ import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import CMenu from "./CMenu";
 import Axios from "../../../axios";
 import Job from "./Job";
+import Button from "../../../shared/Buttons/Button";
 
 const CTemplate = () => {
   const { id } = useParams();
@@ -22,6 +23,7 @@ const CTemplate = () => {
   // const [plc, setPlc] = useState({} as IPlacement);
   const [center, setCenter] = useState(0);
   const [initHeight, setInitHeight] = useState(20);
+  const [selectedJob, setSelectedJob] = useState<number | undefined>();
 
   useEffect(() => {
     calculateCenter();
@@ -108,44 +110,63 @@ const CTemplate = () => {
 
   return (
     <>
-      <button onClick={savePlacement}>save</button>
       <Xwrapper>
-        <div className="jobs_container" id="jobscontainer">
-          {id}
-          <>
-            {showMenu !== "" && <CMenu />}
-            {Object.keys(connection).map((key) => {
-              return connection[key]?.map((value) => {
-                let k = Math.random().toString(36).substr(2, 3);
-                return (
-                  <Xarrow
-                    key={k}
-                    start={key}
-                    end={value}
-                    curveness={0.5}
-                    startAnchor={"bottom"}
-                    endAnchor={"top"}
-                    color={"red"}
-                    strokeWidth={2}
-                    animateDrawing={0.5}
-                  />
-                );
-              });
-            })}
-            {jobs.length > 0 &&
-              jobs.map((job) => {
-                y = biggestY.current + 1;
-                let height = initHeight + y * 120;
-                let left = center + x * 170;
-                if (placement.current.hasOwnProperty(job.id.toString())) {
-                  height = initHeight + placement.current[job.id.toString()][1] * 120;
-                  left = center + placement.current[job.id.toString()][0] * 170;
-                } else {
-                  placement.current[job?.id?.toString()] = [x, y];
-                }
-                return <Job {...job} getBiggestY={getBiggestY} placement={placement.current} key={job.id} top={height} left={left} />;
+        <div className="one_workflow_page">
+          <div className="one_workflow_header">
+            <p>Workflow Template</p>
+          </div>
+          <div className="one_workflow_tools">
+            <Button onClick={savePlacement} style={{ height: "30px" }}>
+              SAVE
+            </Button>
+          </div>
+          <div className="jobs_container" id="jobscontainer">
+            <>
+              {showMenu !== "" && <CMenu />}
+              {Object.keys(connection).map((key) => {
+                return connection[key]?.map((value) => {
+                  let k = Math.random().toString(36).substr(2, 3);
+                  return (
+                    <Xarrow
+                      key={k}
+                      start={key}
+                      end={value}
+                      curveness={0.5}
+                      startAnchor={"bottom"}
+                      endAnchor={"top"}
+                      color={"rgb(255,255,255 , 0.2)"}
+                      strokeWidth={1.5}
+                      // animateDrawing={0.5}
+                    />
+                  );
+                });
               })}
-          </>
+              {jobs.length > 0 &&
+                jobs.map((job) => {
+                  y = biggestY.current + 1;
+                  let height = initHeight + y * 120;
+                  let left = center + x * 170;
+                  if (placement.current.hasOwnProperty(job.id.toString())) {
+                    height = initHeight + placement.current[job.id.toString()][1] * 120;
+                    left = center + placement.current[job.id.toString()][0] * 170;
+                  } else {
+                    placement.current[job?.id?.toString()] = [x, y];
+                  }
+                  return (
+                    <Job
+                      onClick={() => setSelectedJob(job.id)}
+                      isSelected={selectedJob === job.id}
+                      {...job}
+                      getBiggestY={getBiggestY}
+                      placement={placement.current}
+                      key={job.id}
+                      top={height}
+                      left={left}
+                    />
+                  );
+                })}
+            </>
+          </div>
         </div>
       </Xwrapper>
       {/* <div className="tools_list"></div> */}

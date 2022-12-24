@@ -17,10 +17,12 @@
 .created_job {
   color: white;
   width: 140px;
-  height: 5rem;
-  border: 1px solid rgba(255, 255, 255);
+  height: 4.9rem;
   border-radius: 5px;
   position: absolute;
+  font-size: 0.98rem;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .jobs_container {
@@ -64,4 +66,52 @@
   width: 50%;
   display: flex;
   padding: 2rem;
+}
+
+.created_job_selected {
+  border-color: yellow;
+}
+
+.job_link_icon {
+  visibility: hidden;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  font-size: 12px;
+  position: absolute;
+}
+.created_job:hover .job_link_icon {
+  visibility: visible;
+}
+
+.job_link_icon:hover {
+  color: red;
+  font-size: medium;
+}
+.job_link_icon_top {
+  top: -10%;
+}
+
+.job_link_icon_bottom {
+  top: 91%;
+}
+
+.job_remove_icon {
+  top: -10px;
+  left: 95%;
+}
+
+.job_remove_icon:hover {
+  opacity: 100%;
+}
+.job_remove_icon {
+  margin-left: auto;
+  opacity: 10%;
+}
+
+.template_job_name {
+  margin-left: 4px;
+  margin-right: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

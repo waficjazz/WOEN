@@ -3,13 +3,15 @@ import { ISContainer } from "../../../types";
 import Axios from "../../../axios";
 import "./CTemplate.css";
 import SContainer from "./SContainer";
-import { aJobs, aShowMenu } from "../../../store";
+import { aJobs, aShowMenu, aSelectedJob } from "../../../store";
 import { useAtom } from "jotai";
 
 const CMenu = () => {
   const [containres, setContainers] = useState([] as ISContainer[]);
   const [showMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
+  const [selectedJob] = useAtom(aSelectedJob);
+
   useEffect(() => {
     const getSavedContainers = async () => {
       try {
@@ -29,6 +31,7 @@ const CMenu = () => {
       <input />
       {showMenu == "connect" &&
         jobs.map((job: ISContainer) => {
+          if (job.id === selectedJob) return;
           return <SContainer key={job.id} {...job} />;
         })}
       {showMenu == "add" &&

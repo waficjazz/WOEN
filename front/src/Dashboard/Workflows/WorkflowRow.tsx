@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faTrashCan, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faCircleCheck, faClock } from "@fortawesome/free-solid-svg-icons";
 import { ColorRing } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import "./Workflows.css";
