@@ -5,11 +5,12 @@ interface Props {
   children: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: any;
+  disabled?: boolean;
 }
 
-const Button = ({ children, onClick, style }: Props) => {
+const Button = ({ children, onClick, style, disabled }: Props) => {
   return (
-    <button className="p_button" onClick={onClick} style={style}>
+    <button className="p_button" onClick={onClick} style={style} disabled={disabled}>
       {children}
     </button>
   );

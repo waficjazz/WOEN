@@ -14,8 +14,8 @@ const CTemplate = () => {
   const { id } = useParams();
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
-  const [connection, setConnection] = useAtom(aConnect);
-  const [, setDependencies] = useAtom(aDepends);
+  const [connections, setConnections] = useAtom(aConnect);
+  const [dependencies, setDependencies] = useAtom(aDepends);
   let biggestY = useRef(-1);
   let x = 0;
   let y = 0;
@@ -45,7 +45,7 @@ const CTemplate = () => {
           tmpConnection[job["id"].toString()] = job["successors"];
           tmpDepends[job["id"].toString()] = job["dependencies"];
         });
-        setConnection(tmpConnection);
+        setConnections(tmpConnection);
         setDependencies(tmpDepends);
         if (response.data.workflow.placements !== null) placement.current = response.data.workflow.placements;
       }
@@ -89,12 +89,56 @@ const CTemplate = () => {
     if (event.key == "Escape") setShowMenu("");
   };
 
+  const addJob = () => {
+    if (showMenu == "") setShowMenu("add");
+    if (showMenu !== "") setShowMenu("");
+  };
+
   const handleKeyPress = (event: KeyboardEvent) => {
     if (event.code == "Space") {
-      if (showMenu == "") setShowMenu("add");
-      if (showMenu !== "") setShowMenu("");
+      addJob();
     }
     if (event.key == "Escape") setShowMenu("");
+  };
+
+  const handleRemove = async (id: number) => {
+    try {
+      const response = await Axios.delete(`/workflow/template/${id}`);
+      if (response.status === 200) {
+        console.log("Job deleted");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setJobs(jobs.filter((job) => job.id !== id));
+    delete placement.current[id.toString()];
+    let jobConnections = connections[id.toString()];
+    let jobDependencies = dependencies[id.toString()];
+    if (jobConnections) {
+      jobConnections.forEach(async (connection) => {
+        let newDep = { [connection]: dependencies[connection]?.filter((job) => job !== id.toString()) };
+        await Axios.post("/workflow/job/update", { jobId: parseInt(connection), successors: newDep[connection] });
+        setDependencies({ ...dependencies, ...newDep });
+      });
+    }
+    if (jobDependencies) {
+      jobDependencies.forEach(async (dependency) => {
+        let newConnection = { [dependency]: connections[dependency]?.filter((job) => job !== id.toString()) };
+        await Axios.post("/workflow/job/update", { jobId: parseInt(dependency), successors: newConnection[dependency] });
+        setConnections({ ...connections, ...newConnection });
+      });
+    }
+    delete connections[id.toString()];
+    setConnections((current) => {
+      const { [id.toString()]: value, ...rest } = current;
+      return rest;
+    });
+    setDependencies((current) => {
+      const { [id.toString()]: value, ...rest } = current;
+      return rest;
+    });
+    getBiggestY();
+    setSelectedJob(undefined);
   };
 
   useEffect(() => {
@@ -116,6 +160,12 @@ const CTemplate = () => {
             <p>Workflow Template</p>
           </div>
           <div className="one_workflow_tools">
+            <Button onClick={() => handleRemove(selectedJob!!)} style={{ height: "30px" }} disabled={selectedJob === undefined}>
+              REMOVE
+            </Button>
+            <Button onClick={addJob} style={{ height: "30px" }}>
+              ADD JOB
+            </Button>
             <Button onClick={savePlacement} style={{ height: "30px" }}>
               SAVE
             </Button>
@@ -123,8 +173,8 @@ const CTemplate = () => {
           <div className="jobs_container" id="jobscontainer">
             <>
               {showMenu !== "" && <CMenu />}
-              {Object.keys(connection).map((key) => {
-                return connection[key]?.map((value) => {
+              {Object.keys(connections).map((key) => {
+                return connections[key]?.map((value) => {
                   let k = Math.random().toString(36).substr(2, 3);
                   return (
                     <Xarrow
@@ -162,6 +212,7 @@ const CTemplate = () => {
                       key={job.id}
                       top={height}
                       left={left}
+                      remove={handleRemove}
                     />
                   );
                 })}
