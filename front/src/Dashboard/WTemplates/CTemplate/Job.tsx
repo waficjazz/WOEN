@@ -123,12 +123,12 @@ const Job = (props: IProps) => {
           id={props.id.toString()}
           className={props.isSelected ? "created_job created_job_selected" : "created_job"}
           onClick={props.onClick}>
-          <div>{props.name}</div>
+          <div className="template_job_name">
+            {props.name}
+            <FontAwesomeIcon icon={faXmark} size="lg" className="job_remove_icon" onClick={handleRemove} />
+          </div>
           <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_top " onClick={handleConnect} />
           <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_bottom " onClick={handleConnect} />
-          <FontAwesomeIcon icon={faXmark} size="lg" onClick={handleRemove} />
-          {/* <button onClick={handleConnect}>connect</button> */}
-          {/* <button onClick={handleRemove}>remove</button> */}
         </div>
       </Draggable>
     </>

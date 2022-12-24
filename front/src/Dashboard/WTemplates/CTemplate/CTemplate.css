@@ -94,3 +94,24 @@
 .job_link_icon_bottom {
   top: 91%;
 }
+
+.job_remove_icon {
+  top: -10px;
+  left: 95%;
+}
+
+.job_remove_icon:hover {
+  opacity: 100%;
+}
+.job_remove_icon {
+  margin-left: auto;
+  opacity: 10%;
+}
+
+.template_job_name {
+  margin-left: 4px;
+  margin-right: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
