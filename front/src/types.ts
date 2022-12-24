@@ -60,3 +60,11 @@ export interface IUser {
   password?: string;
   confirmPassword?: string;
 }
+
+export interface IWTemplate {
+  id: number;
+  name: number;
+  placements: IPlacement;
+  createdAt: string;
+  updatedAt: string;
+}

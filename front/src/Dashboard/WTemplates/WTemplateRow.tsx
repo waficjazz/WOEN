@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
+import { IWTemplate } from "../../types";
 import Axios from "../../axios";
 import "./WTemplates.css";
-interface Props {
-  id: string;
-  name: string;
-  placements: any;
-}
+import { dateStyle } from "../../utils/time-format";
+import ReactTimeAgo from "react-time-ago";
+interface Props extends IWTemplate {}
 
-const WTemplateRow = ({ id, name, placements }: Props) => {
+const WTemplateRow = ({ id, name, createdAt, updatedAt }: Props) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/cw-template/${id}`);
@@ -33,16 +32,22 @@ const WTemplateRow = ({ id, name, placements }: Props) => {
   return (
     <>
       <div className="workflow_row" onClick={handleClick}>
-        <div>
-          <p>{name}</p>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              initWorkflow();
-            }}>
-            init
-          </button>
+        <div style={{ width: "25%" }}>{name}</div>
+        <div style={{ width: "30%" }}>
+          <ReactTimeAgo date={new Date(createdAt)} locale="en-US" timeStyle={dateStyle} />
         </div>
+        <div style={{ width: "30%" }}>
+          <ReactTimeAgo date={new Date(updatedAt)} locale="en-US" timeStyle={dateStyle} />
+        </div>
+        <FontAwesomeIcon
+          icon={faPlus}
+          onClick={(e) => {
+            e.stopPropagation();
+            initWorkflow();
+          }}
+          size="lg"
+          className="template_submit_icon"
+        />
       </div>
     </>
   );
