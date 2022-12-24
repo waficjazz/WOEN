@@ -16,15 +16,13 @@ interface IProps extends IJob {
   left: number;
   isSelected: boolean;
   onClick: any;
+  remove: any;
 }
 
 const Job = (props: IProps) => {
-  const [connections, setConnections] = useAtom(aConnect);
-  const [dependencies, setDependencies] = useAtom(aDepends);
   const coor = useRef(props.placement[props.id.toString()]);
   const updateXarrow = useXarrow();
   const [, setShowMenu] = useAtom(aShowMenu);
-  const [jobs, setJobs] = useAtom(aJobs);
   const [, setSelectedJob] = useAtom(aSelectedJob);
   const [initialCoord, setInitialCoord] = useState({ x: 0, y: 0 });
 
@@ -60,54 +58,16 @@ const Job = (props: IProps) => {
     }
   };
   const nodeRef = useRef(null);
-  let style = {
-    top: props.top + "px",
-    left: props.left + "px",
-  };
+  // let style = {
+  //   top: props.top + "px",
+  //   left: props.left + "px",
+  // };
 
   const handleConnect = () => {
     setSelectedJob(props.id);
     setShowMenu("connect");
   };
 
-  const handleRemove = async () => {
-    try {
-      const response = await Axios.delete(`/workflow/template/${props.id}`);
-      if (response.status === 200) {
-        console.log("Job deleted");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    setJobs(jobs.filter((job) => job.id !== props.id));
-    delete props.placement[props.id.toString()];
-    let jobConnections = connections[props.id.toString()];
-    let jobDependencies = dependencies[props.id.toString()];
-    if (jobConnections) {
-      jobConnections.forEach(async (connection) => {
-        let newDep = { [connection]: dependencies[connection]?.filter((job) => job !== props.id.toString()) };
-        await Axios.post("/workflow/job/update", { jobId: parseInt(connection), successors: newDep[connection] });
-        setDependencies({ ...dependencies, ...newDep });
-      });
-    }
-    if (jobDependencies) {
-      jobDependencies.forEach(async (dependency) => {
-        let newConnection = { [dependency]: connections[dependency]?.filter((job) => job !== props.id.toString()) };
-        await Axios.post("/workflow/job/update", { jobId: parseInt(dependency), successors: newConnection[dependency] });
-        setConnections({ ...connections, ...newConnection });
-      });
-    }
-    delete connections[props.id.toString()];
-    setConnections((current) => {
-      const { [props.id.toString()]: value, ...rest } = current;
-      return rest;
-    });
-    setDependencies((current) => {
-      const { [props.id.toString()]: value, ...rest } = current;
-      return rest;
-    });
-    props.getBiggestY();
-  };
   return (
     <>
       <Draggable
@@ -125,7 +85,7 @@ const Job = (props: IProps) => {
           onClick={props.onClick}>
           <div className="template_job_name">
             {props.name}
-            <FontAwesomeIcon icon={faXmark} size="lg" className="job_remove_icon" onClick={handleRemove} />
+            <FontAwesomeIcon icon={faXmark} size="lg" className="job_remove_icon" onClick={() => props.remove(props.id)} />
           </div>
           <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_top " onClick={handleConnect} />
           <FontAwesomeIcon icon={faCircle} size="sm" className="job_link_icon job_link_icon_bottom " onClick={handleConnect} />
