@@ -138,7 +138,7 @@ const OneWorkflow = () => {
                 })}
             </>
           </div>
-          {selectedJob !== undefined && <JobDetails />}
+          {selectedJob !== undefined && <JobDetails {...jobs.find((j) => j.id === selectedJob)!!} />}
         </div>
       </div>
     </Xwrapper>

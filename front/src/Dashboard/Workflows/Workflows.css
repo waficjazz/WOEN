@@ -142,6 +142,20 @@
 .job_details_container {
   left: 70%;
   height: 100vh;
+  color: white;
   width: 30vw;
-  background-color: rgb(255, 255, 255, 0.8);
+  background-color: rgb(20, 34, 47);
+}
+
+.job_details_options {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 10px;
+  height: 60px;
+}
+
+.job_details_options > div {
+  cursor: pointer;
 }
