@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IWJob } from "../../types";
 import { getDuration, dateStyle } from "../../utils/time-format";
 import ReactTimeAgo from "react-time-ago";
@@ -6,7 +6,11 @@ import ReactTimeAgo from "react-time-ago";
 interface IProps extends IWJob {}
 const JobDetails = ({ ...props }: IProps) => {
   const [option, setOption] = useState<number>(1);
-
+  useEffect(() => {
+    return () => {
+      console.log("unmounting");
+    };
+  }, []);
   const selectedStyle = {
     borderBottom: "1px solid white ",
   };

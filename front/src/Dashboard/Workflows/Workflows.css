@@ -140,11 +140,20 @@
 }
 
 .job_details_container {
-  left: 70%;
   height: 100vh;
   color: white;
   width: 30vw;
   background-color: rgb(20, 34, 47);
+  animation: details-anim 0.5s ease-in-out;
+}
+
+@keyframes details-anim {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .job_details_options {
