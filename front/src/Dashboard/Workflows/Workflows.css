@@ -159,3 +159,26 @@
 .job_details_options > div {
   cursor: pointer;
 }
+
+.job_details_summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
+}
+
+.job_details_summary > div {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  height: 60px;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem;
+}
+
+.job_details_summary > div > p {
+  width: 60%;
+}
