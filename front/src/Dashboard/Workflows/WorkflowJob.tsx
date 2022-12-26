@@ -1,7 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faGear, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faGear, faClock, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { IPlacement, IWJob } from "../../types";
 import "./Workflows.css";
+import { useEffect } from "react";
 interface IProps extends IWJob {
   placement: IPlacement;
   top: number;
@@ -22,6 +23,9 @@ const WorkflowJob = (props: IProps) => {
         )}
         {props.status === "running" && (
           <FontAwesomeIcon icon={faGear} fill="white" size="lg" color={statusColor(props.status)} className="workflow_job_icon " spin />
+        )}
+        {props.status === "failed" && (
+          <FontAwesomeIcon icon={faCircleXmark} size="lg" color={statusColor(props.status)} className="workflow_job_icon " />
         )}
       </>
     );
@@ -54,6 +58,7 @@ const WorkflowJob = (props: IProps) => {
       <div className="job_timing">
         {props.startedAt?.slice(11, 16)} {props.startedAt && "-"} {props.finishedAt?.slice(11, 16) || ""}
       </div>
+      <div className="job_timing">{props.exitCode ? `exit ${props.exitCode}` : ""}</div>
     </div>
   );
 };

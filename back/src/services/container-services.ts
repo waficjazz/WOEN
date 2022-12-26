@@ -43,6 +43,7 @@ const createWorkflowContainer = async (
 };
 
 const waitContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
+  let exitCode: number;
   try {
     const url = `http://localhost:2375/containers/${containerId}/wait`;
     const response = await axios.post(url);
@@ -51,52 +52,56 @@ const waitContainer = async (uid: number, containerId: string, wid: number, jid:
       return error;
     }
     if (response.data) {
+      exitCode = response.data.StatusCode;
       await updateJob(jid, { finishedAt: new Date() });
-    }
-    if (response.data.StatusCode === 0) {
-      /// add redis check if job is retry
-      let workflow = await prisma.workflow.findUnique({
-        where: {
-          id: wid,
-        },
-      });
-      let completed = workflow!!.completedJobs + 1;
-      let updatedWorkflow = await updateWorkflow(wid, { completedJobs: completed });
-      if (updatedWorkflow)
-        if (updatedWorkflow.totalJobs === completed) {
-          let finishedWorkflow = await updateWorkflow(wid, { status: "finished", finishedAt: new Date() });
-          messageOneUser(uid, "wfs", finishedWorkflow);
-        } else {
-          messageOneUser(uid, "wfs", updatedWorkflow);
-        }
-      let job;
-      try {
-        job = await prisma.job.findUnique({
+      if (exitCode === 0) {
+        /// add redis check if job is retry
+        let workflow = await prisma.workflow.findUnique({
           where: {
-            id: jid,
+            id: wid,
           },
         });
-        if (job && job.successors.length > 0) {
-          if (!redisc.isOpen) await redisc.connect();
+        let completed = workflow!!.completedJobs + 1;
+        let updatedWorkflow = await updateWorkflow(wid, { completedJobs: completed });
+        if (updatedWorkflow)
+          if (updatedWorkflow.totalJobs === completed) {
+            let finishedWorkflow = await updateWorkflow(wid, { status: "finished", finishedAt: new Date() });
+            messageOneUser(uid, "wfs", finishedWorkflow);
+          } else {
+            messageOneUser(uid, "wfs", updatedWorkflow);
+          }
+        let job;
+        try {
+          job = await prisma.job.findUnique({
+            where: {
+              id: jid,
+            },
+          });
+          if (job && job.successors.length > 0) {
+            if (!redisc.isOpen) await redisc.connect();
 
-          await Promise.all(
-            job.successors.map(async (j) => {
-              await redisc.lPush(`${j}${wid}`, jid.toString());
-              //// check below two line if moved outside loop parallele job does not update
-              let uJob = await updateJob(jid, { status: "finished" });
-              messageOneUser(uid, `w${wid.toString()}`, uJob);
-              await runJob(uid, parseInt(j), wid, 0);
-            })
-          );
-          await redisc.disconnect();
-        } else {
-          let job = await updateJob(jid, { status: "finished" });
-          // io.emit(`w${wid.toString()}`, job);
-          messageOneUser(uid, `w${wid.toString()}`, job);
-          console.log("done");
+            await Promise.all(
+              job.successors.map(async (j) => {
+                await redisc.lPush(`${j}${wid}`, jid.toString());
+                //// check below two line if moved outside loop parallele job does not update
+                let uJob = await updateJob(jid, { status: "finished", exitCode: exitCode });
+                messageOneUser(uid, `w${wid.toString()}`, uJob);
+                await runJob(uid, parseInt(j), wid, 0);
+              })
+            );
+            await redisc.disconnect();
+          } else {
+            let job = await updateJob(jid, { status: "finished", exitCode: exitCode });
+            // io.emit(`w${wid.toString()}`, job);
+            messageOneUser(uid, `w${wid.toString()}`, job);
+            console.log("done");
+          }
+        } catch (err) {
+          return err;
         }
-      } catch (err) {
-        return err;
+      } else {
+        let fJob = await updateJob(jid, { status: "failed", exitCode: exitCode });
+        messageOneUser(uid, `w${wid.toString()}`, fJob);
       }
     }
   } catch (err) {

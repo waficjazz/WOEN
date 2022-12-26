@@ -7,6 +7,9 @@ export const updateJob = async (jid: number, data: any) => {
       where: {
         id: jid,
       },
+      include: {
+        container: true,
+      },
       data,
     });
     return job;
