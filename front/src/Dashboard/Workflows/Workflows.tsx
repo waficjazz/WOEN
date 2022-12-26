@@ -9,7 +9,6 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
-  const parent = useRef(null);
   const [workflowRef] = useAutoAnimate<HTMLDivElement>();
 
   useEffect(() => {
