@@ -101,7 +101,11 @@ const getWorkflow = async (req: any, res: any, next: any) => {
         id: parseInt(wid),
       },
       include: {
-        jobs: true,
+        jobs: {
+          include: {
+            container: true,
+          },
+        },
       },
     });
   } catch (err) {
@@ -176,7 +180,6 @@ const createJobTemplate = async (req: any, res: any, next: any) => {
 };
 
 const deleteJobTemplate = async (req: any, res: any, next: any) => {
-  console.log("enter delete");
   const jobId = req.params.jid;
   let job;
   try {

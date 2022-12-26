@@ -27,6 +27,10 @@ const OneWorkflow = () => {
   }, [jobs]);
 
   useEffect(() => {
+    console.log("workflow jobs", jobs);
+  }, [jobs]);
+
+  useEffect(() => {
     calculateCenter();
     getWorkflowJobs();
   }, []);

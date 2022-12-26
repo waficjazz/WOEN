@@ -169,7 +169,7 @@
   cursor: pointer;
 }
 
-.job_details_summary {
+.job_details {
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
@@ -178,16 +178,28 @@
   padding: 1rem;
 }
 
-.job_details_summary > div {
+.job_details > div {
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  height: 60px;
+  min-height: 20px;
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  padding: 0.9rem;
+  padding: 0.4rem;
 }
 
-.job_details_summary > div > p {
+.job_details > div > p {
   width: 60%;
+}
+
+.container_commands {
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+}
+
+.container_commands > div {
+  width: 100%;
+  padding: 0.2rem;
 }

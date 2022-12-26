@@ -5,6 +5,7 @@ export interface ISContainer {
   name: string;
   image: string;
   commands?: string[];
+  createdAt: string;
 }
 
 export interface IJob {
@@ -30,6 +31,7 @@ export interface IWJob {
   jobTemplateId: number;
   startedAt?: string;
   finishedAt?: string;
+  container?: ISContainer;
 }
 
 export interface IConnection {
