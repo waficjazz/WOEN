@@ -32,6 +32,7 @@ export interface IWJob {
   startedAt?: string;
   finishedAt?: string;
   container?: ISContainer;
+  exitCode?: number;
 }
 
 export interface IConnection {

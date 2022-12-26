@@ -132,4 +132,5 @@ model job {
   jobTemplateId Int?
   container     container?   @relation(fields: [containerId], references: [id])
   containerId   Int?
+  exitCode      Int?
 }
