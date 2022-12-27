@@ -12,5 +12,6 @@ router.delete("/remove", auth, containerController.removeContainer);
 router.post("/logs", auth, containerController.getContainerLogs);
 router.post("/save", auth, containerController.saveContainer);
 router.post("/pause", auth, containerController.pauseContainer);
+router.post("/unpause", auth, containerController.unpauseContainer);
 router.get("/saved", auth, containerController.getSavedContainers);
 module.exports = router;

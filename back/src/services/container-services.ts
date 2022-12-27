@@ -121,6 +121,17 @@ export const pauseContainer = async (containerId: string) => {
   }
 };
 
+export const unpauseContainer = async (containerId: string) => {
+  try {
+    const url = `http://localhost:2375/containers/${containerId}/unpause`;
+    const response = await axios.post(url);
+    return response;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
 const runWorkflowContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
   try {
     // io.emit(`w${wid.toString()}`, job);

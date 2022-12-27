@@ -14,6 +14,10 @@ interface Props {
 const ContainerRow = ({ id, name, status, remove, image }: Props) => {
   const [logs, setLogs] = useState("");
   const [hover, setHover] = useState(false);
+
+  useEffect(() => {
+    console.log(status);
+  }, []);
   function setColor(status: string) {
     if (/^Up/.test(status)) {
       return "green";
@@ -25,6 +29,15 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
   const pausecontainer = async () => {
     try {
       const response = await Axios.post(`/containers/pause`, { containerId: id });
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const unpausecontainer = async () => {
+    try {
+      const response = await Axios.post(`/containers/unpause`, { containerId: id });
       console.log(response);
     } catch (err) {
       console.log(err);
@@ -69,8 +82,11 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
         {hover && (
           <div className="container_actions">
             <FontAwesomeIcon icon={faFloppyDisk} size="lg" className="action_icon" onClick={saveContainer} />
-            {/^Up/.test(status) && <FontAwesomeIcon icon={faPause} size="lg" className="action_icon" onClick={pausecontainer} />}
-            <FontAwesomeIcon icon={faPlay} size="lg" className="action_icon" onClick={runContainer} />
+            {/^Up/.test(status) && !/Paused/.test(status) && (
+              <FontAwesomeIcon icon={faPause} size="lg" className="action_icon" onClick={pausecontainer} />
+            )}
+            {/Paused/.test(status) && <FontAwesomeIcon icon={faPlay} size="lg" className="action_icon" onClick={unpausecontainer} />}
+            {!/^Up/.test(status) && <FontAwesomeIcon icon={faPlay} size="lg" className="action_icon" onClick={runContainer} />}
             <FontAwesomeIcon icon={faTrashCan} size="lg" className="action_icon" onClick={() => remove(id)} />
           </div>
         )}
