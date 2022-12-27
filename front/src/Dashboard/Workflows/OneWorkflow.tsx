@@ -8,6 +8,7 @@ import WorkflowJob from "./WorkflowJob";
 import Xarrow, { Xwrapper } from "react-xarrows";
 import { socket } from "../../Socket";
 import JobDetails from "./JobDetails";
+import Button from "../../shared/Buttons/Button";
 
 const OneWorkflow = () => {
   let x = 0;
@@ -24,10 +25,6 @@ const OneWorkflow = () => {
     socket.on(`w${wid}`, (job) => {
       updateWorkflowJob(job);
     });
-  }, [jobs]);
-
-  useEffect(() => {
-    console.log("workflow jobs", jobs);
   }, [jobs]);
 
   useEffect(() => {
@@ -48,6 +45,29 @@ const OneWorkflow = () => {
       return job;
     });
     setJobs(newJobs);
+  };
+
+  const pauseJob = async () => {
+    try {
+      const response = await Axios.post(`/workflow/job/${selectedJob}/pause`);
+      if (response.data) {
+        updateWorkflowJob(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const unpauseJob = async () => {
+    try {
+      const response = await Axios.post(`/workflow/job/${selectedJob}/unpause`);
+      if (response.data) {
+        console.log("ujob", response.data);
+        updateWorkflowJob(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const getWorkflowJobs = async () => {
@@ -96,6 +116,14 @@ const OneWorkflow = () => {
       <div className="one_workflow_page">
         <div className="one_workflow_header">
           <p>Workflow</p>
+        </div>
+        <div className="one_workflow_tools">
+          <Button style={{ height: "30px" }} onClick={unpauseJob}>
+            RESUME
+          </Button>
+          <Button style={{ height: "30px" }} onClick={pauseJob}>
+            PAUSE
+          </Button>
         </div>
         <div className="one_workflow_content">
           <div className="wjobs_container" id="wjobscontainer">

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { createWorkflow, getFirstJobs, runJob, updateWorkflow } from "../services/wokflow-services";
-import { pauseContainer, unpauseContainer } from "../services/container-services";
+import { pauseContainer, unpauseContainer, waitContainer } from "../services/container-services";
 import { messageOneUser } from "../utils/socket";
 import { IWorkflow } from "../types";
 import { updateJob } from "../services/job-services";
@@ -199,7 +199,7 @@ const deleteJobTemplate = async (req: any, res: any, next: any) => {
 
 const pauseJob = async (req: any, res: any, next: any) => {
   const jobId = req.params.jid;
-  let job;
+  let job, ujob;
   try {
     job = await prisma.job.findUnique({
       where: {
@@ -207,17 +207,18 @@ const pauseJob = async (req: any, res: any, next: any) => {
       },
     });
     await pauseContainer(job?.containerInstance!!);
-    await updateJob(jobId, { status: "paused" });
+    ujob = await updateJob(parseInt(jobId), { status: "paused" });
   } catch (err) {
     const error = new HttpError("Could not pause job.", 500);
     return next(error);
   }
-  res.status(200).json(job);
+  res.status(200).json(ujob);
 };
 
 const unpauseJob = async (req: any, res: any, next: any) => {
   const jobId = req.params.jid;
-  let job;
+  const uid = req.userId;
+  let job, ujob;
   try {
     job = await prisma.job.findUnique({
       where: {
@@ -225,12 +226,13 @@ const unpauseJob = async (req: any, res: any, next: any) => {
       },
     });
     await unpauseContainer(job?.containerInstance!!);
-    await updateJob(jobId, { status: "running" });
+    ujob = await updateJob(parseInt(jobId), { status: "running" });
+    if (job) waitContainer(uid, job?.containerInstance!!, job?.workflowId, parseInt(jobId));
   } catch (err) {
     const error = new HttpError("Could not resume job.", 500);
     return next(error);
   }
-  res.status(200).json(job);
+  res.status(200).json(ujob);
 };
 
 const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
