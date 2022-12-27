@@ -35,6 +35,8 @@ export const createWorkflowContainer = async (
       if (!response || response.status !== 201) {
         console.log("error2");
       }
+      //TO DO// separate run workflow from create &&  commun funcition for job and container
+      await updateJob(jid, { containerInstance: response.data.Id });
       runWorkflowContainer(uid, response.data.Id, wid, jid);
     }
   } catch (err) {

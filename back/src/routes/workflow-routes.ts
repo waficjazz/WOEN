@@ -18,6 +18,8 @@ router.post("/job/update", auth, workflowController.upateJobDependencies);
 router.post("/job/create", auth, workflowController.createJobTemplate);
 router.post("/:wid/placement", auth, workflowController.updateWorkflowPlacements);
 router.post("/create", auth, workflowController.createWorkflowTemplate);
+router.post("/job/:jid/pause", auth, workflowController.pauseJob);
+router.post("/job/:jid/unpause", auth, workflowController.unpauseJob);
 
 router.post("/init", auth, workflowController.initWorkflow);
 module.exports = router;
