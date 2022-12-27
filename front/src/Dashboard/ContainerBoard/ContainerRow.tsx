@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBox, faPlay, faTrashCan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
+import { faBox, faPlay, faTrashCan, faFloppyDisk, faPause } from "@fortawesome/free-solid-svg-icons";
 import Axios from "../../axios";
 import CTextArea from "../../shared/TextAreas/CTextArea";
 interface Props {
@@ -21,6 +21,15 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
     if (status === "Created") return "red";
     return "grey";
   }
+
+  const pausecontainer = async () => {
+    try {
+      const response = await Axios.post(`/containers/pause`, { containerId: id });
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   async function runContainer() {
     try {
@@ -60,6 +69,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
         {hover && (
           <div className="container_actions">
             <FontAwesomeIcon icon={faFloppyDisk} size="lg" className="action_icon" onClick={saveContainer} />
+            {/^Up/.test(status) && <FontAwesomeIcon icon={faPause} size="lg" className="action_icon" onClick={pausecontainer} />}
             <FontAwesomeIcon icon={faPlay} size="lg" className="action_icon" onClick={runContainer} />
             <FontAwesomeIcon icon={faTrashCan} size="lg" className="action_icon" onClick={() => remove(id)} />
           </div>

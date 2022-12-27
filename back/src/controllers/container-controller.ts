@@ -1,9 +1,8 @@
 import axios from "axios";
 import { PrismaClient } from "@prisma/client";
-
 const prisma = new PrismaClient();
 const HttpError = require("../utils/http-error");
-
+import { pauseContainer as pause } from "../services/container-services";
 const listImages = async (req: any, res: any, next: any) => {
   const { host, port } = req.body;
   const url = `http://${host}:${port}/images/json`;
@@ -147,7 +146,16 @@ const inspectContainer = async (req: any, res: any, next: any) => {
     return next(error);
   }
 };
-
+const pauseContainer = async (req: any, res: any, next: any) => {
+  const { host, port, containerId } = req.body;
+  try {
+    await pause(containerId);
+    res.status(200).json({ message: "container paused" });
+  } catch (err) {
+    const error = new HttpError("Could not pause container.", 500);
+    return next(error);
+  }
+};
 const saveContainer = async (req: any, res: any, next: any) => {
   const { host, port, containerId } = req.body;
   try {
@@ -209,4 +217,5 @@ module.exports = {
   createContainer,
   runContainer,
   listContainers,
+  pauseContainer,
 };

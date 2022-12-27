@@ -9,7 +9,7 @@ const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
 
-const createWorkflowContainer = async (
+export const createWorkflowContainer = async (
   uid: number,
   image: string,
   CMD: string[],
@@ -110,6 +110,17 @@ const waitContainer = async (uid: number, containerId: string, wid: number, jid:
   }
 };
 
+export const pauseContainer = async (containerId: string) => {
+  try {
+    const url = `http://localhost:2375/containers/${containerId}/pause`;
+    const response = await axios.post(url);
+    return response;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
 const runWorkflowContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
   try {
     // io.emit(`w${wid.toString()}`, job);
@@ -126,10 +137,4 @@ const runWorkflowContainer = async (uid: number, containerId: string, wid: numbe
     const error = new HttpError("Could not start container.", 500);
     return error;
   }
-};
-
-export default module.exports = {
-  createWorkflowContainer: createWorkflowContainer,
-  runWorkflowContainer,
-  waitContainer,
 };

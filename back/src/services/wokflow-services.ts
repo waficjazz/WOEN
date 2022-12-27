@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import wc from "./container-services";
+import { createWorkflowContainer } from "./container-services";
 import { redisc } from "..";
 import { IJob, IWorkflow } from "../types";
 import { messageOneUser } from "../utils/socket";
@@ -177,7 +177,7 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
     if (job) {
       let container = job.container;
       let cname = container?.name + Math.random().toString(36).substring(2, 6);
-      wc.createWorkflowContainer(uid, container!!.image, container!!.commands, cname, wid, job.id);
+      createWorkflowContainer(uid, container!!.image, container!!.commands, cname, wid, job.id);
     }
   } catch (err) {
     return err;
