@@ -44,7 +44,7 @@ export const createWorkflowContainer = async (
   }
 };
 
-const waitContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
+export const waitContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
   let exitCode: number;
   try {
     const url = `http://localhost:2375/containers/${containerId}/wait`;

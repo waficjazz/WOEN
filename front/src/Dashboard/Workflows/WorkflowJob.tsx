@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faGear, faClock, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faGear, faClock, faCircleXmark, faCirclePause } from "@fortawesome/free-solid-svg-icons";
 import { IPlacement, IWJob } from "../../types";
 import "./Workflows.css";
 import { useEffect } from "react";
@@ -27,6 +27,9 @@ const WorkflowJob = (props: IProps) => {
         {props.status === "failed" && (
           <FontAwesomeIcon icon={faCircleXmark} size="lg" color={statusColor(props.status)} className="workflow_job_icon " />
         )}
+        {props.status === "paused" && (
+          <FontAwesomeIcon icon={faCirclePause} size="lg" color={statusColor(props.status)} className="workflow_job_icon " />
+        )}
       </>
     );
   };
@@ -40,6 +43,8 @@ const WorkflowJob = (props: IProps) => {
       case "running":
         return "blue";
       case "pending":
+        return "white";
+      case "paused":
         return "rgb(255, 174, 0)";
       default:
         return "white";
