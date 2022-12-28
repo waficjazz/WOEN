@@ -23,7 +23,7 @@ const OneWorkflow = () => {
   const [selectedJob, setSelectedJob] = useState<number | undefined>();
   useEffect(() => {
     socket.on(`w${wid}`, (job) => {
-      updateWorkflowJob(job);
+      updateWorkflowJob([job]);
     });
   }, [jobs]);
 
@@ -37,21 +37,43 @@ const OneWorkflow = () => {
     if (target?.id === "wjobscontainer") setSelectedJob(undefined);
   };
 
-  const updateWorkflowJob = (uJob: IWJob) => {
-    const newJobs = jobs.map((job) => {
-      if (job.id === uJob.id) {
-        return uJob;
+  const updateWorkflowJob = (uJobs: IWJob[]) => {
+    // const newJobs = jobs.map((job) => {
+    //   if (job.id === uJob.id) {
+    //     return uJob;
+    //   }
+    //   return job;
+    // });
+    const newJobs = [];
+    for (let i = 0; i < jobs.length; i++) {
+      for (let j = 0; j < uJobs.length; j++) {
+        if (jobs[i].id === uJobs[j].id) {
+          newJobs.push(uJobs[j]);
+          break;
+        } else {
+          newJobs.push(jobs[i]);
+        }
       }
-      return job;
-    });
+    }
     setJobs(newJobs);
+  };
+
+  const pauseWorkflow = async () => {
+    try {
+      const response = await Axios.post(`/workflow/${wid}/pause`);
+      if (response.data) {
+        updateWorkflowJob(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const pauseJob = async () => {
     try {
       const response = await Axios.post(`/workflow/job/${selectedJob}/pause`);
       if (response.data) {
-        updateWorkflowJob(response.data);
+        updateWorkflowJob([response.data]);
       }
     } catch (err) {
       console.log(err);
@@ -62,8 +84,7 @@ const OneWorkflow = () => {
     try {
       const response = await Axios.post(`/workflow/job/${selectedJob}/unpause`);
       if (response.data) {
-        console.log("ujob", response.data);
-        updateWorkflowJob(response.data);
+        updateWorkflowJob([response.data]);
       }
     } catch (err) {
       console.log(err);
@@ -123,6 +144,9 @@ const OneWorkflow = () => {
           </Button>
           <Button style={{ height: "30px" }} onClick={pauseJob}>
             PAUSE
+          </Button>
+          <Button style={{ height: "30px" }} onClick={pauseWorkflow}>
+            PAUSE ALL
           </Button>
         </div>
         <div className="one_workflow_content">
