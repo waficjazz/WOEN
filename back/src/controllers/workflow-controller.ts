@@ -227,7 +227,8 @@ const unpauseJob = async (req: any, res: any, next: any) => {
     });
     await unpauseContainer(job?.containerInstance!!);
     ujob = await updateJob(parseInt(jobId), { status: "running" });
-    if (job) waitContainer(uid, job?.containerInstance!!, job?.workflowId, parseInt(jobId));
+    //TODO waiting container http request already , so it will not be enable again (other solution is close connection once paused)
+    // if (job) waitContainer(uid, job?.containerInstance!!, job?.workflowId, parseInt(jobId));
   } catch (err) {
     const error = new HttpError("Could not resume job.", 500);
     return next(error);

@@ -58,6 +58,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
       await updateJob(jid, { finishedAt: new Date() });
       if (exitCode === 0) {
         /// add redis check if job is retry
+
         let workflow = await prisma.workflow.findUnique({
           where: {
             id: wid,
@@ -84,7 +85,10 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
 
             await Promise.all(
               job.successors.map(async (j) => {
+                /// successsor job id are template ids
+                // TODO check for duplictate entry as multple wait could exist for same conatainer
                 await redisc.lPush(`${j}${wid}`, jid.toString());
+
                 //// check below two line if moved outside loop parallele job does not update
                 let uJob = await updateJob(jid, { status: "finished", exitCode: exitCode });
                 messageOneUser(uid, `w${wid.toString()}`, uJob);
