@@ -235,6 +235,32 @@ const unpauseJob = async (req: any, res: any, next: any) => {
   res.status(200).json(ujob);
 };
 
+const pauseWokflow = async (req: any, res: any, next: any) => {
+  const workflowId = req.params.wid;
+  let workflow, uworkflow;
+  let jobs;
+  let ujobs = [];
+  try {
+    jobs = await prisma.job.findMany({
+      where: {
+        workflowId: parseInt(workflowId),
+        status: "running",
+      },
+    });
+    for (let i = 0; i < jobs.length; i++) {
+      let ujob;
+      await pauseContainer(jobs[i].containerInstance!!);
+      ujob = await updateJob(jobs[i].id, { status: "paused" });
+      ujobs.push(ujob);
+    }
+    uworkflow = await updateWorkflow(parseInt(workflowId), { status: "paused" });
+  } catch (err) {
+    const error = new HttpError("Could not pause workflow.", 500);
+    return next(error);
+  }
+  res.status(200).json(ujobs);
+};
+
 const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
   const { placements } = req.body;
   const workflowId = req.params.wid;
@@ -319,4 +345,5 @@ module.exports = {
   deleteWorkflowTemplate,
   pauseJob,
   unpauseJob,
+  pauseWokflow,
 };
