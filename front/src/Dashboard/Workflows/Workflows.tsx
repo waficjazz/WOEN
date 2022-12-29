@@ -6,6 +6,7 @@ import Axios from "../../axios";
 import { IWorkflow } from "../../types";
 import { socket } from "../../Socket";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import * as api from "./api";
 
 const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
@@ -14,32 +15,52 @@ const Workflows = () => {
 
   useEffect(() => {
     socket.on("wfs", (workflow) => {
-      updateWorkflows(workflow);
+      updateWorkflows([workflow]);
     });
   }, [workflows]);
 
-  const updateWorkflows = (uWorkflow: IWorkflow) => {
-    // let exist = true;
-    const newWorkflows = workflows.map((workflow) => {
-      if (workflow.id === uWorkflow.id) {
-        // exist = false;
-        return uWorkflow;
+  const updateWorkflows = (uWorkflow: IWorkflow[]) => {
+    const newWorkflows = [];
+    for (let i = 0; i < workflows.length; i++) {
+      let added = false;
+      for (let j = 0; j < uWorkflow.length; j++) {
+        if (workflows[i].id === uWorkflow[j].id) {
+          newWorkflows.push(uWorkflow[j]);
+          added = true;
+          break;
+        }
       }
-      return workflow;
-    });
-    // if (!exist) newWorkflows.push(uWorkflow);
+      if (added == false) newWorkflows.push(workflows[i]);
+    }
     setWorkflows(newWorkflows);
   };
-
-  async function removeWorkflow(e: MouseEvent, id: string) {
+  async function removeWorkflow() {
     try {
-      e.stopPropagation();
-      const response = await Axios.delete(`/workflow/one/${id}`);
-      setWorkflows((prev) => prev?.filter((w) => w.id !== id));
+      for (const id of selectedWorkflows.keys()) {
+        await Axios.delete(`/workflow/one/${id}`);
+        setWorkflows((prev) => prev?.filter((w) => w.id !== id));
+      }
     } catch (err) {
       console.log(err);
     }
   }
+
+  const pauseWorkflows = async () => {
+    try {
+      let uWorkflows: IWorkflow[] = [];
+      for (const id of selectedWorkflows.keys()) {
+        const response = await api.pauseWorkflow(id);
+        if (response.data) {
+          uWorkflows.push(response.data.workflow as IWorkflow);
+        }
+      }
+      console.log(uWorkflows, "see");
+      updateWorkflows(uWorkflows);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const getWorkflow = async () => {
     try {
       const response = await Axios.get("/workflow/all");
@@ -74,8 +95,8 @@ const Workflows = () => {
         </div>
         <div className="one_workflow_tools">
           <Button>RESUME</Button>
-          <Button>PAUSE</Button>
-          <Button>DELETE</Button>
+          <Button onClick={pauseWorkflows}>PAUSE</Button>
+          <Button onClick={removeWorkflow}>DELETE</Button>
         </div>
         <div className="workflow_table" ref={workflowRef}>
           <div className="workflow_table_header ">

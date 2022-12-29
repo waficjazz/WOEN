@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan, faCircleCheck, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faCircleCheck, faClock, faCirclePause } from "@fortawesome/free-solid-svg-icons";
 import { ColorRing } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import "./Workflows.css";
@@ -27,6 +27,7 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
       <>
         {status === "pending" && <FontAwesomeIcon icon={faClock} size="sm" />}
         {status === "finished" && <FontAwesomeIcon icon={faCircleCheck} size="sm" color="green" />}
+        {status === "paused" && <FontAwesomeIcon icon={faCirclePause} size="sm" color="rgb(255, 174, 0)" />}
         {status === "running" && (
           <ColorRing
             visible={true}
@@ -74,7 +75,6 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
         <div style={{ width: "10%" }}>
           {completedJobs}/{totalJobs}
         </div>
-        <FontAwesomeIcon icon={faTrashCan} className="action_icon" size="lg" onClick={(e) => remove(e, id)} />
       </div>
     </>
   );
