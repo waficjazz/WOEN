@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faCircleCheck, faClock } from "@fortawesome/free-solid-svg-icons";
 import { ColorRing } from "react-loader-spinner";
@@ -11,9 +12,11 @@ import ReactTimeAgo from "react-time-ago";
 interface IProps extends IWorkflow {
   placements: any;
   remove: any;
+  checked: boolean;
+  select: () => void;
 }
 
-const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs, startedAt, finishedAt }: IProps) => {
+const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs, startedAt, finishedAt, checked, select }: IProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/one-workflow/${id}`);
@@ -42,7 +45,19 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
   return (
     <>
       <div className="workflow_row" onClick={handleClick}>
-        <div style={{ width: "5%" }}>
+        <div style={{ width: "2%" }}>
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={() => {
+              select();
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          />
+        </div>
+        <div style={{ width: "3%" }}>
           <IconStatus />
         </div>
         <div style={{ width: "15%" }}>{name}</div>
