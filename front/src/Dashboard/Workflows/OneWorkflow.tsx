@@ -9,7 +9,7 @@ import Xarrow, { Xwrapper } from "react-xarrows";
 import { socket } from "../../Socket";
 import JobDetails from "./JobDetails";
 import Button from "../../shared/Buttons/Button";
-
+import * as api from "./api";
 const OneWorkflow = () => {
   let x = 0;
   let y = 0;
@@ -38,31 +38,28 @@ const OneWorkflow = () => {
   };
 
   const updateWorkflowJob = (uJobs: IWJob[]) => {
-    // const newJobs = jobs.map((job) => {
-    //   if (job.id === uJob.id) {
-    //     return uJob;
-    //   }
-    //   return job;
-    // });
     const newJobs = [];
     for (let i = 0; i < jobs.length; i++) {
+      let added = false;
       for (let j = 0; j < uJobs.length; j++) {
         if (jobs[i].id === uJobs[j].id) {
           newJobs.push(uJobs[j]);
+          added = true;
           break;
-        } else {
-          newJobs.push(jobs[i]);
         }
       }
+      if (added == false) newJobs.push(jobs[i]);
     }
     setJobs(newJobs);
   };
 
   const pauseWorkflow = async () => {
     try {
-      const response = await Axios.post(`/workflow/${wid}/pause`);
-      if (response.data) {
-        updateWorkflowJob(response.data);
+      if (wid !== undefined) {
+        const response = await api.pauseWorkflow(wid);
+        if (response.data) {
+          updateWorkflowJob(response.data.jobs);
+        }
       }
     } catch (err) {
       console.log(err);
@@ -71,7 +68,7 @@ const OneWorkflow = () => {
 
   const pauseJob = async () => {
     try {
-      const response = await Axios.post(`/workflow/job/${selectedJob}/pause`);
+      const response = await api.pauseJob(selectedJob as number);
       if (response.data) {
         updateWorkflowJob([response.data]);
       }

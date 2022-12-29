@@ -259,7 +259,7 @@ const pauseWokflow = async (req: any, res: any, next: any) => {
     const error = new HttpError("Could not pause workflow.", 500);
     return next(error);
   }
-  res.status(200).json(ujobs);
+  res.status(200).json({ jobs: ujobs, workflow: uworkflow });
 };
 
 const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
