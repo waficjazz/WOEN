@@ -72,6 +72,11 @@ const Workflows = () => {
           <p>Workflows</p>
           {/* <Button onClick={() => setShowForm(true)}>Create</Button> */}
         </div>
+        <div className="one_workflow_tools">
+          <Button>RESUME</Button>
+          <Button>PAUSE</Button>
+          <Button>DELETE</Button>
+        </div>
         <div className="workflow_table" ref={workflowRef}>
           <div className="workflow_table_header ">
             <div style={{ width: "5%" }}>

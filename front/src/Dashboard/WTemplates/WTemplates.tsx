@@ -34,6 +34,7 @@ const WTemplates = () => {
           <p>Workflows Templates</p>
           <Button onClick={() => setShowForm(true)}>Create</Button>
         </div>
+        <div className="one_workflow_tools"></div>
         <div className="workflow_table" ref={templateRef}>
           <div className="workflow_table_header ">
             <div style={{ width: "25%" }}>NAME</div>
