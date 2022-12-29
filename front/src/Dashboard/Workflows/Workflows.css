@@ -15,6 +15,7 @@
   font-weight: bolder;
   font-size: 1.25rem;
   padding-left: 1rem;
+  color: white;
 }
 .table_board_header {
   display: flex;
@@ -23,7 +24,8 @@
   justify-content: space-between;
   /* background-color: red; */
   background-color: rgb(255, 255, 255, 0.1);
-  height: 50px;
+  height: 45px;
+  margin-bottom: 1px;
 }
 
 .workflow_table {
@@ -101,7 +103,7 @@
   align-items: center;
   justify-content: space-between;
   background-color: rgb(255, 255, 255, 0.1);
-  height: 40px;
+  height: 45px;
   margin-bottom: 1px;
 }
 .one_workflow_tools {
@@ -111,7 +113,7 @@
   justify-content: flex-start;
   gap: 10px;
   background-color: rgb(255, 255, 255, 0.1);
-  height: 40px;
+  min-height: 45px;
   margin-bottom: 1px;
   padding-left: 10px;
   padding-right: 10px;

@@ -139,15 +139,9 @@ const OneWorkflow = () => {
           <p>Workflow</p>
         </div>
         <div className="one_workflow_tools">
-          <Button style={{ height: "30px" }} onClick={unpauseJob}>
-            RESUME
-          </Button>
-          <Button style={{ height: "30px" }} onClick={pauseJob}>
-            PAUSE
-          </Button>
-          <Button style={{ height: "30px" }} onClick={pauseWorkflow}>
-            PAUSE ALL
-          </Button>
+          <Button onClick={unpauseJob}>RESUME</Button>
+          <Button onClick={pauseJob}>PAUSE</Button>
+          <Button onClick={pauseWorkflow}>PAUSE ALL</Button>
         </div>
         <div className="one_workflow_content">
           <div className="wjobs_container" id="wjobscontainer">

@@ -10,6 +10,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 const Workflows = () => {
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
   const [workflowRef] = useAutoAnimate<HTMLDivElement>();
+  const [selectedWorkflows, setSelectedWorkflows] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     socket.on("wfs", (workflow) => {
@@ -50,11 +51,20 @@ const Workflows = () => {
     }
   };
 
+  const selectWorkflow = (id: string) => {
+    const currentlySelected: Map<string, string> = selectedWorkflows;
+    if (currentlySelected.has(id)) {
+      currentlySelected.delete(id);
+      setSelectedWorkflows(new Map<string, string>(currentlySelected));
+    } else {
+      currentlySelected.set(id, id);
+      setSelectedWorkflows(new Map<string, string>(currentlySelected));
+    }
+  };
   useEffect(() => {
     getWorkflow();
   }, []);
 
-  const [showForm, setShowForm] = useState(false);
   return (
     <>
       <div className="table_board">
@@ -62,9 +72,31 @@ const Workflows = () => {
           <p>Workflows</p>
           {/* <Button onClick={() => setShowForm(true)}>Create</Button> */}
         </div>
+        <div className="one_workflow_tools">
+          <Button>RESUME</Button>
+          <Button>PAUSE</Button>
+          <Button>DELETE</Button>
+        </div>
         <div className="workflow_table" ref={workflowRef}>
           <div className="workflow_table_header ">
-            <div style={{ width: "5%" }}></div>
+            <div style={{ width: "5%" }}>
+              <input
+                type="checkbox"
+                checked={workflows.length === selectedWorkflows.size}
+                onClick={(e) => e.stopPropagation()}
+                onChange={() => {
+                  if (workflows.length === selectedWorkflows.size) {
+                    setSelectedWorkflows(new Map<string, string>());
+                  } else {
+                    const newSelected: Map<string, string> = new Map<string, string>();
+                    workflows.forEach((workflow) => {
+                      newSelected.set(workflow.id, workflow.id);
+                    });
+                    setSelectedWorkflows(newSelected);
+                  }
+                }}
+              />
+            </div>
             <div style={{ width: "15%" }}>NAME</div>
             <div style={{ width: "15%" }}>USER</div>
             <div style={{ width: "15%" }}>STARTED</div>
@@ -75,7 +107,16 @@ const Workflows = () => {
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {
-              return <WorkflowRow key={workflow.id} {...workflow} placements={workflow.placements} remove={removeWorkflow} />;
+              return (
+                <WorkflowRow
+                  key={workflow.id}
+                  {...workflow}
+                  placements={workflow.placements}
+                  remove={removeWorkflow}
+                  checked={selectedWorkflows.has(workflow.id)}
+                  select={() => selectWorkflow(workflow.id)}
+                />
+              );
             })}
         </div>
       </div>
