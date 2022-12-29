@@ -5,7 +5,7 @@ import Button from "../../shared/Buttons/Button";
 import Input from "../../shared/Inputs/Input";
 import CTextArea from "../../shared/TextAreas/CTextArea";
 import { InputEvent } from "../../types";
-
+import * as api from "./api";
 interface Props {
   show: boolean;
   close: any;
@@ -46,7 +46,7 @@ const ContainerForm = ({ show, close }: Props) => {
       let cmds = parseCommands(commandTxt);
       let arr = [shellType, "-c", cmds];
       let obj = { ...container, CMD: arr };
-      const response = await Axios.post("/containers/create", obj);
+      const response = await api.createContainer(obj);
       if (response.status === 201) {
         close(false);
       }

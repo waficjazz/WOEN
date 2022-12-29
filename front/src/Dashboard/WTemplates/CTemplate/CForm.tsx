@@ -4,6 +4,7 @@ import "./CTemplate.css";
 import Axios from "../../../axios";
 import Button from "../../../shared/Buttons/Button";
 import { IWorkflow } from "../../../types";
+import * as api from "../api";
 interface Props {
   setShow: any;
   addWorkflow: any;
@@ -14,8 +15,7 @@ const CForm = (props: Props) => {
   const handleSubmit = async () => {
     let obj = { name: wfName };
     try {
-      console.log(Axios.defaults.headers.common["Authorization"]);
-      const response = await Axios.post("/workflow/create", obj);
+      const response = await api.createWorkflow(obj);
       if (response.status === 201) {
         props.addWorkflow((prev: IWorkflow[]) => [...prev, response.data]);
         props.setShow(false);

@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aSelectedJob, aDepends } from "../../../store";
 import Axios from "../../../axios";
 import { useParams } from "react-router-dom";
-
+import * as api from "../api";
 const SContainer = (props: ISContainer) => {
   const params = useParams();
   const id = params.id || "0";
@@ -21,8 +21,8 @@ const SContainer = (props: ISContainer) => {
     try {
       let old = connection[selectedJob] || [];
       let oldDepends = depends[props.id] || [];
-      const response = await Axios.post("/workflow/job/update", { jobId: selectedJob, successors: [...old, props.id.toString()] });
-      const response1 = await Axios.post("/workflow/job/update", { jobId: props.id, dependencies: [...oldDepends, selectedJob.toString()] });
+      await api.updateJob({ jobId: selectedJob, successors: [...old, props.id.toString()] });
+      await api.updateJob({ jobId: props.id, dependencies: [...oldDepends, selectedJob.toString()] });
     } catch (err) {
       console.log(err);
     }
@@ -31,7 +31,7 @@ const SContainer = (props: ISContainer) => {
     try {
       // random 4 letter name
       let name = Math.random().toString(36).substring(2, 6);
-      const response = await Axios.post("/workflow/job/create", {
+      const response = await api.createJob({
         workflowTemplateId: parseInt(id),
         name: props.name + "-" + name,
         containerId: props.id,

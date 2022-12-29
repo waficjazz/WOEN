@@ -8,6 +8,7 @@ import Axios from "../../axios";
 import "./WTemplates.css";
 import { dateStyle } from "../../utils/time-format";
 import ReactTimeAgo from "react-time-ago";
+import * as api from "./api";
 interface Props extends IWTemplate {}
 
 const WTemplateRow = ({ id, name, createdAt, updatedAt }: Props) => {
@@ -19,7 +20,7 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt }: Props) => {
   const initWorkflow = async () => {
     try {
       let rand = Math.random().toString(36).substring(2, 6);
-      const response = await Axios.post("/workflow/init", { name: name + rand, templateId: id });
+      const response = await api.initWorkflow({ name: name + rand, templateId: id });
       if (response.data) {
         console.log(response.data);
         navigate(`/one-workflow/${response.data.id}`);

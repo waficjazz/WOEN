@@ -79,9 +79,11 @@ const OneWorkflow = () => {
 
   const unpauseJob = async () => {
     try {
-      const response = await Axios.post(`/workflow/job/${selectedJob}/unpause`);
-      if (response.data) {
-        updateWorkflowJob([response.data]);
+      if (selectedJob) {
+        const response = await api.unpauseJob(selectedJob);
+        if (response.data) {
+          updateWorkflowJob([response.data]);
+        }
       }
     } catch (err) {
       console.log(err);
@@ -90,7 +92,7 @@ const OneWorkflow = () => {
 
   const getWorkflowJobs = async () => {
     try {
-      const response = await Axios.get(`/workflow/one/${wid}`);
+      const response = await api.getWorkflowJobs(wid as string);
       if (response.data) {
         setJobs(response.data.jobs);
         let jobs: IWJob[] = response.data.jobs;

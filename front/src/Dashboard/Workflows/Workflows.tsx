@@ -54,7 +54,6 @@ const Workflows = () => {
           uWorkflows.push(response.data.workflow as IWorkflow);
         }
       }
-      console.log(uWorkflows, "see");
       updateWorkflows(uWorkflows);
     } catch (err) {
       console.log(err);
