@@ -15,3 +15,11 @@ export const unpauseJob = (jid: number) => {
 export const getWorkflowJobs = (wid: string) => {
   return Axios.get(`/workflow/one/${wid}`);
 };
+
+export const deleteWorkflow = (wid: string) => {
+  return Axios.delete(`/workflow/one/${wid}`);
+};
+
+export const getWorkflows = () => {
+  return Axios.get(`/workflow/all`);
+};

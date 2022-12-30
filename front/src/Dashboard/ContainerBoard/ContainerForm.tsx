@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./ContainerBoard.css";
-import Axios from "../../axios";
 import Button from "../../shared/Buttons/Button";
 import Input from "../../shared/Inputs/Input";
 import CTextArea from "../../shared/TextAreas/CTextArea";

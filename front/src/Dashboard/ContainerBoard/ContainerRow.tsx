@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faPlay, faTrashCan, faFloppyDisk, faPause } from "@fortawesome/free-solid-svg-icons";
-import Axios from "../../axios";
 import CTextArea from "../../shared/TextAreas/CTextArea";
 import * as api from "./api";
 interface Props {

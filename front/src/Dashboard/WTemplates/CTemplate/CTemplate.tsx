@@ -6,7 +6,6 @@ import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aDepends } from "../../../store";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import CMenu from "./CMenu";
-import Axios from "../../../axios";
 import Job from "./Job";
 import Button from "../../../shared/Buttons/Button";
 import * as api from "../api";

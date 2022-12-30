@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Input from "../../../shared/Inputs/Input";
 import "./CTemplate.css";
-import Axios from "../../../axios";
 import Button from "../../../shared/Buttons/Button";
 import { IWorkflow } from "../../../types";
 import * as api from "../api";

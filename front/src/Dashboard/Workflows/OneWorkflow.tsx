@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import Axios from "../../axios";
 import { useParams } from "react-router-dom";
 import { IWJob, IConnection, IPlacement } from "../../types";
 import { useAtom } from "jotai";

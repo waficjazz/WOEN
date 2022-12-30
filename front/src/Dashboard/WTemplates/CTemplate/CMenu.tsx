@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ISContainer } from "../../../types";
-import Axios from "../../../axios";
 import "./CTemplate.css";
 import SContainer from "./SContainer";
 import { aJobs, aShowMenu, aSelectedJob } from "../../../store";

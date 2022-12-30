@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { InputEvent, IUser } from "../../types";
 import Input from "../../shared/Inputs/Input";
 import "./SignUp.css";
-import Axios from "../../axios";
+import * as api from "../api";
 import Button from "../../shared/Buttons/Button";
 import { updateUser } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
-import { redirect } from "react-router-dom";
+import Axios from "../../axios";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const SignUp = () => {
 
   const signUp = async () => {
     try {
-      const { data, status } = await Axios.post("/user/signup", user);
+      const { data, status } = await api.userSignUp(user);
       if (status === 201) {
         Axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         updateUser(data.token, data.user);
