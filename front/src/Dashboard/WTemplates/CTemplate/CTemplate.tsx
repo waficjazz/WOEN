@@ -6,9 +6,9 @@ import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aDepends } from "../../../store";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
 import CMenu from "./CMenu";
-import Axios from "../../../axios";
 import Job from "./Job";
 import Button from "../../../shared/Buttons/Button";
+import * as api from "../api";
 
 const CTemplate = () => {
   const { id } = useParams();
@@ -35,7 +35,7 @@ const CTemplate = () => {
 
   const getWorkflowJobs = async () => {
     try {
-      const response = await Axios.get(`/workflow/template/${id}`);
+      const response = await api.getTemplate(id!!);
       if (response.data) {
         setJobs(response.data.workflow.jobTemplates);
         let jobs: IJob[] = response.data.workflow.jobTemplates;
@@ -56,7 +56,7 @@ const CTemplate = () => {
 
   const savePlacement = async () => {
     try {
-      const response = await Axios.post(`/workflow/${id}/placement`, { placements: placement.current });
+      const response = await api.updatePlacements(id!!, { placements: placement.current });
       if (response.data) {
         // console.log(response.data);
       }
@@ -103,7 +103,7 @@ const CTemplate = () => {
 
   const handleRemove = async (id: number) => {
     try {
-      const response = await Axios.delete(`/workflow/template/${id}`);
+      const response = await api.deleteTemplate(id);
       if (response.status === 200) {
         console.log("Job deleted");
       }
@@ -117,14 +117,14 @@ const CTemplate = () => {
     if (jobConnections) {
       jobConnections.forEach(async (connection) => {
         let newDep = { [connection]: dependencies[connection]?.filter((job) => job !== id.toString()) };
-        await Axios.post("/workflow/job/update", { jobId: parseInt(connection), successors: newDep[connection] });
+        await api.updateJob({ jobId: parseInt(connection), successors: newDep[connection] });
         setDependencies({ ...dependencies, ...newDep });
       });
     }
     if (jobDependencies) {
       jobDependencies.forEach(async (dependency) => {
         let newConnection = { [dependency]: connections[dependency]?.filter((job) => job !== id.toString()) };
-        await Axios.post("/workflow/job/update", { jobId: parseInt(dependency), successors: newConnection[dependency] });
+        await api.updateJob({ jobId: parseInt(dependency), successors: newConnection[dependency] });
         setConnections({ ...connections, ...newConnection });
       });
     }

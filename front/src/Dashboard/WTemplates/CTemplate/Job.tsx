@@ -7,7 +7,6 @@ import { aJobs } from "../../../store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faCircle } from "@fortawesome/free-solid-svg-icons";
 import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from "react-draggable";
-import Axios from "../../../axios";
 
 interface IProps extends IJob {
   placement: IPlacement;

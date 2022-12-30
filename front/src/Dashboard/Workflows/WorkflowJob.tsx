@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faGear, faClock, faCircleXmark, faCirclePause } from "@fortawesome/free-solid-svg-icons";
 import { IPlacement, IWJob } from "../../types";
 import "./Workflows.css";
-import { useEffect } from "react";
 interface IProps extends IWJob {
   placement: IPlacement;
   top: number;

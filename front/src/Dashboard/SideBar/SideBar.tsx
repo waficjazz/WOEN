@@ -1,4 +1,3 @@
-import React from "react";
 import "./SideBar.css";
 import SideTile from "./SideTile";
 

@@ -2,18 +2,17 @@ import { useState, useEffect } from "react";
 import Button from "../../shared/Buttons/Button";
 import WorkflowRow from "./WTemplateRow";
 import "./WTemplates.css";
-import Axios from "../../axios";
-import { IWorkflow, IWTemplate } from "../../types";
+import { IWTemplate } from "../../types";
 import WTemplateRow from "./WTemplateRow";
 import CForm from "./CTemplate/CForm";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-
+import * as api from "./api";
 const WTemplates = () => {
   const [workflows, setWorkflows] = useState<IWTemplate[]>([]);
   const [templateRef] = useAutoAnimate<HTMLDivElement>();
-  const getWorkflow = async () => {
+  const getTemplates = async () => {
     try {
-      const response = await Axios.get("/workflow/all/templates");
+      const response = await api.getAllTemplates();
       if (response.data) {
         setWorkflows(response.data);
       }
@@ -23,7 +22,7 @@ const WTemplates = () => {
   };
 
   useEffect(() => {
-    getWorkflow();
+    getTemplates();
   }, []);
 
   const [showForm, setShowForm] = useState(false);

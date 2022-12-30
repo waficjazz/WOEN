@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Axios from "../../axios";
 import "./ContainerBoard.css";
 import ContainerRow from "./ContainerRow";
 import ContainerForm from "./ContainerForm";
 import Button from "../../shared/Buttons/Button";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-
+import * as api from "./api";
 const ContainerTable = () => {
   interface Container {
     Id: string;
@@ -18,7 +17,7 @@ const ContainerTable = () => {
   const [containerRef] = useAutoAnimate<HTMLDivElement>();
   const getContainers = async () => {
     try {
-      const response = await Axios.get("/containers/list");
+      const response = await api.getContainers();
       if (response.data) {
         setContainers(response.data.containers);
       }
@@ -28,7 +27,7 @@ const ContainerTable = () => {
   };
   async function removeContainer(id: string) {
     try {
-      const response = await Axios.delete(`/containers/remove`, { data: { containerId: id } });
+      const response = await api.removeContainer({ containerId: id });
       setContainers((prev) => prev?.filter((c) => c.Id !== id));
     } catch (err) {
       console.log(err);

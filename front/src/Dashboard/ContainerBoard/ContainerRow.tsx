@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faPlay, faTrashCan, faFloppyDisk, faPause } from "@fortawesome/free-solid-svg-icons";
-import Axios from "../../axios";
 import CTextArea from "../../shared/TextAreas/CTextArea";
+import * as api from "./api";
 interface Props {
   name: string;
   image: string;
@@ -28,8 +28,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
 
   const pausecontainer = async () => {
     try {
-      const response = await Axios.post(`/containers/pause`, { containerId: id });
-      console.log(response);
+      const response = await api.containerPause({ containerId: id });
     } catch (err) {
       console.log(err);
     }
@@ -37,8 +36,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
 
   const unpausecontainer = async () => {
     try {
-      const response = await Axios.post(`/containers/unpause`, { containerId: id });
-      console.log(response);
+      const response = await api.containerUnpause({ containerId: id });
     } catch (err) {
       console.log(err);
     }
@@ -46,7 +44,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
 
   async function runContainer() {
     try {
-      const response = await Axios.post(`/containers/run`, { containerId: id });
+      const response = await api.containerRun({ containerId: id });
     } catch (err) {
       console.log(err);
     }
@@ -54,7 +52,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
 
   async function saveContainer() {
     try {
-      const response = await Axios.post(`/containers/save`, { containerId: id });
+      const response = await api.containerSave({ containerId: id });
     } catch (err) {
       console.log(err);
     }
@@ -62,7 +60,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
 
   async function getLogs() {
     try {
-      const response = await Axios.post(`/containers/logs`, { containerId: id });
+      const response = await api.conatainerLogs({ containerId: id });
       setLogs(response.data.logs);
     } catch (err) {
       console.log(err);

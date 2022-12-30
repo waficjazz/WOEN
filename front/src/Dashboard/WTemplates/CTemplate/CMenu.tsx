@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { ISContainer } from "../../../types";
-import Axios from "../../../axios";
 import "./CTemplate.css";
 import SContainer from "./SContainer";
 import { aJobs, aShowMenu, aSelectedJob } from "../../../store";
 import { useAtom } from "jotai";
-
+import * as api from "../api";
 const CMenu = () => {
   const [containres, setContainers] = useState([] as ISContainer[]);
   const [showMenu] = useAtom(aShowMenu);
@@ -15,7 +14,7 @@ const CMenu = () => {
   useEffect(() => {
     const getSavedContainers = async () => {
       try {
-        const response = await Axios.get("/containers/saved");
+        const response = await api.getSavedContainers();
         if (response.status === 200) {
           setContainers(response.data);
         }
