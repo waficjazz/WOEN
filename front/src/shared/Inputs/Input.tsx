@@ -7,9 +7,10 @@ interface Props {
   name?: string;
   className?: string;
   label?: string;
+  style?: any;
 }
 
-const Input = ({ onChange, name, placeholder, className, label }: Props) => {
+const Input = ({ onChange, name, placeholder, className, label, style }: Props) => {
   return (
     <div className={"input_container " + className}>
       <label className="input_label">{label}</label>

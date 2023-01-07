@@ -44,7 +44,7 @@ const listContainers = async (req: any, res: any, next: any) => {
 };
 
 const createContainer = async (req: any, res: any, next: any) => {
-  const { host, port, image, CMD, name, hostName, domainName } = req.body;
+  const { host, port, image, CMD, name, hostName, domainName, User, Env } = req.body;
   // const url = `http://localhost:2375/images/create?fromImage=${image}`;
   // const response = await axios.post(url);
   // if (!response) {
@@ -58,6 +58,8 @@ const createContainer = async (req: any, res: any, next: any) => {
       Domainname: domainName,
       Image: image,
       Cmd: CMD,
+      User,
+      Env,
     });
     if (!response || response.status !== 201) {
       const error = new HttpError("Could not create container.", 500);
@@ -77,6 +79,7 @@ const runContainer = async (req: any, res: any, next: any) => {
     const url = `http://localhost:2375/containers/${containerId}/start`;
     const response = await axios.post(url);
     if (!response || response.status !== 204) {
+      console.log(response);
       const error = new HttpError("Could not start container.", 500);
       return next(error);
     }

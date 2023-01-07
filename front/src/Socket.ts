@@ -6,6 +6,5 @@ export const socket = manager.socket("/");
 const token = localStorage.getItem("token");
 
 socket.on("connect", () => {
-  console.log(socket.id);
   socket.emit("addUser", token);
 });

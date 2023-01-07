@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Button from "../../shared/Buttons/Button";
-import WorkflowRow from "./WTemplateRow";
 import "./WTemplates.css";
 import { IWTemplate } from "../../types";
 import WTemplateRow from "./WTemplateRow";

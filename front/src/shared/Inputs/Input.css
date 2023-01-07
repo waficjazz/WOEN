@@ -15,6 +15,7 @@
 }
 
 .p_input:focus {
+  border-bottom: 2px solid rgb(0, 81, 255) !important;
   outline: none;
   border: none;
 }
