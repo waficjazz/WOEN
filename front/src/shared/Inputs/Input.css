@@ -1,14 +1,17 @@
 .p_input {
   /* color: rgb(255, 208, 0); */
-  color: white;
+  color: rgb(255, 255, 255, 0.8);
   background-color: transparent;
   width: 100%;
   /* border-bottom: 2px solid rgb(0, 81, 255) !important; */
-  border-bottom: 2px solid rgb(255, 255, 255) !important;
+  border-bottom: 1px solid rgb(255, 255, 255) !important;
+  /* border: 1px solid rgb(255, 255, 255, 0.6) !important; */
+  /* border-radius: 3px; */
   /* border-bottom: 2px solid rgb(255, 208, 0) !important; */
-  height: 30px;
+  height: 35px;
+  margin: 0 !important;
   border: none;
-  font-size: medium;
+  font-size: 1rem;
 }
 
 .p_input:focus {
@@ -24,9 +27,10 @@
 }
 
 .input_label {
-  padding: 0;
+  padding: 0 !important;
   margin: 0;
-  font-size: small;
-  color: rgb(255, 255, 255, 0.5);
-  /* color: rgb(255, 208, 0); */
+  font-size: medium;
+  font-weight: bold;
+  color: white;
+  /* color: rgb(0, 81, 255); */
 }

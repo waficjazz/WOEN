@@ -57,9 +57,9 @@ const ContainerForm = ({ show, close }: Props) => {
   return (
     <>
       <div className="container_form">
-        <Input placeholder="Name" name="name" onChange={handleChange} />
-        <Input placeholder="Domain Name" name="domainName" onChange={handleChange} />
-        <Input placeholder="Image" name="image" onChange={handleChange} />
+        <Input label="Name" name="name" onChange={handleChange} />
+        <Input label="Domain Name" name="domainName" onChange={handleChange} />
+        <Input label="Image" name="image" onChange={handleChange} />
         <select className="select_shell" onChange={(e) => setShellType(e.target.value)}>
           <option value="bash">bash</option>
           <option value="sh">sh</option>
