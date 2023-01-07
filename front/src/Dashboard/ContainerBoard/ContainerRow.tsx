@@ -15,9 +15,6 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
   const [logs, setLogs] = useState("");
   const [hover, setHover] = useState(false);
 
-  useEffect(() => {
-    console.log(status);
-  }, []);
   function setColor(status: string) {
     if (/^Up/.test(status)) {
       return "green";

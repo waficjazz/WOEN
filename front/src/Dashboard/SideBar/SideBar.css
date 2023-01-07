@@ -1,7 +1,7 @@
 .side_bar {
   height: 100vh;
   min-width: 180px;
-  width: 12%;
+  min-width: 12%;
   border-right: 2px solid rgba(255, 255, 255, 0.8);
   color: white;
   display: flex;
