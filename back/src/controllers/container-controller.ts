@@ -182,7 +182,7 @@ const saveContainer = async (req: any, res: any, next: any) => {
     }
     const container = response.data;
     const name = container.Name;
-    const { Cmd, Image } = container.Config;
+    const { Cmd, Image, Env, User, WorkingDir } = container.Config;
 
     const savedContainer = await prisma.container.create({
       data: {
@@ -190,6 +190,9 @@ const saveContainer = async (req: any, res: any, next: any) => {
         name: name.slice(1),
         image: Image,
         commands: Cmd,
+        envs: Env,
+        user: User,
+        workingDir: WorkingDir,
       },
     });
     if (!savedContainer) {
