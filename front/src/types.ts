@@ -5,6 +5,7 @@ export interface ISContainer {
   name: string;
   image: string;
   commands?: string[];
+  envs?: string[];
   createdAt?: string;
 }
 

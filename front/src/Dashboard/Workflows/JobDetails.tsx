@@ -6,6 +6,9 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 interface IProps extends IWJob {}
 const JobDetails = ({ ...props }: IProps) => {
+  useEffect(() => {
+    console.log("JobDetails mounted", props);
+  }, []);
   const [jdRef] = useAutoAnimate<HTMLDivElement>();
 
   const [option, setOption] = useState<number>(1);
@@ -73,8 +76,19 @@ const JobDetails = ({ ...props }: IProps) => {
               <label>COMMANDS</label>
               <div className="container_commands">
                 {props.container?.commands &&
-                  props.container?.commands[2].split(";").map((l) => {
-                    return <div>{l}</div>;
+                  props.container?.commands[2].split(";").map((c) => {
+                    return <div>{c}</div>;
+                  })}
+              </div>
+            </>
+          </div>
+          <div>
+            <>
+              <label>Environment Variables</label>
+              <div className="container_commands">
+                {props.container?.envs &&
+                  props.container?.envs.map((env, i) => {
+                    if (i < props.container?.envs?.length!! - 1) return <div>{env}</div>;
                   })}
               </div>
             </>
