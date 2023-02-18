@@ -34,6 +34,7 @@ export interface IWJob {
   finishedAt?: string;
   container?: ISContainer;
   exitCode?: number;
+  containerInstance?: string;
 }
 
 export interface IConnection {
