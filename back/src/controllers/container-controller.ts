@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const HttpError = require("../utils/http-error");
 import { pauseContainer as pause, unpauseContainer as unpause } from "../services/container-services";
+import { messageOneUser } from "../utils/socket";
 const listImages = async (req: any, res: any, next: any) => {
   const { host, port } = req.body;
   const url = `http://${host}:${port}/images/json`;
@@ -103,15 +104,31 @@ const removeContainer = async (req: any, res: any, next: any) => {
 
 const getContainerLogs = async (req: any, res: any, next: any) => {
   const { host, port, containerId } = req.body;
-
+  const uid = req.userId;
   try {
-    const url = `http://localhost:2375/containers/${containerId}/logs?stdout=true&stderr=true`;
-    const response = await axios.get(url);
+    const url = `http://localhost:2375/containers/${containerId}/logs?stdout=true&stderr=true&follow=1`;
+
+    const response = await axios.get(url, {
+      responseType: "stream",
+    });
+
     if (!response || response.status !== 200) {
       const error = new HttpError("Could not get container logs.", 500);
       return next(error);
     }
-    res.status(200).json({ logs: response.data });
+
+    // Stream the logs back to the client as they are received from the Docker API
+    response.data.on("data", (chunk: any) => {
+      const logs = chunk.toString("utf-8");
+      console.log("wrote logs", logs);
+      messageOneUser(uid, `clogs${containerId}`, logs);
+      res.write(chunk);
+    });
+
+    response.data.on("end", () => {
+      messageOneUser(uid, `clogs${containerId}`, `end${containerId}`);
+      res.end();
+    });
   } catch (err) {
     const error = new HttpError("Could not get container logs.", 500);
     return next(error);

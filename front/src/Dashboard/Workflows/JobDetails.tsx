@@ -3,18 +3,53 @@ import { IWJob } from "../../types";
 import { getDuration, dateStyle } from "../../utils/time-format";
 import ReactTimeAgo from "react-time-ago";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-
+import { socket } from "../../Socket";
+import * as capi from "../ContainerBoard/api";
+import { ThreeDots } from "react-loader-spinner";
 interface IProps extends IWJob {}
 const JobDetails = ({ ...props }: IProps) => {
-  useEffect(() => {
-    console.log("JobDetails mounted", props);
-  }, []);
   const [jdRef] = useAutoAnimate<HTMLDivElement>();
 
   const [option, setOption] = useState<number>(1);
 
   const selectedStyle = {
     borderBottom: "1px solid white ",
+  };
+  const Logs = () => {
+    const [logs, setLogs] = useState<string>("");
+    const [endLogs, setEndLogs] = useState<boolean>(false);
+    useEffect(() => {
+      const getLogs = async () => {
+        try {
+          await capi.conatainerLogs({ containerId: props.containerInstance });
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      getLogs();
+
+      socket.on(`clogs${props.containerInstance}`, (log) => {
+        if (endLogs === false) setEndLogs(false);
+        if (log === `end${props.containerInstance}`) setEndLogs(true);
+        else setLogs((prevLogs) => prevLogs + log);
+      });
+    }, []);
+    return (
+      <div>
+        {logs.split("").map((st) => (
+          <div>{st}</div>
+        ))}
+        <ThreeDots
+          height="8"
+          width="60"
+          radius="1"
+          color="white"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{ marginLeft: "80%", marginTop: "20px" }}
+          visible={!endLogs}
+        />
+      </div>
+    );
   };
   return (
     <div className="job_details_container" ref={jdRef}>
@@ -24,6 +59,9 @@ const JobDetails = ({ ...props }: IProps) => {
         </div>
         <div style={option === 2 ? selectedStyle : {}} onClick={() => setOption(2)}>
           CONTAINER
+        </div>
+        <div style={option === 3 ? selectedStyle : {}} onClick={() => setOption(3)}>
+          LOGS
         </div>
       </div>
       {option === 1 && (
@@ -95,6 +133,7 @@ const JobDetails = ({ ...props }: IProps) => {
           </div>
         </div>
       )}
+      {option === 3 && <Logs />}
     </div>
   );
 };

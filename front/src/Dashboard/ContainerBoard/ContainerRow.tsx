@@ -1,3 +1,4 @@
+import { socket } from "../../Socket";
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faPlay, faTrashCan, faFloppyDisk, faPause } from "@fortawesome/free-solid-svg-icons";
@@ -55,17 +56,9 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
     }
   }
 
-  async function getLogs() {
-    try {
-      const response = await api.conatainerLogs({ containerId: id });
-      setLogs(response.data.logs);
-    } catch (err) {
-      console.log(err);
-    }
-  }
   return (
     <>
-      <div className="container_row" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onClick={getLogs}>
+      <div className="container_row" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
         <FontAwesomeIcon icon={faBox} size="lg" color={setColor(status)} />
         <div className="container_row_text">
           <p>
