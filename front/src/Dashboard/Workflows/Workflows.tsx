@@ -59,6 +59,21 @@ const Workflows = () => {
     }
   };
 
+  const resumeWorkflows = async () => {
+    try {
+      let uWorkflows: IWorkflow[] = [];
+      for (const id of selectedWorkflows.keys()) {
+        const response = await api.resumeWorkflow(id);
+        if (response.data) {
+          uWorkflows.push(response.data.workflow as IWorkflow);
+        }
+      }
+      updateWorkflows(uWorkflows);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const getWorkflows = async () => {
     try {
       const response = await api.getWorkflows();
@@ -92,7 +107,7 @@ const Workflows = () => {
           {/* <Button onClick={() => setShowForm(true)}>Create</Button> */}
         </div>
         <div className="one_workflow_tools">
-          <Button>RESUME</Button>
+          <Button onClick={resumeWorkflows}>RESUME</Button>
           <Button onClick={pauseWorkflows}>PAUSE</Button>
           <Button onClick={removeWorkflow}>DELETE</Button>
         </div>
