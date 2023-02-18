@@ -236,6 +236,32 @@ const unpauseJob = async (req: any, res: any, next: any) => {
   res.status(200).json(ujob);
 };
 
+const resumeWorkflow = async (req: any, res: any, next: any) => {
+  const workflowId = req.params.wid;
+  const uid = req.userUd;
+  let jobs, uworkflow;
+  let ujobs = [];
+  try {
+    jobs = await prisma.job.findMany({
+      where: {
+        workflowId: parseInt(workflowId),
+        status: "paused",
+      },
+    });
+    for (let i = 0; i < jobs.length; i++) {
+      let ujob;
+      await unpauseContainer(jobs[i].containerInstance!!);
+      ujob = await updateJob(jobs[i].id, { status: "running" });
+      ujobs.push(ujob);
+    }
+    uworkflow = await updateWorkflow(parseInt(workflowId), { status: "running" });
+  } catch (err) {
+    const error = new HttpError("Could not resume workflow.", 500);
+    return next(error);
+  }
+  res.status(200).json({ jobs: ujobs, workflow: uworkflow });
+};
+
 const pauseWokflow = async (req: any, res: any, next: any) => {
   const workflowId = req.params.wid;
   let workflow, uworkflow;
@@ -347,4 +373,5 @@ module.exports = {
   pauseJob,
   unpauseJob,
   pauseWokflow,
+  resumeWorkflow,
 };

@@ -117,10 +117,8 @@ const getContainerLogs = async (req: any, res: any, next: any) => {
       return next(error);
     }
 
-    // Stream the logs back to the client as they are received from the Docker API
     response.data.on("data", (chunk: any) => {
       const logs = chunk.toString("utf-8");
-      console.log("wrote logs", logs);
       messageOneUser(uid, `clogs${containerId}`, logs);
       res.write(chunk);
     });

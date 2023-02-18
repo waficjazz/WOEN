@@ -4,6 +4,10 @@ export const pauseWorkflow = (wid: string) => {
   return Axios.post(`/workflow/${wid}/pause`);
 };
 
+export const resumeWorkflow = (wid: string) => {
+  return Axios.post(`/workflow/${wid}/resume`);
+};
+
 export const pauseJob = (jid: number) => {
   return Axios.post(`/workflow/job/${jid}/pause`);
 };
