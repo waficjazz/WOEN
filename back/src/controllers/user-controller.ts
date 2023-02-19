@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
+// const createGroup = async (name : string )
+
 const signup = async (req: any, res: any, next: any) => {
   const { firstName, lastName, username, email, password } = req.body;
   let user;
@@ -132,6 +134,10 @@ const login = async (req: any, res: any, next: any) => {
     const error = new HttpError("Logging in failed, please try again later.", 500);
     return next(error);
   }
+};
+
+const createProject = async (req: any, res: any, next: any) => {
+  const { name, owner };
 };
 
 module.exports = {

@@ -10,6 +10,9 @@ const workflowRoutes = require("./routes/workflow-routes");
 const containerRoutes = require("./routes/container-routes");
 const app = express();
 const server = http.createServer(app);
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
+
 export const redisc = createClient();
 export const io = new Server(server, {
   cors: {
@@ -42,6 +45,7 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 server.listen(process.env.PORT || 5001, () => {
   console.log("Server started on port 5000");
 });
