@@ -81,47 +81,56 @@ const signup = async (req: any, res: any, next: any) => {
 };
 
 const login = async (req: any, res: any, next: any) => {
-  const { email, username, password } = req.body;
-  if (!email && !username) {
-    const error = new HttpError("Please enter a valid email or username.", 422);
-    return next(error);
-  }
-  if (email || username) {
-    try {
-      const user = await prisma.user.findUnique({
+  const { user, password } = req.body;
+  try {
+    let found;
+    found = await prisma.user.findUnique({
+      where: {
+        username: user,
+      },
+    });
+    if (!found) {
+      found = await prisma.user.findUnique({
         where: {
-          email: email,
+          email: user,
         },
       });
-      if (!user) {
-        const error = new HttpError("Could not find user with this email.", 404);
+      if (!found) {
+        const error = new HttpError("Could not find this user.", 404);
         return next(error);
       }
-      let isValidPassword = false;
-      try {
-        isValidPassword = await bcrypt.compare(password, user.password);
-      } catch (err) {
-        const error = new HttpError("Could not log you in, please check your credentials and try again.", 500);
-        return next(error);
-      }
-      if (!isValidPassword) {
-        const error = new HttpError("Invalid credentials, could not log you in.", 401);
-        return next(error);
-      }
-      let token;
-      try {
-        token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
-      } catch (err) {
-        const error = new HttpError("Invalid credentials, could not log you in.", 401);
-        return next(error);
-      }
-      res.status(201).json({
-        token: token,
-      });
+    }
+    let isValidPassword = false;
+    try {
+      isValidPassword = await bcrypt.compare(password, found.password);
     } catch (err) {
-      const error = new HttpError("Logging in failed, please try again later.", 500);
+      const error = new HttpError("Could not log you in, please check your credentials and try again.", 500);
       return next(error);
     }
+    if (!isValidPassword) {
+      const error = new HttpError("Invalid credentials, could not log you in.", 401);
+      return next(error);
+    }
+    let token;
+    try {
+      token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
+    } catch (err) {
+      const error = new HttpError("Invalid credentials, could not log you in.", 401);
+      return next(error);
+    }
+    res.status(201).json({
+      token: token,
+      user: {
+        firstName: found.firstName,
+        lastName: found.lastName,
+        username: found.username,
+        email: found.email,
+        createdAt: found.createdAt,
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Logging in failed, please try again later.", 500);
+    return next(error);
   }
 };
 

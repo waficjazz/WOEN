@@ -62,8 +62,14 @@ export interface IUser {
   lastName: string;
   username: string;
   email: string;
-  password?: string;
+  password: string;
   confirmPassword?: string;
+}
+
+export interface ISignIn {
+  username: string | null;
+  email: string | null;
+  password: string;
 }
 
 export interface IWTemplate {
