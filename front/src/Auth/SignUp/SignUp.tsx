@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { InputEvent, IUser } from "../../types";
 import Input from "../../shared/Inputs/Input";
-import "./SignUp.css";
+import "./../Auth.css";
 import * as api from "../api";
 import Button from "../../shared/Buttons/Button";
 import { updateUser } from "../../utils/auth";
@@ -32,13 +32,13 @@ const SignUp = () => {
   };
 
   return (
-    <div className="signup_container">
-      <Input className="signup_input" label="First Name" name="firstName" onChange={handleChange} />
-      <Input className="signup_input" label="Last Name" name="lastName" onChange={handleChange} />
-      <Input className="signup_input_lg" label="UserName" name="username" onChange={handleChange} />
-      <Input className="signup_input_lg" label="Email" name="email" onChange={handleChange} />
-      <Input className="signup_input_lg" label="Password" name="password" onChange={handleChange} />
-      <Input className="signup_input_lg" label="Confirm Password" name="confirmPassword" onChange={handleChange} />
+    <div className="reg_container">
+      <Input className="reg_input" label="First Name" name="firstName" onChange={handleChange} />
+      <Input className="reg_input" label="Last Name" name="lastName" onChange={handleChange} />
+      <Input className="reg_input_lg" label="UserName" name="username" onChange={handleChange} />
+      <Input className="reg_input_lg" label="Email" name="email" onChange={handleChange} />
+      <Input className="reg_input_lg" label="Password" name="password" onChange={handleChange} />
+      <Input className="reg_input_lg" label="Confirm Password" name="confirmPassword" onChange={handleChange} />
       <Button onClick={signUp}>signup</Button>
     </div>
   );
