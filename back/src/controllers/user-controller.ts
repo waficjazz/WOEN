@@ -138,13 +138,12 @@ const login = async (req: any, res: any, next: any) => {
 
 const createProject = async (req: any, res: any, next: any) => {
   const { name } = req.body;
-  console.log(req.userId);
   let project;
   try {
     project = await prisma.project.create({
       data: {
         name: name,
-        userId: 1,
+        userId: req.userId,
       },
     });
   } catch (err) {
