@@ -137,10 +137,26 @@ const login = async (req: any, res: any, next: any) => {
 };
 
 const createProject = async (req: any, res: any, next: any) => {
-  const { name, owner };
+  const { name } = req.body;
+  console.log(req.userId);
+  let project;
+  try {
+    project = await prisma.project.create({
+      data: {
+        name: name,
+        userId: 1,
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Failed to create project", 500);
+    console.log(err);
+    return next(error);
+  }
+  res.status(201).json(project);
 };
 
 module.exports = {
   signup,
   login,
+  createProject,
 };

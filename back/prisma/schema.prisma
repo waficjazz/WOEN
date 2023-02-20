@@ -11,18 +11,31 @@ datasource db {
 }
 
 model user {
-  id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
-  username  String   @unique
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  group     group[]
+  id               Int                @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  username         String             @unique
+  email            String             @unique
+  password         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  group            group[]
+  container        container[]
+  workflowTemplate workflowTemplate[]
+  workflow         workflow[]
+  project          project[]          @relation("project_owner")
+  projects         project[]          @relation("project_users")
+}
 
-  project project[]
-
+model project {
+  id               Int                @id @default(autoincrement())
+  name             String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  owner            user?              @relation("project_owner", fields: [userId], references: [id])
+  userId           Int
+  group            group[]
+  users            user[]             @relation("project_users")
   container        container[]
   workflowTemplate workflowTemplate[]
   workflow         workflow[]
@@ -35,19 +48,6 @@ model group {
   updatedAt DateTime  @updatedAt
   user      user[]
   project   project[]
-}
-
-model project {
-  id               Int                @id @default(autoincrement())
-  name             String
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  owner            user?              @relation(fields: [userId], references: [id])
-  userId           Int?
-  group            group[]
-  container        container[]
-  workflowTemplate workflowTemplate[]
-  workflow         workflow[]
 }
 
 model container {
