@@ -53,7 +53,9 @@ io.on("connection", (socket: any) => {
   socket.on("addUser", (data: any) => {
     (async () => {
       if (!redisc.isOpen) await redisc.connect();
-      await redisc.set(getTokenId(data), socket.id);
+      let uid = await getTokenId(data);
+      console.log(uid);
+      await redisc.set(uid, socket.id);
       await redisc.disconnect();
     })();
   });

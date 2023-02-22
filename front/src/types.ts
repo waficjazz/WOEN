@@ -79,3 +79,8 @@ export interface IWTemplate {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IProject {
+  id?: number;
+  name: string;
+}

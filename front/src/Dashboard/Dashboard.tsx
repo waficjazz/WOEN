@@ -6,6 +6,7 @@ import "./Dashboard.css";
 import { useAtom } from "jotai";
 import { aJobs } from "../store";
 import CWorkflow from "./WTemplates/CTemplate/CTemplate";
+import Projects from "./Projects/ProjectBoard";
 import WTemplates from "./WTemplates/WTemplates";
 import Workflows from "./Workflows/Workflows";
 import CTemplate from "./WTemplates/CTemplate/CTemplate";
@@ -22,6 +23,7 @@ const Dashboard = () => {
           <Route path="workflows" element={<Workflows />} />
           <Route path="one-workflow/:wid" element={<OneWorkflow />} />
           <Route path="cw-template/:id" element={<CTemplate />} />
+          <Route path="projects" element={<Projects />} />
         </Routes>
       </div>
     </div>
