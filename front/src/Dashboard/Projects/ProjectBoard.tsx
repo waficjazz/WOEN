@@ -23,7 +23,7 @@ const ProjectBoard = () => {
       getProjects();
     }, []);
     return (
-      <div className="container_table">
+      <div className="workflow_table">
         <div className="workflow_table_header ">
           <div style={{ width: "25%" }}>NAME</div>
           <div style={{ width: "30%" }}>CREATED</div>
