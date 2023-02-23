@@ -1,9 +1,39 @@
 import React, { useEffect, useState } from "react";
 import Button from "../../shared/Buttons/Button";
+import { IProject } from "../../types";
 import ProjectForm from "./ProjectForm";
-
+import * as api from "./api";
+import ProjectRow from "./ProjectRow";
 const ProjectBoard = () => {
   const [showForm, setShowForm] = useState(false);
+  const ProjectsTable = () => {
+    const [projects, setProjects] = useState<IProject[]>([]);
+
+    useEffect(() => {
+      const getProjects = async () => {
+        try {
+          console.log("enter");
+          const response = await api.getProjects();
+          if (response.data) {
+            setProjects(response.data);
+            console.log(response.data, "seeme");
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      getProjects();
+    }, []);
+    return (
+      <div className="container_table">
+        {projects &&
+          projects.length > 0 &&
+          projects.map((project) => {
+            return <ProjectRow key={project.id} {...project} />;
+          })}
+      </div>
+    );
+  };
 
   return (
     <div className="table_board">
@@ -11,7 +41,7 @@ const ProjectBoard = () => {
         <p>Projects</p>
         {!showForm && <Button onClick={() => setShowForm(true)}>Create</Button>}
       </div>
-      {showForm ? <ProjectForm show={showForm} close={setShowForm} /> : <></>}
+      {showForm ? <ProjectForm show={showForm} close={setShowForm} /> : <ProjectsTable />}
     </div>
   );
 };

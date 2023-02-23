@@ -115,7 +115,7 @@ const login = async (req: any, res: any, next: any) => {
     }
     let token;
     try {
-      token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
+      token = jwt.sign({ userId: found.id, email: found.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
     } catch (err) {
       const error = new HttpError("Invalid credentials, could not log you in.", 401);
       return next(error);
@@ -148,14 +148,34 @@ const createProject = async (req: any, res: any, next: any) => {
     });
   } catch (err) {
     const error = new HttpError("Failed to create project", 500);
-    console.log(err);
     return next(error);
   }
   res.status(201).json(project);
+};
+
+const listProjects = async (req: any, res: any, next: any) => {
+  let userId = req.userId;
+  let projects = [];
+  try {
+    projects = await prisma.project.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+    if (projects.length === 0) {
+      const error = new HttpError("No projects found", 404);
+      return next(error);
+    }
+  } catch (err) {
+    const error = new HttpError("Failed find projects", 500);
+    return next(error);
+  }
+  res.status(200).json(projects);
 };
 
 module.exports = {
   signup,
   login,
   createProject,
+  listProjects,
 };

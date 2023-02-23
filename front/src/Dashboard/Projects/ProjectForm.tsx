@@ -18,7 +18,7 @@ const ProjectForm = ({ show, close }: Props) => {
 
   const submit = async () => {
     try {
-      const response = await api.userSignUp(project);
+      const response = await api.createProject(project);
     } catch (err) {
       console.log(err);
     }
@@ -30,7 +30,7 @@ const ProjectForm = ({ show, close }: Props) => {
         <div>
           <Input label="Name" name="name" onChange={handleChange} />
 
-          <Button>submit</Button>
+          <Button onClick={submit}>submit</Button>
         </div>
       </div>
     </>
