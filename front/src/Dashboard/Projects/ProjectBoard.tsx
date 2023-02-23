@@ -12,11 +12,9 @@ const ProjectBoard = () => {
     useEffect(() => {
       const getProjects = async () => {
         try {
-          console.log("enter");
           const response = await api.getProjects();
           if (response.data) {
             setProjects(response.data);
-            console.log(response.data, "seeme");
           }
         } catch (err) {
           console.log(err);
@@ -26,6 +24,11 @@ const ProjectBoard = () => {
     }, []);
     return (
       <div className="container_table">
+        <div className="workflow_table_header ">
+          <div style={{ width: "25%" }}>NAME</div>
+          <div style={{ width: "30%" }}>CREATED</div>
+          <div style={{ width: "30%" }}>LAST UPDATE</div>
+        </div>
         {projects &&
           projects.length > 0 &&
           projects.map((project) => {
