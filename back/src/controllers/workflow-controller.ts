@@ -119,11 +119,12 @@ const getWorkflow = async (req: any, res: any, next: any) => {
 const createWorkflowTemplate = async (req: any, res: any, next: any) => {
   //get user id for jwt token
 
-  const { name } = req.body;
+  const { name, projectId } = req.body;
   let workflow;
   try {
     workflow = await prisma.workflowTemplate.create({
       data: {
+        projectId: projectId,
         userId: req.userId,
         name,
       },

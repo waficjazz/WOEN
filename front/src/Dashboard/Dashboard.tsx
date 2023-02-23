@@ -18,11 +18,11 @@ const Dashboard = () => {
       <SideBar />
       <div className="dashboard_content">
         <Routes>
-          <Route path="containers" element={<ContainerBoard />} />
-          <Route path="w-templates" element={<WTemplates />} />
-          <Route path="workflows" element={<Workflows />} />
-          <Route path="one-workflow/:wid" element={<OneWorkflow />} />
-          <Route path="cw-template/:id" element={<CTemplate />} />
+          <Route path=":project/containers" element={<ContainerBoard />} />
+          <Route path=":project/w-templates" element={<WTemplates />} />
+          <Route path=":project/workflows" element={<Workflows />} />
+          <Route path=":project/one-workflow/:wid" element={<OneWorkflow />} />
+          <Route path=":project/cw-template/:id" element={<CTemplate />} />
           <Route path="projects" element={<Projects />} />
         </Routes>
       </div>
