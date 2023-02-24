@@ -3,13 +3,16 @@ import { dateStyle } from "../../utils/time-format";
 import ReactTimeAgo from "react-time-ago";
 import { IProject } from "../../types";
 import { useNavigate } from "react-router-dom";
-
+import { useAtom } from "jotai";
+import { aProject } from "../../store";
 interface Props extends IProject {}
 
 const ProjectRow = ({ id, name, createdAt, updatedAt }: Props) => {
+  const [, setProject] = useAtom(aProject);
   const navigate = useNavigate();
   const handlClick = () => {
-    localStorage.setItem("project", JSON.stringify({ pid: id, name: name }));
+    localStorage.setItem("project", JSON.stringify({ id: id, name: name }));
+    setProject({ id, name });
     navigate(`/${name}/containers`);
   };
   return (
