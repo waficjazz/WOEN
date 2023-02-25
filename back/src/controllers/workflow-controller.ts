@@ -82,6 +82,11 @@ const getWorkflowTemplate = async (req: any, res: any, next: any) => {
       },
       include: {
         jobTemplates: true,
+        // jobTemplates: {
+        //   include: {
+        //     container: true,
+        //   },
+        // },
       },
     });
   } catch (err) {
@@ -355,7 +360,6 @@ const initWorkflow = async (req: any, res: any, next: any) => {
     let updatedWorkflow = await updateWorkflow(workflow!!.id, { status: "running" });
     messageOneUser(req.userId, "wfs", updatedWorkflow);
   } catch (err) {
-    console.log(err);
     const error = new HttpError("Could not update job.", 500);
     return next(error);
   }
@@ -363,7 +367,22 @@ const initWorkflow = async (req: any, res: any, next: any) => {
   res.status(201).json(workflow);
 };
 
+const setOutputParams = async (req: any, res: any, next: any) => {
+  const { params } = req.body;
+
+  try {
+    await prisma.outputParams.createMany({
+      data: params,
+    });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Could not update job.", 500);
+    return next(error);
+  }
+};
+
 module.exports = {
+  setOutputParams,
   getWorkflow,
   createJobTemplate,
   getWorkflowTemplate,

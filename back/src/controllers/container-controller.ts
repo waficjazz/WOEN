@@ -198,7 +198,7 @@ const saveContainer = async (req: any, res: any, next: any) => {
     const container = response.data;
     const name = container.Name;
     const { Cmd, Image, Env, User, WorkingDir } = container.Config;
-
+    console.log(name.slice(1), Image, Cmd, Env, User, WorkingDir);
     const savedContainer = await prisma.container.create({
       data: {
         userId: req.userId,
@@ -235,6 +235,25 @@ const getSavedContainers = async (req: any, res: any, next: any) => {
     res.status(200).json(savedContainers);
   } catch (err) {
     const error = new HttpError("Could not get saved containers.", 500);
+    return next(error);
+  }
+};
+
+const getOneContainer = async (req: any, res: any, next: any) => {
+  const container = req.params.cid;
+  try {
+    const savedContainer = await prisma.container.findUnique({
+      where: {
+        id: container,
+      },
+    });
+    if (!savedContainer) {
+      const error = new HttpError("Could not get saved container.", 500);
+      return next(error);
+    }
+    res.status(200).json(savedContainer);
+  } catch (err) {
+    const error = new HttpError("Could not get saved container.", 500);
     return next(error);
   }
 };

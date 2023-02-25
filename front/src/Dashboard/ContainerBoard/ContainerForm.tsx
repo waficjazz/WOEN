@@ -48,7 +48,6 @@ const ContainerForm = ({ show, close }: Props) => {
     const oldValues = envPair;
     let obj;
     if (name == "env") {
-      console.log(value);
       obj = { [value]: "" };
       oldValues[i] = obj;
     }
@@ -67,10 +66,6 @@ const ContainerForm = ({ show, close }: Props) => {
   //     setCommandTxt((prev) => prev + "- ");
   //   }
   // };
-
-  useEffect(() => {
-    console.log(envPair);
-  }, [envPair]);
 
   const parseCommands = (commands: string) => {
     let parsedCommands: any = commands.split("\n");

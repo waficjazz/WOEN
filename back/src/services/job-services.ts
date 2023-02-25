@@ -19,12 +19,11 @@ export const updateJob = async (jid: number, data: any) => {
   }
 };
 
-export const saveOutputParams = async (containerId: string, outputParams: any, jid: number) => {
+export const saveOutputParamsValue = async (containerId: string, outputParams: any, jid: number) => {
   try {
     if (outputParams) {
       outputParams.map(async (param: any) => {
         let value = await getArchive(containerId, param.path);
-        console.log(value);
         await prisma.outputParamsValue.create({
           data: {
             outputParamsId: param.id,

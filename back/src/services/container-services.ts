@@ -6,7 +6,7 @@ import { runJob, updateWorkflow } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
 import { messageOneUser } from "../utils/socket";
-import { updateJob, saveOutputParams } from "./job-services";
+import { updateJob, saveOutputParamsValue } from "./job-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -89,7 +89,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
               },
             },
           });
-          if (job) if (job.jobTemplate?.outputParams) saveOutputParams(containerId, job.jobTemplate?.outputParams, jid);
+          if (job) if (job.jobTemplate?.outputParams) saveOutputParamsValue(containerId, job.jobTemplate?.outputParams, jid);
           if (job && job.successors.length > 0) {
             if (!redisc.isOpen) await redisc.connect();
 
