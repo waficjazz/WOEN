@@ -2,7 +2,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import { createClient } from "redis";
 import { getTokenId } from "./utils/decode-token";
-import { archive } from "./services/container-services";
 const { Server } = require("socket.io");
 const http = require("http");
 const HttpError = require("./utils/http-error");
@@ -64,5 +63,3 @@ io.on("connection", (socket: any) => {
 });
 
 redisc.on("error", (err) => console.log("Redis Client Error", err));
-
-archive().then((content) => console.log(content));

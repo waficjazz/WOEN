@@ -6,7 +6,7 @@ import { runJob, updateWorkflow } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
 import { messageOneUser } from "../utils/socket";
-import { updateJob } from "./job-services";
+import { updateJob, saveOutputParams } from "./job-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -81,7 +81,15 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
             where: {
               id: jid,
             },
+            include: {
+              jobTemplate: {
+                include: {
+                  outputParams: true,
+                },
+              },
+            },
           });
+          if (job) if (job.jobTemplate?.outputParams) saveOutputParams(containerId, job.jobTemplate?.outputParams, jid);
           if (job && job.successors.length > 0) {
             if (!redisc.isOpen) await redisc.connect();
 
@@ -140,7 +148,7 @@ export const unpauseContainer = async (containerId: string) => {
   }
 };
 
-export const getArchive = async (containerId: string, path: string) => {
+export const getArchive = async (containerId: string, path: string): Promise<string> => {
   try {
     const url = `http://localhost:2375/containers/${containerId}/archive?path=${path}`;
     const response = await axios.get(url, { responseType: "stream" });
@@ -161,7 +169,7 @@ export const getArchive = async (containerId: string, path: string) => {
     });
   } catch (err) {
     console.log(err);
-    return err;
+    return err as any;
   }
 };
 

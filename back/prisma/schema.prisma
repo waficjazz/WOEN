@@ -101,7 +101,7 @@ model jobTemplate {
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id], onDelete: Cascade)
   workflowTemplateId Int?
   jobs               job[]
-  jobParams          outputParams[]
+  outputParams       outputParams[]
   inputParams        inputParams[]
 
   @@map("job_template")
