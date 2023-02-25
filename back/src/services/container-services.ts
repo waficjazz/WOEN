@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
+const tar = require("tar");
+const stream = require("stream");
 import { runJob, updateWorkflow } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
@@ -132,6 +134,31 @@ export const unpauseContainer = async (containerId: string) => {
     const url = `http://localhost:2375/containers/${containerId}/unpause`;
     const response = await axios.post(url);
     return response;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
+
+export const getArchive = async (containerId: string, path: string) => {
+  try {
+    const url = `http://localhost:2375/containers/${containerId}/archive?path=${path}`;
+    const response = await axios.get(url, { responseType: "stream" });
+    const tarParser = new tar.Parse();
+    const contentStream = new stream.Writable();
+    let content = "";
+    contentStream._write = function (chunk: any, encoding: any, done: any) {
+      content += chunk.toString();
+      done();
+    };
+    response.data.pipe(tarParser).on("entry", function (entry: any) {
+      entry.pipe(contentStream);
+    });
+    return new Promise<string>((resolve) => {
+      response.data.on("end", function () {
+        resolve(content);
+      });
+    });
   } catch (err) {
     console.log(err);
     return err;
