@@ -5,10 +5,10 @@ const workflowController = require("../controllers/workflow-controller");
 
 const router = express.Router();
 
-router.get("/all", auth, workflowController.getAllWorkflows);
+router.get("/all/:pid", auth, workflowController.getAllWorkflows);
 router.get("/one/:wid", auth, workflowController.getWorkflow);
 router.get("/template/:wid", auth, workflowController.getWorkflowTemplate);
-router.get("/all/templates", auth, workflowController.getAllWorkflowsTemplates);
+router.get("/all/templates/:pid", auth, workflowController.getAllWorkflowsTemplates);
 
 router.delete("/template/:jid", auth, workflowController.deleteJobTemplate);
 router.delete("/template/:tid", auth, workflowController.deleteWorkflowTemplate);

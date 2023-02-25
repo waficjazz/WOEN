@@ -19,32 +19,39 @@ model user {
   password         String
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  group            group[]            @relation("group_users")
+  container        container[]
+  workflowTemplate workflowTemplate[]
+  workflow         workflow[]
+  project          project[]          @relation("project_owner")
+  projects         project[]          @relation("project_users")
+  groups           group[]            @relation("group_owner")
+}
+
+model project {
+  id               Int                @id @default(autoincrement())
+  name             String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  owner            user?              @relation("project_owner", fields: [userId], references: [id])
+  userId           Int
   group            group[]
-  project          project[]
+  users            user[]             @relation("project_users")
   container        container[]
   workflowTemplate workflowTemplate[]
   workflow         workflow[]
 }
 
 model group {
-  id               Int                @id @default(autoincrement())
-  name             String             @unique
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  user             user[]
-  project          project[]
-  workflowTemplate workflowTemplate[]
-  container        container[]
-  workflow         workflow[]
-}
-
-model project {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      user[]
-  group     group[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  owner       user?     @relation("group_owner", fields: [userId], references: [id])
+  userId      Int
+  user        user[]    @relation("group_users")
+  project     project[]
 }
 
 model container {
@@ -60,9 +67,9 @@ model container {
   jobtemplates jobTemplate[]
   jobs         job[]
   owner        user?         @relation(fields: [userId], references: [id])
-  group        group?        @relation(fields: [groupId], references: [id])
   userId       Int?
-  groupId      Int?
+  project      project?      @relation(fields: [projectId], references: [id])
+  projectId    Int?
 }
 
 model workflowTemplate {
@@ -75,9 +82,9 @@ model workflowTemplate {
   placements   Json?
   workflows    workflow[]
   owner        user?         @relation(fields: [userId], references: [id])
-  group        group?        @relation(fields: [groupId], references: [id])
   userId       Int?
-  groupId      Int?
+  project      project?      @relation(fields: [projectId], references: [id])
+  projectId    Int?
 
   @@map("workflow_template")
 }
@@ -114,9 +121,9 @@ model workflow {
   workflowTemplateId Int?
   jidsMap            Json?
   owner              user?             @relation(fields: [userId], references: [id])
-  group              group?            @relation(fields: [groupId], references: [id])
   userId             Int?
-  groupId            Int?
+  project            project?          @relation(fields: [projectId], references: [id])
+  projectId          Int?
 }
 
 model job {

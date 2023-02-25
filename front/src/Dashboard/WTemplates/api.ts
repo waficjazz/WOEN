@@ -1,14 +1,15 @@
 import Axios from "../../axios";
+import { ICWTemplate, IWTemplate } from "../../types";
 
 export const initWorkflow = (data: any) => {
   return Axios.post(`/workflow/init`, data);
 };
 
-export const getAllTemplates = () => {
-  return Axios.get("/workflow/all/templates");
+export const getAllTemplates = (pid: number) => {
+  return Axios.get(`/workflow/all/templates/${pid}`);
 };
 
-export const createWorkflow = (data: any) => {
+export const createWorkflow = (data: ICWTemplate) => {
   return Axios.post("/workflow/create", data);
 };
 

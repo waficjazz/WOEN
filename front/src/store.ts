@@ -1,5 +1,7 @@
 import { atom } from "jotai";
-import { IPlacement, IConnection, IJob, IUser } from "./types";
+import { IPlacement, IConnection, IJob, IUser, IProject } from "./types";
+
+let project: IProject = JSON.parse(localStorage.getItem("project") ?? "{}") as IProject;
 
 export const aJobs = atom<IJob[]>([]);
 export const aConnect = atom<IConnection>({});
@@ -8,3 +10,4 @@ export const aSelectedJob = atom<number>(0);
 export const aShowMenu = atom("");
 export const aUser = atom<IUser>({} as IUser);
 export const aIsLoggedIn = atom(false);
+export const aProject = atom<IProject>(project);

@@ -21,7 +21,7 @@ const SingIn = () => {
       if (status === 201) {
         Axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         updateUser(data.token, data.user);
-        navigate("/containers");
+        navigate("/projects");
       }
     } catch (err) {
       console.log(err);
