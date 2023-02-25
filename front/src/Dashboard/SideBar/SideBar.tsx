@@ -11,6 +11,8 @@ const SideBar = () => {
   return (
     <div className="side_bar">
       <h2 className="side_bar_header">WOEN</h2>
+      <SideTile txt="Projects" route="/projects" />
+      <SideTile txt="Groups" route="/groups" />
       {project !== null && (
         <>
           <SideTile txt="Containers" route={`/${project.name}/containers`} />
