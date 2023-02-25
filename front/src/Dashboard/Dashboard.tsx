@@ -11,6 +11,7 @@ import WTemplates from "./WTemplates/WTemplates";
 import Workflows from "./Workflows/Workflows";
 import CTemplate from "./WTemplates/CTemplate/CTemplate";
 import OneWorkflow from "./Workflows/OneWorkflow";
+import Groups from "./Groups/Groups";
 const Dashboard = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   const [project, setProject] = useAtom(aProject);
@@ -25,6 +26,7 @@ const Dashboard = () => {
       <div className="dashboard_content">
         <Routes>
           <Route path=":project/containers" element={<ContainerBoard />} />
+          <Route path="/groups" element={<Groups />} />
           <Route path=":project/w-templates" element={<WTemplates />} />
           <Route path=":project/workflows" element={<Workflows />} />
           <Route path="one-workflow/:wid" element={<OneWorkflow />} />

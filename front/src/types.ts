@@ -90,3 +90,12 @@ export interface IProject {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface IGroup {
+  id?: number;
+  name: string;
+  owner?: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

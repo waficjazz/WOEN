@@ -189,7 +189,27 @@ const createGroup = async (req: any, res: any, next: any) => {
     const error = new HttpError("Failed creating group", 500);
     return next(error);
   }
-  res.status(200).json(group);
+  res.status(201).json(group);
+};
+
+const listGroups = async (req: any, res: any, next: any) => {
+  let userId = req.userId;
+  let groups;
+  try {
+    groups = await prisma.group.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+    if (groups.length === 0) {
+      const error = new HttpError("No groups found", 404);
+      return next(error);
+    }
+  } catch (err) {
+    const error = new HttpError("Failed getting group", 500);
+    return next(error);
+  }
+  res.status(200).json(groups);
 };
 
 module.exports = {
@@ -198,4 +218,5 @@ module.exports = {
   createProject,
   listProjects,
   createGroup,
+  listGroups,
 };
