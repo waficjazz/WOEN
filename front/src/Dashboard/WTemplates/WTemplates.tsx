@@ -6,12 +6,15 @@ import WTemplateRow from "./WTemplateRow";
 import CForm from "./CTemplate/CForm";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import * as api from "./api";
+import { useAtom } from "jotai";
+import { aProject } from "../../store";
 const WTemplates = () => {
+  const [project, setProject] = useAtom(aProject);
   const [workflows, setWorkflows] = useState<IWTemplate[]>([]);
   const [templateRef] = useAutoAnimate<HTMLDivElement>();
   const getTemplates = async () => {
     try {
-      const response = await api.getAllTemplates();
+      const response = await api.getAllTemplates(project?.id);
       if (response.data) {
         setWorkflows(response.data);
       }

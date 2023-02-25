@@ -19,12 +19,13 @@ model user {
   password         String
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
-  group            group[]
+  group            group[]            @relation("group_users")
   container        container[]
   workflowTemplate workflowTemplate[]
   workflow         workflow[]
   project          project[]          @relation("project_owner")
   projects         project[]          @relation("project_users")
+  groups           group[]            @relation("group_owner")
 }
 
 model project {
@@ -42,12 +43,15 @@ model project {
 }
 
 model group {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  user      user[]
-  project   project[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  owner       user?     @relation("group_owner", fields: [userId], references: [id])
+  userId      Int
+  user        user[]    @relation("group_users")
+  project     project[]
 }
 
 model container {

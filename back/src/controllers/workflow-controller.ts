@@ -41,10 +41,11 @@ const deleteWorkflow = async (req: any, res: any, next: any) => {
 
 const getAllWorkflows = async (req: any, res: any, next: any) => {
   let workflows;
+
   try {
     workflows = await prisma.workflow.findMany({
       where: {
-        userId: req.userId,
+        projectId: parseInt(req.params.pid),
       },
       orderBy: {
         createdAt: "desc",
@@ -141,7 +142,7 @@ const getAllWorkflowsTemplates = async (req: any, res: any, next: any) => {
   try {
     workflows = await prisma.workflowTemplate.findMany({
       where: {
-        userId: req.userId,
+        projectId: parseInt(req.params.pid),
       },
       orderBy: {
         createdAt: "desc",
@@ -336,9 +337,9 @@ const upateJobDependencies = async (req: any, res: any, next: any) => {
 const initWorkflow = async (req: any, res: any, next: any) => {
   let workflow: IWorkflow | undefined;
   let firstJobsId: number[] | undefined;
-  const { name, templateId } = req.body;
+  const { name, templateId, projectId } = req.body;
   try {
-    workflow = await createWorkflow(req.userId, name, templateId);
+    workflow = await createWorkflow(req.userId, name, templateId, projectId);
     messageOneUser(req.userId, "wfs", workflow);
     if (workflow !== undefined) {
       firstJobsId = await getFirstJobs(workflow.id);

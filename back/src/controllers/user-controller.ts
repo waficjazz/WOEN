@@ -173,9 +173,29 @@ const listProjects = async (req: any, res: any, next: any) => {
   res.status(200).json(projects);
 };
 
+const createGroup = async (req: any, res: any, next: any) => {
+  let userId = req.userId;
+  let { name, description } = req.body;
+  let group;
+  try {
+    group = await prisma.group.create({
+      data: {
+        name: name,
+        description: description,
+        userId: userId,
+      },
+    });
+  } catch (err) {
+    const error = new HttpError("Failed creating group", 500);
+    return next(error);
+  }
+  res.status(200).json(group);
+};
+
 module.exports = {
   signup,
   login,
   createProject,
   listProjects,
+  createGroup,
 };

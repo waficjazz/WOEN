@@ -6,8 +6,11 @@ import { IWorkflow } from "../../types";
 import { socket } from "../../Socket";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import * as api from "./api";
+import { useAtom } from "jotai";
+import { aProject } from "../../store";
 
 const Workflows = () => {
+  const [project, setProject] = useAtom(aProject);
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
   const [workflowRef] = useAutoAnimate<HTMLDivElement>();
   const [selectedWorkflows, setSelectedWorkflows] = useState<Map<string, string>>(new Map());
@@ -76,7 +79,7 @@ const Workflows = () => {
 
   const getWorkflows = async () => {
     try {
-      const response = await api.getWorkflows();
+      const response = await api.getWorkflows(project?.id);
       if (response.data) {
         setWorkflows(response.data);
       }

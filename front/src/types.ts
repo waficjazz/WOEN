@@ -74,14 +74,18 @@ export interface ISignIn {
 
 export interface IWTemplate {
   id: number;
-  name: number;
+  name: string;
   placements: IPlacement;
   createdAt: string;
   updatedAt: string;
 }
+export interface ICWTemplate {
+  name: string;
+  projectId: number;
+}
 
 export interface IProject {
-  id?: number;
+  id: number;
   name: string;
   createdAt?: string;
   updatedAt?: string;

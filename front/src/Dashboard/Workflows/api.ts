@@ -24,6 +24,6 @@ export const deleteWorkflow = (wid: string) => {
   return Axios.delete(`/workflow/one/${wid}`);
 };
 
-export const getWorkflows = () => {
-  return Axios.get(`/workflow/all`);
+export const getWorkflows = (pid: number) => {
+  return Axios.get(`/workflow/all/${pid}`);
 };

@@ -2,17 +2,21 @@ import { useState } from "react";
 import Input from "../../../shared/Inputs/Input";
 import "./CTemplate.css";
 import Button from "../../../shared/Buttons/Button";
-import { IWorkflow } from "../../../types";
+import { ICWTemplate, IWorkflow } from "../../../types";
+import { useAtom } from "jotai";
+import { aProject } from "../../../store";
 import * as api from "../api";
+
 interface Props {
   setShow: any;
   addWorkflow: any;
 }
 const CForm = (props: Props) => {
+  const [project, setProject] = useAtom(aProject);
   const [wfName, setWfName] = useState("");
 
   const handleSubmit = async () => {
-    let obj = { name: wfName };
+    let obj: ICWTemplate = { name: wfName, projectId: project?.id || 0 };
     try {
       const response = await api.createWorkflow(obj);
       if (response.status === 201) {
