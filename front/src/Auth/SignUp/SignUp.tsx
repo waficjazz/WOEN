@@ -22,9 +22,7 @@ const SignUp = () => {
       if (status === 201) {
         Axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         updateUser(data.token, data.user);
-        navigate("/containers");
-        // redirect("/containers");
-        console.log("navigate");
+        navigate("/projects");
       }
     } catch (err) {
       console.log(err);

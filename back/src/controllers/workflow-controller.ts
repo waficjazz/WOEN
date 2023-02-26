@@ -369,11 +369,12 @@ const initWorkflow = async (req: any, res: any, next: any) => {
 
 const setOutputParams = async (req: any, res: any, next: any) => {
   const { params } = req.body;
-
   try {
     await prisma.outputParams.createMany({
       data: params,
     });
+
+    res.status(201).json(params);
   } catch (err) {
     console.log(err);
     const error = new HttpError("Could not update job.", 500);
@@ -381,7 +382,30 @@ const setOutputParams = async (req: any, res: any, next: any) => {
   }
 };
 
+const getJTOutputParams = async (req: any, res: any, next: any) => {
+  const jtid = req.params.jtid;
+  try {
+    const params = await prisma.outputParams.findMany({
+      where: {
+        jobTemplateId: parseInt(jtid),
+      },
+      select: {
+        path: true,
+        name: true,
+        jobTemplateId: true,
+      },
+    });
+    console.log(params);
+    if (params) res.status(200).json(params);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Could not get Output Params.", 500);
+    return next(error);
+  }
+};
+
 module.exports = {
+  getJTOutputParams,
   setOutputParams,
   getWorkflow,
   createJobTemplate,

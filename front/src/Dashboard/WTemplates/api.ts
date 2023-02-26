@@ -33,6 +33,10 @@ export const setOutParams = (data: any) => {
   return Axios.post("/workflow/job/outParams", { params: data });
 };
 
+export const getOutParams = (jtid: number) => {
+  return Axios.get(`/workflow/job/outParams/${jtid}`);
+};
+
 export const deleteTemplate = (id: number) => {
   return Axios.delete(`/workflow/template/${id}`);
 };

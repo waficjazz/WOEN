@@ -25,11 +25,23 @@ const TJobDetails = (props: any) => {
 
   const handleSave = async () => {
     try {
+      console.log(outputs);
       const response = await api.setOutParams(outputs);
     } catch (err) {
       console.log(err);
     }
   };
+  useEffect(() => {
+    const getJobParams = async () => {
+      try {
+        const response = await api.getOutParams(props.id);
+        if (response.status === 200) setOutputs(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getJobParams();
+  }, []);
   return (
     <div className="job_details_container">
       <div className="job_details_options">
