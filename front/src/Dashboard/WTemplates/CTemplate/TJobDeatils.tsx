@@ -8,13 +8,37 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../shared/Buttons/Button";
 import { InputEvent } from "../../../types";
+import { useAtom } from "jotai";
+import { aDepends, aJobs } from "../../../store";
 const TJobDetails = (props: any) => {
+  const [dependencies, setDependencies] = useAtom(aDepends);
+  const [jobs, setJobs] = useAtom(aJobs);
+  const [fullDependencies, setFullDependencies] = useState<string[]>([]);
+
+  function getAllDependencies(key: string, reachableKeys: string[] = []) {
+    if (!dependencies.hasOwnProperty(key)) {
+      return reachableKeys;
+    }
+    const keys = dependencies[key];
+    if (!keys) return reachableKeys;
+    reachableKeys.push(...keys);
+    keys.forEach((k) => {
+      getAllDependencies(k, reachableKeys);
+    });
+    setFullDependencies(Array.from(new Set(reachableKeys)));
+  }
+
   interface outputsPair {
     jobTemplateId: number;
     name: string;
     path: string;
   }
+  interface inputsPair {
+    from: string;
+    name: string;
+  }
   const [outputs, setOutputs] = useState<outputsPair[]>([]);
+  const [inputs, setInputs] = useState<outputsPair[]>([]);
 
   const handleOutputsPair = (e: InputEvent, i: number) => {
     const { name, value } = e.target;
@@ -37,7 +61,6 @@ const TJobDetails = (props: any) => {
       try {
         const response = await api.getOutParams(props.id);
         if (response.status === 200) setOutputs(response.data);
-        console.log(response.data);
       } catch (err) {
         console.log(err);
       }
@@ -45,6 +68,7 @@ const TJobDetails = (props: any) => {
     getJobParams();
     return () => {
       setOutputs([]);
+      setFullDependencies([]);
     };
   }, [props.id]);
   return (
@@ -57,13 +81,34 @@ const TJobDetails = (props: any) => {
           </div>
           <div>
             <div>
+              <label>Inputs</label>
+              {inputs.map((input, i) => {
+                return (
+                  <div className="paramInptuContainer">
+                    <div>from</div>
+                    <div>output</div>
+                  </div>
+                );
+              })}
+              <select onMouseDown={() => getAllDependencies(props.id)}>
+                <option>Select a job</option>
+                {fullDependencies.map((dep) => {
+                  const job = jobs.find((job) => job.id === parseInt(dep));
+                  if (job)
+                    return (
+                      <option value={job.name} key={job.id}>
+                        {job.name}
+                      </option>
+                    );
+                })}
+              </select>
               <label>Outputs</label>
               {outputs.map((output, i) => {
                 return (
-                  <>
+                  <div className="paramInptuContainer">
                     <Input label="name" name="name" defaultValue={output.name} onChange={(e) => handleOutputsPair(e, i)} key={"name" + i} />
                     <Input label="path" name="path" defaultValue={output.path} onChange={(e) => handleOutputsPair(e, i)} key={"path" + i} />
-                  </>
+                  </div>
                 );
               })}
               <FontAwesomeIcon

@@ -114,14 +114,16 @@ model outputParams {
   jobTemplate       jobTemplate?        @relation(fields: [jobTemplateId], references: [id])
   jobTemplateId     Int?
   outputParamsValue outputParamsValue[]
+  inputParams       inputParams[]
 }
 
 model inputParams {
-  id            Int          @id @default(autoincrement())
-  name          String
-  path          String
-  jobTemplate   jobTemplate? @relation(fields: [jobTemplateId], references: [id])
-  jobTemplateId Int?
+  id             Int          @id @default(autoincrement())
+  name           String?
+  jobTemplate    jobTemplate? @relation(fields: [jobTemplateId], references: [id])
+  jobTemplateId  Int?
+  outputParams   outputParams @relation(fields: [outputParamsId], references: [id])
+  outputParamsId Int
 }
 
 model outputParamsValue {
