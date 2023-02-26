@@ -89,7 +89,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
               },
             },
           });
-          if (job) if (job.jobTemplate?.outputParams) saveOutputParamsValue(containerId, job.jobTemplate?.outputParams, jid);
+          if (job) if (job.jobTemplate?.outputParams) await saveOutputParamsValue(containerId, job.jobTemplate?.outputParams, jid, wid);
           if (job && job.successors.length > 0) {
             if (!redisc.isOpen) await redisc.connect();
 

@@ -111,7 +111,7 @@ model outputParams {
   id                Int                 @id @default(autoincrement())
   name              String
   path              String
-  jobTemplate       jobTemplate?        @relation(fields: [jobTemplateId], references: [id])
+  jobTemplate       jobTemplate?        @relation(fields: [jobTemplateId], references: [id], onDelete: Cascade)
   jobTemplateId     Int?
   outputParamsValue outputParamsValue[]
   inputParams       inputParams[]
@@ -129,10 +129,11 @@ model inputParams {
 model outputParamsValue {
   id             Int          @id @default(autoincrement())
   value          String
-  job            job?         @relation(fields: [jobId], references: [id])
-  jobId          Int?
   outputParams   outputParams @relation(fields: [outputParamsId], references: [id])
   outputParamsId Int
+  job            job?         @relation(fields: [jobId], references: [id])
+  jobId          Int?
+  workflowId     Int
 }
 
 model workflow {

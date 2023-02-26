@@ -19,19 +19,22 @@ export const updateJob = async (jid: number, data: any) => {
   }
 };
 
-export const saveOutputParamsValue = async (containerId: string, outputParams: any, jid: number) => {
+export const saveOutputParamsValue = async (containerId: string, outputParams: any, jid: number, wid: number) => {
   try {
     if (outputParams) {
-      outputParams.map(async (param: any) => {
-        let value = await getArchive(containerId, param.path);
-        await prisma.outputParamsValue.create({
-          data: {
-            outputParamsId: param.id,
-            value: value,
-            jobId: jid,
-          },
-        });
-      });
+      await Promise.all(
+        outputParams.map(async (param: any) => {
+          let value = await getArchive(containerId, param.path);
+          await prisma.outputParamsValue.create({
+            data: {
+              outputParamsId: param.id,
+              value: value,
+              jobId: jid,
+              workflowId: wid,
+            },
+          });
+        })
+      );
     }
   } catch (err) {
     console.log(err);

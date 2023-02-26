@@ -404,6 +404,12 @@ const getJTInputParams = async (req: any, res: any, next: any) => {
       where: {
         jobTemplateId: parseInt(jtid),
       },
+      select: {
+        jobTemplateId: true,
+        name: true,
+        outputParams: true,
+        outputParamsId: true,
+      },
     });
     if (params) res.status(200).json(params);
   } catch (err) {

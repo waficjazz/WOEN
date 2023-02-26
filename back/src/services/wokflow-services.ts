@@ -153,6 +153,11 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
         },
         include: {
           container: true,
+          jobTemplate: {
+            include: {
+              inputParams: true,
+            },
+          },
         },
       });
       updateWorkflow(wid, { startedAt: new Date() });
@@ -164,10 +169,33 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
         },
         include: {
           container: true,
+          jobTemplate: {
+            include: {
+              inputParams: true,
+            },
+          },
         },
       });
     }
     if (job) {
+      if (job.jobTemplate?.inputParams) {
+        ///this part is where we get inputs value
+        let inputParams = job.jobTemplate.inputParams;
+        let result: any = [];
+        await Promise.all(
+          inputParams.map(async (param) => {
+            let paramValue = await prisma.outputParamsValue.findFirst({
+              where: {
+                outputParamsId: param.outputParamsId,
+                workflowId: wid,
+              },
+            });
+            if (paramValue) {
+              result.push({ name: param.name, value: paramValue.value });
+            }
+          })
+        );
+      }
       if (job.dependencies.length !== 0) {
         if (!redisc.isOpen) await redisc.connect();
         let l = await redisc.lLen(`${jtid}${wid}`);
