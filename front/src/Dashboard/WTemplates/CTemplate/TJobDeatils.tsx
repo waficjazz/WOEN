@@ -69,7 +69,6 @@ const TJobDetails = (props: any) => {
 
   const handleInSave = async () => {
     try {
-      console.log(inputs);
       const response = await api.setInParams(inputs);
     } catch (err) {
       console.log(err);

@@ -178,33 +178,42 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
       });
     }
     if (job) {
+      let container = job.container;
+      interface IInput {
+        name: string | null;
+        value: string;
+      }
+      let result: IInput[] = [];
       if (job.jobTemplate?.inputParams) {
         ///this part is where we get inputs value
         let inputParams = job.jobTemplate.inputParams;
-        let result: any = [];
-        await Promise.all(
-          inputParams.map(async (param) => {
-            let paramValue = await prisma.outputParamsValue.findFirst({
-              where: {
-                outputParamsId: param.outputParamsId,
-                workflowId: wid,
-              },
-            });
-            if (paramValue) {
-              result.push({ name: param.name, value: paramValue.value });
-            }
-          })
-        );
+        if (inputParams.length > 0) {
+          await Promise.all(
+            inputParams.map(async (param) => {
+              let paramValue = await prisma.outputParamsValue.findFirst({
+                where: {
+                  outputParamsId: param.outputParamsId,
+                  workflowId: wid,
+                },
+              });
+              if (paramValue) {
+                result.push({ name: param.name, value: paramValue.value });
+              }
+            })
+          );
+          result.forEach((input) => {
+            const regex = new RegExp(`{{${input.name}}}`, "g");
+            container!!.commands[2] = container!!.commands[2].replace(regex, input.value);
+          });
+        }
+        ////////
+        if (job.dependencies.length !== 0) {
+          if (!redisc.isOpen) await redisc.connect();
+          let l = await redisc.lLen(`${jtid}${wid}`);
+          await redisc.disconnect();
+          if (job.dependencies.length != l) return;
+        }
       }
-      if (job.dependencies.length !== 0) {
-        if (!redisc.isOpen) await redisc.connect();
-        let l = await redisc.lLen(`${jtid}${wid}`);
-        await redisc.disconnect();
-        if (job.dependencies.length != l) return;
-      }
-    }
-    if (job) {
-      let container = job.container;
       let cname = container?.name + Math.random().toString(36).substring(2, 6);
       createWorkflowContainer(uid, container!!.image, container!!.commands, cname, wid, job.id);
     }
