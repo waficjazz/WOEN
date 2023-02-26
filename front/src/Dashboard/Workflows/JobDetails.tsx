@@ -36,8 +36,8 @@ const JobDetails = ({ ...props }: IProps) => {
     }, []);
     return (
       <div>
-        {logs.split("").map((st) => (
-          <div>{st}</div>
+        {logs.split("").map((st, i) => (
+          <div key={i}>{st}</div>
         ))}
         <ThreeDots
           height="8"
@@ -114,8 +114,8 @@ const JobDetails = ({ ...props }: IProps) => {
               <label>COMMANDS</label>
               <div className="container_commands">
                 {props.container?.commands &&
-                  props.container?.commands[2].split(";").map((c) => {
-                    return <div>{c}</div>;
+                  props.container?.commands[2].split(";").map((c, i) => {
+                    return <div key={c + i}>{c}</div>;
                   })}
               </div>
             </>
@@ -126,7 +126,7 @@ const JobDetails = ({ ...props }: IProps) => {
               <div className="container_commands">
                 {props.container?.envs &&
                   props.container?.envs.map((env, i) => {
-                    if (i < props.container?.envs?.length!! - 1) return <div>{env}</div>;
+                    if (i < props.container?.envs?.length!! - 1) return <div key={env + i}>{env}</div>;
                   })}
               </div>
             </>

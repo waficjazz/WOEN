@@ -101,8 +101,39 @@ model jobTemplate {
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id], onDelete: Cascade)
   workflowTemplateId Int?
   jobs               job[]
+  outputParams       outputParams[]
+  inputParams        inputParams[]
 
   @@map("job_template")
+}
+
+model outputParams {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  path              String
+  jobTemplate       jobTemplate?        @relation(fields: [jobTemplateId], references: [id], onDelete: Cascade)
+  jobTemplateId     Int?
+  outputParamsValue outputParamsValue[]
+  inputParams       inputParams[]
+}
+
+model inputParams {
+  id             Int          @id @default(autoincrement())
+  name           String?
+  jobTemplate    jobTemplate? @relation(fields: [jobTemplateId], references: [id])
+  jobTemplateId  Int?
+  outputParams   outputParams @relation(fields: [outputParamsId], references: [id])
+  outputParamsId Int
+}
+
+model outputParamsValue {
+  id             Int          @id @default(autoincrement())
+  value          String
+  outputParams   outputParams @relation(fields: [outputParamsId], references: [id])
+  outputParamsId Int
+  job            job?         @relation(fields: [jobId], references: [id])
+  jobId          Int?
+  workflowId     Int
 }
 
 model workflow {
@@ -127,21 +158,22 @@ model workflow {
 }
 
 model job {
-  id                Int          @id @default(autoincrement())
+  id                Int                 @id @default(autoincrement())
   name              String
-  status            String       @default("pending")
-  successors        String[]     @default([])
-  dependencies      String[]     @default([])
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  status            String              @default("pending")
+  successors        String[]            @default([])
+  dependencies      String[]            @default([])
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
   startedAt         DateTime?
   finishedAt        DateTime?
-  workflow          workflow     @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow          workflow            @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   workflowId        Int
-  jobTemplate       jobTemplate? @relation(fields: [jobTemplateId], references: [id])
+  jobTemplate       jobTemplate?        @relation(fields: [jobTemplateId], references: [id])
   jobTemplateId     Int?
-  container         container?   @relation(fields: [containerId], references: [id])
+  container         container?          @relation(fields: [containerId], references: [id])
   containerId       Int?
   exitCode          Int?
   containerInstance String?
+  outputParamsValue outputParamsValue[]
 }

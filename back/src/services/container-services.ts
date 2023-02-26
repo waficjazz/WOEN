@@ -1,10 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
+const tar = require("tar");
+const stream = require("stream");
 import { runJob, updateWorkflow } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
 import { messageOneUser } from "../utils/socket";
-import { updateJob } from "./job-services";
+import { updateJob, saveOutputParamsValue } from "./job-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -79,7 +81,15 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
             where: {
               id: jid,
             },
+            include: {
+              jobTemplate: {
+                include: {
+                  outputParams: true,
+                },
+              },
+            },
           });
+          if (job) if (job.jobTemplate?.outputParams) await saveOutputParamsValue(containerId, job.jobTemplate?.outputParams, jid, wid);
           if (job && job.successors.length > 0) {
             if (!redisc.isOpen) await redisc.connect();
 
@@ -135,6 +145,31 @@ export const unpauseContainer = async (containerId: string) => {
   } catch (err) {
     console.log(err);
     return err;
+  }
+};
+
+export const getArchive = async (containerId: string, path: string): Promise<string> => {
+  try {
+    const url = `http://localhost:2375/containers/${containerId}/archive?path=${path}`;
+    const response = await axios.get(url, { responseType: "stream" });
+    const tarParser = new tar.Parse();
+    const contentStream = new stream.Writable();
+    let content = "";
+    contentStream._write = function (chunk: any, encoding: any, done: any) {
+      content += chunk.toString();
+      done();
+    };
+    response.data.pipe(tarParser).on("entry", function (entry: any) {
+      entry.pipe(contentStream);
+    });
+    return new Promise<string>((resolve) => {
+      response.data.on("end", function () {
+        resolve(content);
+      });
+    });
+  } catch (err) {
+    console.log(err);
+    return err as any;
   }
 };
 

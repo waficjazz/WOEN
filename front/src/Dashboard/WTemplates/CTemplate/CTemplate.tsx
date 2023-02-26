@@ -9,6 +9,7 @@ import CMenu from "./CMenu";
 import Job from "./Job";
 import Button from "../../../shared/Buttons/Button";
 import * as api from "../api";
+import TJobDetails from "./TJobDeatils";
 
 const CTemplate = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ const CTemplate = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   const [connections, setConnections] = useAtom(aConnect);
   const [dependencies, setDependencies] = useAtom(aDepends);
+
   let biggestY = useRef(-1);
   let x = 0;
   let y = 0;
@@ -170,53 +172,56 @@ const CTemplate = () => {
               SAVE
             </Button>
           </div>
-          <div className="jobs_container" id="jobscontainer">
-            <>
-              {showMenu !== "" && <CMenu />}
-              {Object.keys(connections).map((key) => {
-                return connections[key]?.map((value) => {
-                  let k = Math.random().toString(36).substr(2, 3);
-                  return (
-                    <Xarrow
-                      key={k}
-                      start={key}
-                      end={value}
-                      curveness={0.5}
-                      startAnchor={"bottom"}
-                      endAnchor={"top"}
-                      color={"rgb(255,255,255 , 0.2)"}
-                      strokeWidth={1.5}
-                      // animateDrawing={0.5}
-                    />
-                  );
-                });
-              })}
-              {jobs.length > 0 &&
-                jobs.map((job) => {
-                  y = biggestY.current + 1;
-                  let height = initHeight + y * 120;
-                  let left = center + x * 170;
-                  if (placement.current.hasOwnProperty(job.id.toString())) {
-                    height = initHeight + placement.current[job.id.toString()][1] * 120;
-                    left = center + placement.current[job.id.toString()][0] * 170;
-                  } else {
-                    placement.current[job?.id?.toString()] = [x, y];
-                  }
-                  return (
-                    <Job
-                      onClick={() => setSelectedJob(job.id)}
-                      isSelected={selectedJob === job.id}
-                      {...job}
-                      getBiggestY={getBiggestY}
-                      placement={placement.current}
-                      key={job.id}
-                      top={height}
-                      left={left}
-                      remove={handleRemove}
-                    />
-                  );
+          <div className="one_workflow_content">
+            <div className="jobs_container" id="jobscontainer">
+              <>
+                {showMenu !== "" && <CMenu />}
+                {Object.keys(connections).map((key) => {
+                  return connections[key]?.map((value) => {
+                    let k = Math.random().toString(36).substr(2, 3);
+                    return (
+                      <Xarrow
+                        key={k}
+                        start={key}
+                        end={value}
+                        curveness={0.5}
+                        startAnchor={"bottom"}
+                        endAnchor={"top"}
+                        color={"rgb(255,255,255 , 0.2)"}
+                        strokeWidth={1.5}
+                        // animateDrawing={0.5}
+                      />
+                    );
+                  });
                 })}
-            </>
+                {jobs.length > 0 &&
+                  jobs.map((job) => {
+                    y = biggestY.current + 1;
+                    let height = initHeight + y * 120;
+                    let left = center + x * 170;
+                    if (placement.current.hasOwnProperty(job.id.toString())) {
+                      height = initHeight + placement.current[job.id.toString()][1] * 120;
+                      left = center + placement.current[job.id.toString()][0] * 170;
+                    } else {
+                      placement.current[job?.id?.toString()] = [x, y];
+                    }
+                    return (
+                      <Job
+                        onClick={() => setSelectedJob(job.id)}
+                        isSelected={selectedJob === job.id}
+                        {...job}
+                        getBiggestY={getBiggestY}
+                        placement={placement.current}
+                        key={job.id}
+                        top={height}
+                        left={left}
+                        remove={handleRemove}
+                      />
+                    );
+                  })}
+              </>
+            </div>
+            {selectedJob !== undefined && <TJobDetails {...jobs.find((j) => j.id === selectedJob)!!} />}
           </div>
         </div>
       </Xwrapper>

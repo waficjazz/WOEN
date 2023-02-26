@@ -48,7 +48,6 @@ server.listen(process.env.PORT || 5001, () => {
 });
 
 let interval: any;
-
 io.on("connection", (socket: any) => {
   socket.on("addUser", (data: any) => {
     (async () => {

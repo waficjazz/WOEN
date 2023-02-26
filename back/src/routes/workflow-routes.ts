@@ -23,5 +23,11 @@ router.post("/create", auth, workflowController.createWorkflowTemplate);
 router.post("/job/:jid/pause", auth, workflowController.pauseJob);
 router.post("/job/:jid/unpause", auth, workflowController.unpauseJob);
 
+router.post("/job/outParams", auth, workflowController.setOutputParams);
+router.get("/job/outParams/:jtid", auth, workflowController.getJTOutputParams);
+
+router.post("/job/inParams", auth, workflowController.setInputParams);
+router.get("/job/inParams/:jtid", auth, workflowController.getJTInputParams);
+
 router.post("/init", auth, workflowController.initWorkflow);
 module.exports = router;
