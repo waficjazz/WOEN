@@ -15,6 +15,7 @@ const TJobDetails = (props: any) => {
     path: string;
   }
   const [outputs, setOutputs] = useState<outputsPair[]>([]);
+
   const handleOutputsPair = (e: InputEvent, i: number) => {
     const { name, value } = e.target;
     let arr = outputs;
@@ -36,12 +37,16 @@ const TJobDetails = (props: any) => {
       try {
         const response = await api.getOutParams(props.id);
         if (response.status === 200) setOutputs(response.data);
+        console.log(response.data);
       } catch (err) {
         console.log(err);
       }
     };
     getJobParams();
-  }, []);
+    return () => {
+      setOutputs([]);
+    };
+  }, [props.id]);
   return (
     <div className="job_details_container">
       <div className="job_details_options">
@@ -56,8 +61,8 @@ const TJobDetails = (props: any) => {
               {outputs.map((output, i) => {
                 return (
                   <>
-                    <Input label="name" name="name" onChange={(e) => handleOutputsPair(e, i)} key={"name" + i} />
-                    <Input label="path" name="path" onChange={(e) => handleOutputsPair(e, i)} key={"path" + i} />
+                    <Input label="name" name="name" defaultValue={output.name} onChange={(e) => handleOutputsPair(e, i)} key={"name" + i} />
+                    <Input label="path" name="path" defaultValue={output.path} onChange={(e) => handleOutputsPair(e, i)} key={"path" + i} />
                   </>
                 );
               })}
@@ -65,7 +70,13 @@ const TJobDetails = (props: any) => {
                 className="add_env_button"
                 icon={faCirclePlus}
                 onClick={() => {
-                  setOutputs([...outputs, { jobTemplateId: props.id, name: "", path: "" }]);
+                  const addOutput = () => setOutputs([...outputs, { jobTemplateId: props.id, name: "", path: "" }]);
+                  if (outputs.length > 0) {
+                    const last = outputs[outputs.length - 1];
+                    if (last.name !== "" && last.path !== "") {
+                      addOutput();
+                    }
+                  } else addOutput();
                 }}
               />
               <Button onClick={handleSave}>Save</Button>
