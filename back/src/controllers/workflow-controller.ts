@@ -377,7 +377,38 @@ const setOutputParams = async (req: any, res: any, next: any) => {
     res.status(201).json(params);
   } catch (err) {
     console.log(err);
-    const error = new HttpError("Could not update job.", 500);
+    const error = new HttpError("Could not update output Params.", 500);
+    return next(error);
+  }
+};
+
+const setInputParams = async (req: any, res: any, next: any) => {
+  const { params } = req.body;
+  try {
+    await prisma.inputParams.createMany({
+      data: params,
+    });
+
+    res.status(201).json(params);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Could not update input Params.", 500);
+    return next(error);
+  }
+};
+
+const getJTInputParams = async (req: any, res: any, next: any) => {
+  const jtid = req.params.jtid;
+  try {
+    const params = await prisma.inputParams.findMany({
+      where: {
+        jobTemplateId: parseInt(jtid),
+      },
+    });
+    if (params) res.status(200).json(params);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Could not get Output Params.", 500);
     return next(error);
   }
 };
@@ -404,6 +435,8 @@ const getJTOutputParams = async (req: any, res: any, next: any) => {
 };
 
 module.exports = {
+  getJTInputParams,
+  setInputParams,
   getJTOutputParams,
   setOutputParams,
   getWorkflow,

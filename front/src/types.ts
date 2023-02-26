@@ -11,8 +11,9 @@ export interface ISContainer {
 
 export interface inputsParams {
   name: string;
-  from: number;
-  output: number;
+  from?: number;
+  outputParamsId: number;
+  jobTemplateId: number;
 }
 
 export interface outputsParams {

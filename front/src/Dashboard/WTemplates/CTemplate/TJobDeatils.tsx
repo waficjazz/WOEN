@@ -14,6 +14,19 @@ const TJobDetails = (props: any) => {
   const [selectedJob, setSelectedJob] = useState<IJob>({} as IJob);
   const [selectedOutput, setSelectedOutput] = useState<string>("");
   const [inputParamName, setInputParamName] = useState<string>("");
+
+  const updateJobOutputs = (id: number, outputs: outputsParams[]) => {
+    let tmpJob = jobs;
+    tmpJob = tmpJob.map((j) => {
+      if (j.id === id) {
+        j.outputParams = outputs;
+        return j;
+      }
+      return j;
+    });
+    setJobs(tmpJob);
+  };
+
   function getAllDependencies(key: string, reachableKeys: string[] = []) {
     if (!dependencies.hasOwnProperty(key)) {
       return reachableKeys;
@@ -31,7 +44,7 @@ const TJobDetails = (props: any) => {
   const [inputs, setInputs] = useState<inputsParams[]>([]);
 
   const submitLocalInput = () => {
-    setInputs((prev) => [...prev, { name: inputParamName, from: selectedJob.id, output: parseInt(selectedOutput) }]);
+    setInputs((prev) => [...prev, { jobTemplateId: props.id, name: inputParamName, outputParamsId: parseInt(selectedOutput) }]);
     setInputParamName("");
     setSelectedJob({} as IJob);
     setSelectedOutput("");
@@ -45,27 +58,48 @@ const TJobDetails = (props: any) => {
     setOutputs(arr);
   };
 
-  const handleSave = async () => {
+  const handleOutSave = async () => {
     try {
-      console.log(outputs);
       const response = await api.setOutParams(outputs);
+      if (response.status === 201) updateJobOutputs(props.id, response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleInSave = async () => {
+    try {
+      const response = await api.setInParams(inputs);
     } catch (err) {
       console.log(err);
     }
   };
   useEffect(() => {
-    const getJobParams = async () => {
+    const getJobInParams = async () => {
       try {
-        const response = await api.getOutParams(props.id);
-        if (response.status === 200) setOutputs(response.data);
+        const response = await api.getInParams(props.id);
+        if (response.status === 200) setInputs(response.data);
       } catch (err) {
         console.log(err);
       }
     };
-    getJobParams();
+
+    const getJobOutParams = async () => {
+      try {
+        const response = await api.getOutParams(props.id);
+        if (response.status === 200) {
+          setOutputs(response.data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getJobOutParams();
+    getJobInParams();
     return () => {
       setOutputs([]);
       setFullDependencies([]);
+      setInputs([]);
     };
   }, [props.id]);
   return (
@@ -78,67 +112,75 @@ const TJobDetails = (props: any) => {
           </div>
           <div>
             <div>
-              <label>Inputs</label>
-              {inputs.map((input, i) => {
-                return (
-                  <div className="paramInptuContainer">
-                    <div>from</div>
-                    <div>output</div>
-                  </div>
-                );
-              })}
               <div>
-                <Input label="name" name="name" onChange={(e) => setInputParamName(e.target.value)} />
-                <label>From</label>
-                <select onMouseDown={() => getAllDependencies(props.id)} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
-                  <option>Select a job</option>
-                  {fullDependencies.map((dep) => {
-                    const job = jobs.find((job) => job.id === parseInt(dep));
-                    if (job)
+                <label>Inputs</label>
+                {inputs.map((input, i) => {
+                  return (
+                    <div className="paramInptuContainer" key={input.name}>
+                      <div>{input.name}</div>
+                    </div>
+                  );
+                })}
+                <div>
+                  <Input label="name" name="name" onChange={(e) => setInputParamName(e.target.value)} />
+                  <label>From</label>
+                  <select onMouseDown={() => getAllDependencies(props.id)} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
+                    <option>Select a job</option>
+                    {fullDependencies.map((dep) => {
+                      const job = jobs.find((job) => job.id === parseInt(dep));
+                      if (job)
+                        return (
+                          <option value={JSON.stringify(job)} key={job.id}>
+                            {job.name}
+                          </option>
+                        );
+                    })}
+                  </select>
+                  <label>Output</label>
+                  <select onChange={(e) => setSelectedOutput(e.target.value)}>
+                    <option>Select job output</option>
+                    {selectedJob?.outputParams?.map((param) => {
                       return (
-                        <option value={JSON.stringify(job)} key={job.id}>
-                          {job.name}
+                        <option value={param.id} key={param.name}>
+                          {param.name}
                         </option>
                       );
-                  })}
-                </select>
-                <label>Output</label>
-                <select onChange={(e) => setSelectedOutput(e.target.value)}>
-                  <option>Select job output</option>
-                  {selectedJob?.outputParams?.map((param) => {
+                    })}
+                  </select>
+                  <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={submitLocalInput} />
+                </div>
+                <Button onClick={handleInSave}>Save</Button>
+              </div>
+              <div>
+                <div>
+                  <label>Outputs</label>
+                  {outputs.map((output, i) => {
                     return (
-                      <option value={param.id} key={param.name}>
-                        {param.name}
-                      </option>
+                      <div className="paramInptuContainer" key={"name" + i}>
+                        <Input label="name" name="name" defaultValue={output.name} onChange={(e) => handleOutputsPair(e, i)} />
+                        <Input label="path" name="path" defaultValue={output.path} onChange={(e) => handleOutputsPair(e, i)} />
+                      </div>
                     );
                   })}
-                </select>
-                <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={submitLocalInput} />
-              </div>
 
-              <label>Outputs</label>
-              {outputs.map((output, i) => {
-                return (
-                  <div className="paramInptuContainer">
-                    <Input label="name" name="name" defaultValue={output.name} onChange={(e) => handleOutputsPair(e, i)} key={"name" + i} />
-                    <Input label="path" name="path" defaultValue={output.path} onChange={(e) => handleOutputsPair(e, i)} key={"path" + i} />
-                  </div>
-                );
-              })}
-              <FontAwesomeIcon
-                className="add_env_button"
-                icon={faCirclePlus}
-                onClick={() => {
-                  const addOutput = () => setOutputs([...outputs, { jobTemplateId: props.id, name: "", path: "" }]);
-                  if (outputs.length > 0) {
-                    const last = outputs[outputs.length - 1];
-                    if (last.name !== "" && last.path !== "") {
-                      addOutput();
-                    }
-                  } else addOutput();
-                }}
-              />
-              <Button onClick={handleSave}>Save</Button>
+                  <FontAwesomeIcon
+                    className="add_env_button"
+                    icon={faCirclePlus}
+                    onClick={() => {
+                      const addOutput = () => setOutputs([...outputs, { jobTemplateId: props.id, name: "", path: "" }]);
+                      if (outputs.length > 0) {
+                        const last = outputs[outputs.length - 1];
+                        if (last.name !== "" && last.path !== "") {
+                          addOutput();
+                        }
+                      } else addOutput();
+                    }}
+                  />
+                </div>
+                <div>
+                  <Button onClick={handleOutSave}>Save</Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
