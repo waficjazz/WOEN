@@ -81,12 +81,12 @@ const getWorkflowTemplate = async (req: any, res: any, next: any) => {
         id: parseInt(wid),
       },
       include: {
-        jobTemplates: true,
-        // jobTemplates: {
-        //   include: {
-        //     container: true,
-        //   },
-        // },
+        // jobTemplates: true,
+        jobTemplates: {
+          include: {
+            outputParams: true,
+          },
+        },
       },
     });
   } catch (err) {
@@ -395,7 +395,6 @@ const getJTOutputParams = async (req: any, res: any, next: any) => {
         jobTemplateId: true,
       },
     });
-    console.log(params);
     if (params) res.status(200).json(params);
   } catch (err) {
     console.log(err);

@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
-import ReactTimeAgo from "react-time-ago";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { ThreeDots } from "react-loader-spinner";
 import * as api from "../api";
 import Input from "../../../shared/Inputs/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../shared/Buttons/Button";
-import { InputEvent } from "../../../types";
+import { IJob, InputEvent, inputsParams, outputsParams } from "../../../types";
 import { useAtom } from "jotai";
 import { aDepends, aJobs } from "../../../store";
 const TJobDetails = (props: any) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
   const [jobs, setJobs] = useAtom(aJobs);
   const [fullDependencies, setFullDependencies] = useState<string[]>([]);
-
+  const [selectedJob, setSelectedJob] = useState<IJob>({} as IJob);
+  const [selectedOutput, setSelectedOutput] = useState<string>("");
+  const [inputParamName, setInputParamName] = useState<string>("");
   function getAllDependencies(key: string, reachableKeys: string[] = []) {
     if (!dependencies.hasOwnProperty(key)) {
       return reachableKeys;
@@ -28,17 +27,15 @@ const TJobDetails = (props: any) => {
     setFullDependencies(Array.from(new Set(reachableKeys)));
   }
 
-  interface outputsPair {
-    jobTemplateId: number;
-    name: string;
-    path: string;
-  }
-  interface inputsPair {
-    from: string;
-    name: string;
-  }
-  const [outputs, setOutputs] = useState<outputsPair[]>([]);
-  const [inputs, setInputs] = useState<outputsPair[]>([]);
+  const [outputs, setOutputs] = useState<outputsParams[]>([]);
+  const [inputs, setInputs] = useState<inputsParams[]>([]);
+
+  const submitLocalInput = () => {
+    setInputs((prev) => [...prev, { name: inputParamName, from: selectedJob.id, output: parseInt(selectedOutput) }]);
+    setInputParamName("");
+    setSelectedJob({} as IJob);
+    setSelectedOutput("");
+  };
 
   const handleOutputsPair = (e: InputEvent, i: number) => {
     const { name, value } = e.target;
@@ -90,18 +87,35 @@ const TJobDetails = (props: any) => {
                   </div>
                 );
               })}
-              <select onMouseDown={() => getAllDependencies(props.id)}>
-                <option>Select a job</option>
-                {fullDependencies.map((dep) => {
-                  const job = jobs.find((job) => job.id === parseInt(dep));
-                  if (job)
+              <div>
+                <Input label="name" name="name" onChange={(e) => setInputParamName(e.target.value)} />
+                <label>From</label>
+                <select onMouseDown={() => getAllDependencies(props.id)} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
+                  <option>Select a job</option>
+                  {fullDependencies.map((dep) => {
+                    const job = jobs.find((job) => job.id === parseInt(dep));
+                    if (job)
+                      return (
+                        <option value={JSON.stringify(job)} key={job.id}>
+                          {job.name}
+                        </option>
+                      );
+                  })}
+                </select>
+                <label>Output</label>
+                <select onChange={(e) => setSelectedOutput(e.target.value)}>
+                  <option>Select job output</option>
+                  {selectedJob?.outputParams?.map((param) => {
                     return (
-                      <option value={job.name} key={job.id}>
-                        {job.name}
+                      <option value={param.id} key={param.name}>
+                        {param.name}
                       </option>
                     );
-                })}
-              </select>
+                  })}
+                </select>
+                <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={submitLocalInput} />
+              </div>
+
               <label>Outputs</label>
               {outputs.map((output, i) => {
                 return (
