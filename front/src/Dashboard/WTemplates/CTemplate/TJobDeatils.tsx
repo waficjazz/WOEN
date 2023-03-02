@@ -4,10 +4,10 @@ import Input from "../../../shared/Inputs/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../shared/Buttons/Button";
-import { IJob, InputEvent, inputsParams, outputsParams } from "../../../types";
+import { IJob, InputEvent, inputsParams, IWJob, outputsParams } from "../../../types";
 import { useAtom } from "jotai";
 import { aDepends, aJobs } from "../../../store";
-const TJobDetails = (props: any) => {
+const TJobDetails = (props: IJob) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
   const [jobs, setJobs] = useAtom(aJobs);
   const [fullDependencies, setFullDependencies] = useState<string[]>([]);
@@ -124,7 +124,7 @@ const TJobDetails = (props: any) => {
                 <div>
                   <Input label="name" name="name" onChange={(e) => setInputParamName(e.target.value)} />
                   <label>From</label>
-                  <select onMouseDown={() => getAllDependencies(props.id)} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
+                  <select onMouseDown={() => getAllDependencies(props.id.toString())} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
                     <option>Select a job</option>
                     {fullDependencies.map((dep) => {
                       const job = jobs.find((job) => job.id === parseInt(dep));

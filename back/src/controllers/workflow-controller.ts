@@ -85,6 +85,7 @@ const getWorkflowTemplate = async (req: any, res: any, next: any) => {
         jobTemplates: {
           include: {
             outputParams: true,
+            container: true,
           },
         },
       },

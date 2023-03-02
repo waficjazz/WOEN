@@ -32,6 +32,9 @@ export interface IJob {
   successors?: string[];
   status?: string;
   outputParams?: outputsParams[];
+  container?: ISContainer;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IWJob {

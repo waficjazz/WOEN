@@ -102,6 +102,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
                 //// check below two line if moved outside loop parallele job does not update
                 let uJob = await updateJob(jid, { status: "finished", exitCode: exitCode });
                 messageOneUser(uid, `w${wid.toString()}`, uJob);
+                console.log("enter run", wid, j);
                 await runJob(uid, parseInt(j), wid, 0);
               })
             );
