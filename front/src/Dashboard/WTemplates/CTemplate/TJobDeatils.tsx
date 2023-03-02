@@ -111,6 +111,10 @@ const TJobDetails = (props: IJob) => {
             <p>{props.name}</p>
           </div>
           <div>
+            <label>Container</label>
+            <p>{props.container?.commands}</p>
+          </div>
+          <div>
             <div>
               <div>
                 <label>Inputs</label>
