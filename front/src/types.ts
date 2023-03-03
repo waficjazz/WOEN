@@ -10,10 +10,12 @@ export interface ISContainer {
 }
 
 export interface inputsParams {
+  id?: number | string;
   name: string;
   from?: number;
   outputParamsId: number;
   jobTemplateId: number;
+  outputParams?: outputsParams;
 }
 
 export interface outputsParams {

@@ -51,8 +51,11 @@ const TJobDetails = (props: IJob) => {
   const [outputs, setOutputs] = useState<outputsParams[]>([]);
   const [inputs, setInputs] = useState<inputsParams[]>([]);
 
+  const [inputSumbit, setInputSubmit] = useState<inputsParams[]>([]);
+
   const submitLocalInput = () => {
     setInputs((prev) => [...prev, { jobTemplateId: props.id, name: inputParamName, outputParamsId: parseInt(selectedOutput) }]);
+    setInputSubmit((prev) => [...prev, { jobTemplateId: props.id, name: inputParamName, outputParamsId: parseInt(selectedOutput) }]);
     setInputParamName("");
     setSelectedJob({} as IJob);
     setSelectedOutput("");
@@ -77,7 +80,7 @@ const TJobDetails = (props: IJob) => {
 
   const handleInSave = async () => {
     try {
-      const response = await api.setInParams(inputs);
+      const response = await api.setInParams(inputSumbit);
     } catch (err) {
       console.log(err);
     }
@@ -132,10 +135,7 @@ const TJobDetails = (props: IJob) => {
           </div>
           <div>
             <label>CREATED</label>
-            <p>
-              {(props.container?.createdAt && <ReactTimeAgo date={new Date(props.container?.createdAt)} locale="en-US" timeStyle={dateStyle} />) ||
-                "-"}
-            </p>
+            <p>{(props.createdAt && <ReactTimeAgo date={new Date(props.createdAt)} locale="en-US" timeStyle={dateStyle} />) || "-"}</p>
           </div>
         </div>
       )}
@@ -146,6 +146,11 @@ const TJobDetails = (props: IJob) => {
             <p>{props.container?.name}</p>
           </div>
           <div>
+            <label>Image</label>
+            <p>{props.container?.image}</p>
+          </div>
+
+          <div>
             <label>Commands</label>
             <div className="container_commands">
               {props.container?.commands &&
@@ -153,6 +158,13 @@ const TJobDetails = (props: IJob) => {
                   return <div key={c + i}>{c}</div>;
                 })}
             </div>
+          </div>
+          <div>
+            <label>CREATED</label>
+            <p>
+              {(props.container?.createdAt && <ReactTimeAgo date={new Date(props.container?.createdAt)} locale="en-US" timeStyle={dateStyle} />) ||
+                "-"}
+            </p>
           </div>
         </div>
       )}
@@ -164,7 +176,7 @@ const TJobDetails = (props: IJob) => {
                 <label>Inputs</label>
                 {inputs.map((input, i) => {
                   return (
-                    <div className="paramInptuContainer" key={input.name}>
+                    <div className="paramInptuContainer" key={input.id}>
                       <div>{input.name}</div>
                     </div>
                   );
