@@ -373,6 +373,7 @@ const setOutputParams = async (req: any, res: any, next: any) => {
   try {
     await prisma.outputParams.createMany({
       data: params,
+      skipDuplicates: true,
     });
 
     res.status(201).json(params);

@@ -48,7 +48,9 @@ const TJobDetails = (props: IJob) => {
     setFullDependencies(Array.from(new Set(reachableKeys)));
   }
 
+  const [currentOutput, setCurrentOutput] = useState<outputsParams>({ name: "", path: "" } as outputsParams);
   const [outputs, setOutputs] = useState<outputsParams[]>([]);
+  const [outputSubmit, setOutputSubmit] = useState<outputsParams[]>([]);
   const [inputs, setInputs] = useState<inputsParams[]>([]);
 
   const [inputSumbit, setInputSubmit] = useState<inputsParams[]>([]);
@@ -61,18 +63,21 @@ const TJobDetails = (props: IJob) => {
     setSelectedOutput("");
   };
 
-  const handleOutputsPair = (e: InputEvent, i: number) => {
+  const handleOutputsPair = (e: InputEvent) => {
     const { name, value } = e.target;
-    let arr = outputs;
-    if (name === "name") arr[i].name = value;
-    if (name === "path") arr[i].path = value;
-    setOutputs(arr);
+    if (name === "name") {
+      setCurrentOutput((prev) => ({ ...prev, name: value, jobTemplateId: props.id } as outputsParams));
+    }
+    if (name === "path") {
+      setCurrentOutput((prev) => ({ ...prev, path: value } as outputsParams));
+    }
   };
 
   const handleOutSave = async () => {
     try {
-      const response = await api.setOutParams(outputs);
-      if (response.status === 201) updateJobOutputs(props.id, response.data);
+      console.log(outputs);
+      // const response = await api.setOutParams(outputSubmit);
+      // if (response.status === 201) updateJobOutputs(props.id, response.data);
     } catch (err) {
       console.log(err);
     }
@@ -83,6 +88,17 @@ const TJobDetails = (props: IJob) => {
       const response = await api.setInParams(inputSumbit);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleLocalOutput = () => {
+    console.log(outputs);
+    setCurrentOutput({ name: "", path: "" } as outputsParams);
+
+    if (currentOutput?.name !== "" && currentOutput?.path !== "") {
+      console.log(currentOutput?.name, currentOutput?.path);
+      setOutputs((prev) => [...prev, currentOutput as outputsParams]);
+      // setOutputSubmit((prev) => [...prev, currentOutput as outputsParams]);
     }
   };
   useEffect(() => {
@@ -217,25 +233,16 @@ const TJobDetails = (props: IJob) => {
                   {outputs.map((output, i) => {
                     return (
                       <div className="paramInptuContainer" key={"name" + i}>
-                        <Input label="name" name="name" defaultValue={output.name} onChange={(e) => handleOutputsPair(e, i)} />
-                        <Input label="path" name="path" defaultValue={output.path} onChange={(e) => handleOutputsPair(e, i)} />
+                        <Input label="name" defaultValue={output.name} />
+                        <Input label="path" defaultValue={output.path} />
                       </div>
                     );
                   })}
-
-                  <FontAwesomeIcon
-                    className="add_env_button"
-                    icon={faCirclePlus}
-                    onClick={() => {
-                      const addOutput = () => setOutputs([...outputs, { jobTemplateId: props.id, name: "", path: "" }]);
-                      if (outputs.length > 0) {
-                        const last = outputs[outputs.length - 1];
-                        if (last.name !== "" && last.path !== "") {
-                          addOutput();
-                        }
-                      } else addOutput();
-                    }}
-                  />
+                  <div className="paramInptuContainer">
+                    <Input label="name" name="name" onChange={(e) => handleOutputsPair(e)} value={currentOutput.name} />
+                    <Input label="path" name="path" onChange={(e) => handleOutputsPair(e)} value={currentOutput.path} />
+                  </div>
+                  <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={handleLocalOutput} />
                 </div>
                 <div>
                   <Button onClick={handleOutSave}>Save</Button>
