@@ -10,10 +10,12 @@ export interface ISContainer {
 }
 
 export interface inputsParams {
+  id?: number | string;
   name: string;
   from?: number;
   outputParamsId: number;
   jobTemplateId: number;
+  outputParams?: outputsParams;
 }
 
 export interface outputsParams {
@@ -32,6 +34,9 @@ export interface IJob {
   successors?: string[];
   status?: string;
   outputParams?: outputsParams[];
+  container?: ISContainer;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IWJob {

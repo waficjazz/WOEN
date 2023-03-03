@@ -4,16 +4,24 @@ import Input from "../../../shared/Inputs/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../shared/Buttons/Button";
-import { IJob, InputEvent, inputsParams, outputsParams } from "../../../types";
+import { IJob, InputEvent, inputsParams, IWJob, outputsParams } from "../../../types";
 import { useAtom } from "jotai";
 import { aDepends, aJobs } from "../../../store";
-const TJobDetails = (props: any) => {
+import ReactTimeAgo from "react-time-ago";
+import { dateStyle } from "../../../utils/time-format";
+const TJobDetails = (props: IJob) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
   const [jobs, setJobs] = useAtom(aJobs);
   const [fullDependencies, setFullDependencies] = useState<string[]>([]);
   const [selectedJob, setSelectedJob] = useState<IJob>({} as IJob);
   const [selectedOutput, setSelectedOutput] = useState<string>("");
   const [inputParamName, setInputParamName] = useState<string>("");
+
+  const [option, setOption] = useState<number>(1);
+
+  const selectedStyle = {
+    borderBottom: "1px solid white ",
+  };
 
   const updateJobOutputs = (id: number, outputs: outputsParams[]) => {
     let tmpJob = jobs;
@@ -40,27 +48,35 @@ const TJobDetails = (props: any) => {
     setFullDependencies(Array.from(new Set(reachableKeys)));
   }
 
+  const [currentOutput, setCurrentOutput] = useState<outputsParams>({ name: "", path: "" } as outputsParams);
   const [outputs, setOutputs] = useState<outputsParams[]>([]);
+  const [outputSubmit, setOutputSubmit] = useState<outputsParams[]>([]);
   const [inputs, setInputs] = useState<inputsParams[]>([]);
+
+  const [inputSumbit, setInputSubmit] = useState<inputsParams[]>([]);
 
   const submitLocalInput = () => {
     setInputs((prev) => [...prev, { jobTemplateId: props.id, name: inputParamName, outputParamsId: parseInt(selectedOutput) }]);
+    setInputSubmit((prev) => [...prev, { jobTemplateId: props.id, name: inputParamName, outputParamsId: parseInt(selectedOutput) }]);
     setInputParamName("");
     setSelectedJob({} as IJob);
     setSelectedOutput("");
   };
 
-  const handleOutputsPair = (e: InputEvent, i: number) => {
+  const handleOutputsPair = (e: InputEvent) => {
     const { name, value } = e.target;
-    let arr = outputs;
-    if (name === "name") arr[i].name = value;
-    if (name === "path") arr[i].path = value;
-    setOutputs(arr);
+    if (name === "name") {
+      setCurrentOutput((prev) => ({ ...prev, name: value, jobTemplateId: props.id } as outputsParams));
+    }
+    if (name === "path") {
+      setCurrentOutput((prev) => ({ ...prev, path: value } as outputsParams));
+    }
   };
 
   const handleOutSave = async () => {
     try {
-      const response = await api.setOutParams(outputs);
+      console.log(outputSubmit);
+      const response = await api.setOutParams(outputSubmit);
       if (response.status === 201) updateJobOutputs(props.id, response.data);
     } catch (err) {
       console.log(err);
@@ -69,9 +85,18 @@ const TJobDetails = (props: any) => {
 
   const handleInSave = async () => {
     try {
-      const response = await api.setInParams(inputs);
+      const response = await api.setInParams(inputSumbit);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleLocalOutput = () => {
+    setCurrentOutput({ name: "", path: "" } as outputsParams);
+
+    if (currentOutput?.name !== "" && currentOutput?.path !== "") {
+      setOutputs((prev) => [...prev, currentOutput as outputsParams]);
+      setOutputSubmit((prev) => [...prev, currentOutput as outputsParams]);
     }
   };
   useEffect(() => {
@@ -105,18 +130,67 @@ const TJobDetails = (props: any) => {
   return (
     <div className="job_details_container">
       <div className="job_details_options">
+        <div style={option === 1 ? selectedStyle : {}} className="tab" onClick={() => setOption(1)}>
+          Template
+        </div>
+        <div style={option === 2 ? selectedStyle : {}} className="tab" onClick={() => setOption(2)}>
+          Container
+        </div>
+        <div style={option === 3 ? selectedStyle : {}} className="tab" onClick={() => setOption(3)}>
+          Input/Output
+        </div>
+      </div>
+
+      {option === 1 && (
         <div className="job_details">
           <div>
             <label>NAME</label>
             <p>{props.name}</p>
           </div>
           <div>
+            <label>CREATED</label>
+            <p>{(props.createdAt && <ReactTimeAgo date={new Date(props.createdAt)} locale="en-US" timeStyle={dateStyle} />) || "-"}</p>
+          </div>
+        </div>
+      )}
+      {option === 2 && (
+        <div className="job_details">
+          <div>
+            <label>NAME</label>
+            <p>{props.container?.name}</p>
+          </div>
+          <div>
+            <label>Image</label>
+            <p>{props.container?.image}</p>
+          </div>
+
+          <div>
+            <label>Commands</label>
+            <div className="container_commands">
+              {props.container?.commands &&
+                props.container?.commands[2].split(";").map((c, i) => {
+                  return <div key={c + i}>{c}</div>;
+                })}
+            </div>
+          </div>
+          <div>
+            <label>CREATED</label>
+            <p>
+              {(props.container?.createdAt && <ReactTimeAgo date={new Date(props.container?.createdAt)} locale="en-US" timeStyle={dateStyle} />) ||
+                "-"}
+            </p>
+          </div>
+        </div>
+      )}
+      {option === 3 && (
+        <div className="job_details">
+          <div>
             <div>
               <div>
                 <label>Inputs</label>
                 {inputs.map((input, i) => {
                   return (
-                    <div className="paramInptuContainer" key={input.name}>
+                    <div className="paramInptuContainer" key={input.id}>
                       <div>{input.name}</div>
                     </div>
                   );
@@ -124,7 +198,7 @@ const TJobDetails = (props: any) => {
                 <div>
                   <Input label="name" name="name" onChange={(e) => setInputParamName(e.target.value)} />
                   <label>From</label>
-                  <select onMouseDown={() => getAllDependencies(props.id)} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
+                  <select onMouseDown={() => getAllDependencies(props.id.toString())} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
                     <option>Select a job</option>
                     {fullDependencies.map((dep) => {
                       const job = jobs.find((job) => job.id === parseInt(dep));
@@ -157,25 +231,16 @@ const TJobDetails = (props: any) => {
                   {outputs.map((output, i) => {
                     return (
                       <div className="paramInptuContainer" key={"name" + i}>
-                        <Input label="name" name="name" defaultValue={output.name} onChange={(e) => handleOutputsPair(e, i)} />
-                        <Input label="path" name="path" defaultValue={output.path} onChange={(e) => handleOutputsPair(e, i)} />
+                        <Input label="name" defaultValue={output.name} disabled />
+                        <Input label="path" defaultValue={output.path} disabled />
                       </div>
                     );
                   })}
-
-                  <FontAwesomeIcon
-                    className="add_env_button"
-                    icon={faCirclePlus}
-                    onClick={() => {
-                      const addOutput = () => setOutputs([...outputs, { jobTemplateId: props.id, name: "", path: "" }]);
-                      if (outputs.length > 0) {
-                        const last = outputs[outputs.length - 1];
-                        if (last.name !== "" && last.path !== "") {
-                          addOutput();
-                        }
-                      } else addOutput();
-                    }}
-                  />
+                  <div className="paramInptuContainer">
+                    <Input label="name" name="name" onChange={(e) => handleOutputsPair(e)} value={currentOutput.name} />
+                    <Input label="path" name="path" onChange={(e) => handleOutputsPair(e)} value={currentOutput.path} />
+                  </div>
+                  <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={handleLocalOutput} />
                 </div>
                 <div>
                   <Button onClick={handleOutSave}>Save</Button>
@@ -184,7 +249,7 @@ const TJobDetails = (props: any) => {
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
