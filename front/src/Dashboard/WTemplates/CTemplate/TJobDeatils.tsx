@@ -7,6 +7,8 @@ import Button from "../../../shared/Buttons/Button";
 import { IJob, InputEvent, inputsParams, IWJob, outputsParams } from "../../../types";
 import { useAtom } from "jotai";
 import { aDepends, aJobs } from "../../../store";
+import ReactTimeAgo from "react-time-ago";
+import { dateStyle } from "../../../utils/time-format";
 const TJobDetails = (props: IJob) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
   const [jobs, setJobs] = useAtom(aJobs);
@@ -14,6 +16,12 @@ const TJobDetails = (props: IJob) => {
   const [selectedJob, setSelectedJob] = useState<IJob>({} as IJob);
   const [selectedOutput, setSelectedOutput] = useState<string>("");
   const [inputParamName, setInputParamName] = useState<string>("");
+
+  const [option, setOption] = useState<number>(1);
+
+  const selectedStyle = {
+    borderBottom: "1px solid white ",
+  };
 
   const updateJobOutputs = (id: number, outputs: outputsParams[]) => {
     let tmpJob = jobs;
@@ -105,15 +113,51 @@ const TJobDetails = (props: IJob) => {
   return (
     <div className="job_details_container">
       <div className="job_details_options">
+        <div style={option === 1 ? selectedStyle : {}} className="tab" onClick={() => setOption(1)}>
+          Template
+        </div>
+        <div style={option === 2 ? selectedStyle : {}} className="tab" onClick={() => setOption(2)}>
+          Container
+        </div>
+        <div style={option === 3 ? selectedStyle : {}} className="tab" onClick={() => setOption(3)}>
+          Input/Output
+        </div>
+      </div>
+
+      {option === 1 && (
         <div className="job_details">
           <div>
             <label>NAME</label>
             <p>{props.name}</p>
           </div>
           <div>
-            <label>Container</label>
-            <p>{props.container?.commands}</p>
+            <label>CREATED</label>
+            <p>
+              {(props.container?.createdAt && <ReactTimeAgo date={new Date(props.container?.createdAt)} locale="en-US" timeStyle={dateStyle} />) ||
+                "-"}
+            </p>
           </div>
+        </div>
+      )}
+      {option === 2 && (
+        <div className="job_details">
+          <div>
+            <label>NAME</label>
+            <p>{props.container?.name}</p>
+          </div>
+          <div>
+            <label>Commands</label>
+            <div className="container_commands">
+              {props.container?.commands &&
+                props.container?.commands[2].split(";").map((c, i) => {
+                  return <div key={c + i}>{c}</div>;
+                })}
+            </div>
+          </div>
+        </div>
+      )}
+      {option === 3 && (
+        <div className="job_details">
           <div>
             <div>
               <div>
@@ -188,7 +232,7 @@ const TJobDetails = (props: IJob) => {
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
