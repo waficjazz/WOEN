@@ -75,9 +75,9 @@ const TJobDetails = (props: IJob) => {
 
   const handleOutSave = async () => {
     try {
-      console.log(outputs);
-      // const response = await api.setOutParams(outputSubmit);
-      // if (response.status === 201) updateJobOutputs(props.id, response.data);
+      console.log(outputSubmit);
+      const response = await api.setOutParams(outputSubmit);
+      if (response.status === 201) updateJobOutputs(props.id, response.data);
     } catch (err) {
       console.log(err);
     }
@@ -92,13 +92,11 @@ const TJobDetails = (props: IJob) => {
   };
 
   const handleLocalOutput = () => {
-    console.log(outputs);
     setCurrentOutput({ name: "", path: "" } as outputsParams);
 
     if (currentOutput?.name !== "" && currentOutput?.path !== "") {
-      console.log(currentOutput?.name, currentOutput?.path);
       setOutputs((prev) => [...prev, currentOutput as outputsParams]);
-      // setOutputSubmit((prev) => [...prev, currentOutput as outputsParams]);
+      setOutputSubmit((prev) => [...prev, currentOutput as outputsParams]);
     }
   };
   useEffect(() => {
@@ -233,8 +231,8 @@ const TJobDetails = (props: IJob) => {
                   {outputs.map((output, i) => {
                     return (
                       <div className="paramInptuContainer" key={"name" + i}>
-                        <Input label="name" defaultValue={output.name} />
-                        <Input label="path" defaultValue={output.path} />
+                        <Input label="name" defaultValue={output.name} disabled />
+                        <Input label="path" defaultValue={output.path} disabled />
                       </div>
                     );
                   })}
