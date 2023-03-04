@@ -4,7 +4,7 @@ import Input from "../../../shared/Inputs/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../shared/Buttons/Button";
-import { IWTemplate } from "../../../types";
+import { InputEvent, ITemplateParam, IWTemplate } from "../../../types";
 import { useAtom } from "jotai";
 import { aDepends, aJobs } from "../../../store";
 import ReactTimeAgo from "react-time-ago";
@@ -12,7 +12,7 @@ import { dateStyle } from "../../../utils/time-format";
 const TemplateDetails = (props: IWTemplate) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
   const [jobs, setJobs] = useAtom(aJobs);
-  const [currentParam, setCurrentParam] = useState<any>();
+  const [currentParam, setCurrentParam] = useState<ITemplateParam>({} as ITemplateParam);
 
   const [option, setOption] = useState<number>(1);
 
@@ -20,6 +20,10 @@ const TemplateDetails = (props: IWTemplate) => {
     borderBottom: "1px solid white ",
   };
 
+  const handleParam = (e: InputEvent) => {
+    const { name, value } = e.target;
+    setCurrentParam((prev) => ({ ...prev, [name]: value }));
+  };
   return (
     <div className="template_details_container">
       <div className="job_details_options">
@@ -46,7 +50,25 @@ const TemplateDetails = (props: IWTemplate) => {
           </div>
         </div>
       )}
-      {option === 2 && <div className="job_details"></div>}
+      {option === 2 && (
+        <div className="job_details">
+          <div>
+            {props.parameters?.map((param) => {
+              return (
+                <div>
+                  <div>{param.name}</div>
+                  <div>{param.default}</div>
+                  <div>{param.required}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="">
+            <Input name="name" label="Name" onChange={(e) => handleParam(e)} />
+            <Input name="default" label="Default Value" onChange={(e) => handleParam(e)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -99,6 +99,7 @@ export interface IWTemplate {
   createdAt?: string;
   updatedAt?: string;
   owner?: string;
+  parameters?: ITemplateParam[];
 }
 export interface ICWTemplate {
   name: string;
@@ -119,4 +120,10 @@ export interface IGroup {
   description?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface ITemplateParam {
+  name: string;
+  default?: string;
+  required?: boolean | false;
 }
