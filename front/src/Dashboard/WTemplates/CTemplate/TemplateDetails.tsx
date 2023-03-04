@@ -12,12 +12,28 @@ import { dateStyle } from "../../../utils/time-format";
 const TemplateDetails = (props: IWTemplate) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
   const [jobs, setJobs] = useAtom(aJobs);
-  const [currentParam, setCurrentParam] = useState<ITemplateParam>({} as ITemplateParam);
-
+  const [currentParam, setCurrentParam] = useState<ITemplateParam>({ name: "", default: "", required: false, workflowTemplateId: props.id });
+  const [params, setParams] = useState<ITemplateParam[]>([]);
   const [option, setOption] = useState<number>(1);
 
   const selectedStyle = {
     borderBottom: "1px solid white ",
+  };
+
+  const handleSubmitParams = async () => {
+    try {
+      console.log(params);
+      const response = await api.addWorkflowParam(params);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleAddParams = () => {
+    if (currentParam.name !== "" && currentParam.default !== "") {
+      setParams((prev) => [...prev, currentParam]);
+      setCurrentParam({ name: "", default: "", required: false, workflowTemplateId: props.id });
+    }
   };
 
   const handleParam = (e: InputEvent) => {
@@ -53,9 +69,9 @@ const TemplateDetails = (props: IWTemplate) => {
       {option === 2 && (
         <div className="job_details">
           <div>
-            {props.parameters?.map((param) => {
+            {[...props.parameters!!, ...params].map((param) => {
               return (
-                <div>
+                <div key={param.name}>
                   <div>{param.name}</div>
                   <div>{param.default}</div>
                   <div>{param.required}</div>
@@ -64,9 +80,11 @@ const TemplateDetails = (props: IWTemplate) => {
             })}
           </div>
           <div className="">
-            <Input name="name" label="Name" onChange={(e) => handleParam(e)} />
-            <Input name="default" label="Default Value" onChange={(e) => handleParam(e)} />
+            <Input name="name" label="Name" onChange={(e) => handleParam(e)} value={currentParam.name} />
+            <Input name="default" label="Default Value" onChange={(e) => handleParam(e)} value={currentParam.default} />
           </div>
+          <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={handleAddParams} />
+          <Button onClick={handleSubmitParams}>Save</Button>
         </div>
       )}
     </div>

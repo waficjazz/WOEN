@@ -1,5 +1,5 @@
 import Axios from "../../axios";
-import { ICWTemplate, IWTemplate } from "../../types";
+import { ICWTemplate, ITemplateParam, IWTemplate } from "../../types";
 
 export const initWorkflow = (data: any) => {
   return Axios.post(`/workflow/init`, data);
@@ -51,4 +51,8 @@ export const deleteTemplate = (id: number) => {
 
 export const getTemplate = (id: string) => {
   return Axios.get(`/workflow/template/${id}`);
+};
+
+export const addWorkflowParam = (data: ITemplateParam[]) => {
+  return Axios.post("/workflow/addParams", { params: data });
 };

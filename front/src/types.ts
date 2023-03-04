@@ -96,8 +96,8 @@ export interface IWTemplate {
   id: number | string;
   name: string;
   placements: IPlacement;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
   owner?: string;
   parameters?: ITemplateParam[];
 }
@@ -126,4 +126,5 @@ export interface ITemplateParam {
   name: string;
   default?: string;
   required?: boolean | false;
+  workflowTemplateId: string | number;
 }

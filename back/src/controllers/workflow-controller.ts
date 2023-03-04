@@ -81,7 +81,7 @@ const getWorkflowTemplate = async (req: any, res: any, next: any) => {
         id: parseInt(wid),
       },
       include: {
-        // jobTemplates: true,
+        parameters: true,
         jobTemplates: {
           include: {
             outputParams: true,
@@ -399,6 +399,19 @@ const setInputParams = async (req: any, res: any, next: any) => {
   }
 };
 
+const setWorkflowParams = async (req: any, res: any, next: any) => {
+  const { params } = req.body;
+  try {
+    await prisma.workflowTemplateParam.createMany({
+      data: params,
+    });
+    res.status(201).json(params);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Could not add workflow Params.", 500);
+    return next(error);
+  }
+};
 const getJTInputParams = async (req: any, res: any, next: any) => {
   const jtid = req.params.jtid;
   try {
@@ -463,4 +476,5 @@ module.exports = {
   unpauseJob,
   pauseWokflow,
   resumeWorkflow,
+  setWorkflowParams,
 };
