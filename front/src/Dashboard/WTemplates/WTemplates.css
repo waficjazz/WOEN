@@ -44,10 +44,11 @@
   color: rgb(31, 101, 253);
 } */
 .sumbit_form_container {
-  height: 100vh;
-  width: 35%;
-  position: absolute;
+  position: fixed;
+  top: 0;
   right: 0;
+  height: 100vh;
+  width: 40vw;
   z-index: 10;
   background-color: rgb(20, 34, 47);
 }

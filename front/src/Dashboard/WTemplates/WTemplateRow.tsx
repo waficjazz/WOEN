@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -8,11 +9,11 @@ import ReactTimeAgo from "react-time-ago";
 import * as api from "./api";
 import { useAtom } from "jotai";
 import { aProject } from "../../store";
-interface Props extends IWTemplate {
-  showSubmit: any;
-}
+import SubmitForm from "./SubmitForm";
+interface Props extends IWTemplate {}
 
-const WTemplateRow = ({ id, name, createdAt, updatedAt, showSubmit }: Props) => {
+const WTemplateRow = ({ id, name, createdAt, updatedAt, parameters }: Props) => {
+  const [showSubmit, setShowSubmit] = useState(false);
   const [project, setProject] = useAtom(aProject);
   const navigate = useNavigate();
   const handleClick = () => {
@@ -22,7 +23,7 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt, showSubmit }: Props) => 
   const initWorkflow = async () => {
     try {
       let rand = Math.random().toString(36).substring(2, 6);
-      showSubmit(true);
+      setShowSubmit(false);
       // const response = await api.initWorkflow({ name: name + rand, templateId: id, projectId: project.id });
       // if (response.data) {
       //   navigate(`/one-workflow/${response.data.id}`);
@@ -35,6 +36,7 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt, showSubmit }: Props) => 
   return (
     <>
       <div className="workflow_row" onClick={handleClick}>
+        {showSubmit && <SubmitForm close={() => setShowSubmit(false)} init={initWorkflow} params={parameters!!} />}
         <div style={{ width: "25%" }}>{name}</div>
         <div style={{ width: "30%" }}>
           <ReactTimeAgo date={new Date(createdAt)} locale="en-US" timeStyle={dateStyle} />
@@ -46,7 +48,7 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt, showSubmit }: Props) => 
           icon={faPlus}
           onClick={(e) => {
             e.stopPropagation();
-            initWorkflow();
+            setShowSubmit(true);
           }}
           size="lg"
           className="template_submit_icon"

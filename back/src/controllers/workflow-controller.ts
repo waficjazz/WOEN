@@ -151,6 +151,9 @@ const getAllWorkflowsTemplates = async (req: Request, res: Response, next: NextF
       where: {
         projectId: parseInt(req.params.pid),
       },
+      include: {
+        parameters: true,
+      },
       orderBy: {
         createdAt: "desc",
       },

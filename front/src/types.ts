@@ -128,3 +128,10 @@ export interface ITemplateParam {
   required?: boolean | false;
   workflowTemplateId: string | number;
 }
+
+export interface IWorkflowParam {
+  id?: number;
+  workflowId?: number;
+  name: string;
+  value: string;
+}
