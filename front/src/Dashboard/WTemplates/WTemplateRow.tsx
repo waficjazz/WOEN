@@ -8,9 +8,11 @@ import ReactTimeAgo from "react-time-ago";
 import * as api from "./api";
 import { useAtom } from "jotai";
 import { aProject } from "../../store";
-interface Props extends IWTemplate {}
+interface Props extends IWTemplate {
+  showSubmit: any;
+}
 
-const WTemplateRow = ({ id, name, createdAt, updatedAt }: Props) => {
+const WTemplateRow = ({ id, name, createdAt, updatedAt, showSubmit }: Props) => {
   const [project, setProject] = useAtom(aProject);
   const navigate = useNavigate();
   const handleClick = () => {
@@ -20,10 +22,11 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt }: Props) => {
   const initWorkflow = async () => {
     try {
       let rand = Math.random().toString(36).substring(2, 6);
-      const response = await api.initWorkflow({ name: name + rand, templateId: id, projectId: project.id });
-      if (response.data) {
-        navigate(`/one-workflow/${response.data.id}`);
-      }
+      showSubmit(true);
+      // const response = await api.initWorkflow({ name: name + rand, templateId: id, projectId: project.id });
+      // if (response.data) {
+      //   navigate(`/one-workflow/${response.data.id}`);
+      // }
     } catch (err) {
       console.log(err);
     }

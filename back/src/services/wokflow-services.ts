@@ -6,6 +6,20 @@ import { messageOneUser } from "../utils/socket";
 import { updateJob } from "./job-services";
 const prisma = new PrismaClient();
 
+export const setWorkflowParams = async (wid: number, params: [any]) => {
+  let workflowParams = params.map((param) => {
+    param.workflowId = wid;
+    return param;
+  });
+  try {
+    await prisma.workflowParam.createMany({
+      data: workflowParams,
+    });
+  } catch (err) {
+    return err;
+  }
+};
+
 export const createWorkflow = async (userId: number, name: string, templateId: number, pid: number): Promise<IWorkflow | undefined> => {
   let workflow: IWorkflow;
   let jobsTemplate;

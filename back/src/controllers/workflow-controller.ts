@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
-import { createWorkflow, getFirstJobs, runJob, updateWorkflow } from "../services/wokflow-services";
+import { createWorkflow, getFirstJobs, runJob, setWorkflowParams, updateWorkflow } from "../services/wokflow-services";
 import { pauseContainer, unpauseContainer, waitContainer } from "../services/container-services";
 import { messageOneUser } from "../utils/socket";
 import { IWorkflow, RequestWithUserId } from "../types";
@@ -344,9 +344,10 @@ const upateJobDependencies = async (req: Request, res: Response, next: NextFunct
 const initWorkflow = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let workflow: IWorkflow | undefined;
   let firstJobsId: number[] | undefined;
-  const { name, templateId, projectId } = req.body;
+  const { name, templateId, projectId, params } = req.body;
   try {
     workflow = await createWorkflow(req.userId, name, templateId, projectId);
+    if (workflow) await setWorkflowParams(workflow.id, params);
     messageOneUser(req.userId, "wfs", workflow);
     if (workflow !== undefined) {
       firstJobsId = await getFirstJobs(workflow.id);
@@ -400,7 +401,7 @@ const setInputParams = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-const setWorkflowParams = async (req: Request, res: Response, next: NextFunction) => {
+const setTemplateParams = async (req: Request, res: Response, next: NextFunction) => {
   const { params } = req.body;
   try {
     await prisma.workflowTemplateParam.createMany({
@@ -477,5 +478,5 @@ module.exports = {
   unpauseJob,
   pauseWokflow,
   resumeWorkflow,
-  setWorkflowParams,
+  setTemplateParams,
 };

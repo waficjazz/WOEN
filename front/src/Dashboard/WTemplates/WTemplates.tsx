@@ -8,7 +8,9 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import * as api from "./api";
 import { useAtom } from "jotai";
 import { aProject } from "../../store";
+import SubmitForm from "./SubmitForm";
 const WTemplates = () => {
+  const [showSubmit, setShowSubmit] = useState(false);
   const [project, setProject] = useAtom(aProject);
   const [workflows, setWorkflows] = useState<IWTemplate[]>([]);
   const [templateRef] = useAutoAnimate<HTMLDivElement>();
@@ -30,6 +32,7 @@ const WTemplates = () => {
   const [showForm, setShowForm] = useState(false);
   return (
     <>
+      {showSubmit && <SubmitForm close={() => setShowSubmit(false)} />}
       <div className="table_board">
         <div className="table_board_header">
           <p>Workflows Templates</p>
@@ -53,6 +56,7 @@ const WTemplates = () => {
                   placements={workflow.placements}
                   createdAt={workflow.createdAt}
                   updatedAt={workflow.updatedAt}
+                  showSubmit={setShowSubmit}
                 />
               );
             })}

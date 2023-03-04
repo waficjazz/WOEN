@@ -43,3 +43,11 @@
 /* .template_submit_icon {
   color: rgb(31, 101, 253);
 } */
+.sumbit_form_container {
+  height: 100vh;
+  width: 35%;
+  position: absolute;
+  right: 0;
+  z-index: 10;
+  background-color: rgb(20, 34, 47);
+}
