@@ -73,20 +73,38 @@ model container {
 }
 
 model workflowTemplate {
-  id           Int           @id @default(autoincrement())
-  name         String        @unique
+  id           Int                     @id @default(autoincrement())
+  name         String                  @unique
   jobTemplates jobTemplate[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  initJob      String        @default("init")
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  initJob      String                  @default("init")
   placements   Json?
   workflows    workflow[]
-  owner        user?         @relation(fields: [userId], references: [id])
+  owner        user?                   @relation(fields: [userId], references: [id])
   userId       Int?
-  project      project?      @relation(fields: [projectId], references: [id])
+  project      project?                @relation(fields: [projectId], references: [id])
   projectId    Int?
+  parameters   workflowTemplateParam[]
 
   @@map("workflow_template")
+}
+
+model workflowTemplateParam {
+  id                 Int              @id @default(autoincrement())
+  name               String
+  workflowTemplate   workflowTemplate @relation(fields: [workflowTemplateId], references: [id])
+  workflowTemplateId Int
+  required           Boolean          @default(false)
+  default            String
+}
+
+model workflowParam {
+  id         Int      @id @default(autoincrement())
+  name       String
+  value      String
+  workflow   workflow @relation(fields: [workflowId], references: [id])
+  workflowId Int
 }
 
 model jobTemplate {
@@ -155,6 +173,7 @@ model workflow {
   userId             Int?
   project            project?          @relation(fields: [projectId], references: [id])
   projectId          Int?
+  workflowParam      workflowParam[]
 }
 
 model job {

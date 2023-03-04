@@ -64,7 +64,7 @@ export interface IConnection {
 export interface IWorkflow {
   id: string;
   name: string;
-  owner: any;
+  owner: string;
   status: string;
   placements?: any;
   totalJobs: number;
@@ -93,11 +93,12 @@ export interface ISignIn {
 }
 
 export interface IWTemplate {
-  id: number;
+  id: number | string;
   name: string;
   placements: IPlacement;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  owner?: string;
 }
 export interface ICWTemplate {
   name: string;

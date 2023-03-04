@@ -123,3 +123,11 @@
 .paramInptuContainer {
   display: flex;
 }
+
+.template_details_container {
+  height: 100vh;
+  color: white;
+  width: 60%;
+  background-color: rgb(20, 34, 47);
+  animation: details-anim 0.5s ease-in-out;
+}
