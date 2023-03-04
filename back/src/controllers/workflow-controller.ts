@@ -1,14 +1,15 @@
+import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import { createWorkflow, getFirstJobs, runJob, updateWorkflow } from "../services/wokflow-services";
 import { pauseContainer, unpauseContainer, waitContainer } from "../services/container-services";
 import { messageOneUser } from "../utils/socket";
-import { IWorkflow } from "../types";
+import { IWorkflow, RequestWithUserId } from "../types";
 import { updateJob } from "../services/job-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
 
-const deleteWorkflowTemplate = async (req: any, res: any, next: any) => {
+const deleteWorkflowTemplate = async (req: Request, res: Response, next: NextFunction) => {
   const tid = req.params.tid;
   try {
     await prisma.workflowTemplate.delete({
@@ -23,7 +24,7 @@ const deleteWorkflowTemplate = async (req: any, res: any, next: any) => {
   }
 };
 
-const deleteWorkflow = async (req: any, res: any, next: any) => {
+const deleteWorkflow = async (req: Request, res: Response, next: NextFunction) => {
   const wid = req.params.wid;
   try {
     await prisma.workflow.delete({
@@ -39,7 +40,7 @@ const deleteWorkflow = async (req: any, res: any, next: any) => {
   }
 };
 
-const getAllWorkflows = async (req: any, res: any, next: any) => {
+const getAllWorkflows = async (req: Request, res: Response, next: NextFunction) => {
   let workflows;
 
   try {
@@ -72,7 +73,7 @@ const getAllWorkflows = async (req: any, res: any, next: any) => {
   res.status(200).json(workflows);
 };
 
-const getWorkflowTemplate = async (req: any, res: any, next: any) => {
+const getWorkflowTemplate = async (req: Request, res: Response, next: NextFunction) => {
   const wid = req.params.wid;
   let workflow;
   try {
@@ -101,7 +102,7 @@ const getWorkflowTemplate = async (req: any, res: any, next: any) => {
   res.json({ workflow: workflow });
 };
 
-const getWorkflow = async (req: any, res: any, next: any) => {
+const getWorkflow = async (req: Request, res: Response, next: NextFunction) => {
   const wid = req.params.wid;
   let workflow;
   try {
@@ -123,7 +124,7 @@ const getWorkflow = async (req: any, res: any, next: any) => {
   }
   res.json(workflow);
 };
-const createWorkflowTemplate = async (req: any, res: any, next: any) => {
+const createWorkflowTemplate = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   //get user id for jwt token
 
   const { name, projectId } = req.body;
@@ -143,7 +144,7 @@ const createWorkflowTemplate = async (req: any, res: any, next: any) => {
   res.status(201).json(workflow);
 };
 
-const getAllWorkflowsTemplates = async (req: any, res: any, next: any) => {
+const getAllWorkflowsTemplates = async (req: Request, res: Response, next: NextFunction) => {
   let workflows;
   try {
     workflows = await prisma.workflowTemplate.findMany({
@@ -166,7 +167,7 @@ const getAllWorkflowsTemplates = async (req: any, res: any, next: any) => {
   res.status(200).json(workflows);
 };
 
-const createJobTemplate = async (req: any, res: any, next: any) => {
+const createJobTemplate = async (req: Request, res: Response, next: NextFunction) => {
   const { name, workflowTemplateId, containerId } = req.body;
   let job;
   try {
@@ -189,7 +190,7 @@ const createJobTemplate = async (req: any, res: any, next: any) => {
   res.status(201).json(job);
 };
 
-const deleteJobTemplate = async (req: any, res: any, next: any) => {
+const deleteJobTemplate = async (req: Request, res: Response, next: NextFunction) => {
   const jobId = req.params.jid;
   let job;
   try {
@@ -205,7 +206,7 @@ const deleteJobTemplate = async (req: any, res: any, next: any) => {
   res.status(200).json(job);
 };
 
-const pauseJob = async (req: any, res: any, next: any) => {
+const pauseJob = async (req: Request, res: Response, next: NextFunction) => {
   const jobId = req.params.jid;
   let job, ujob;
   try {
@@ -223,7 +224,7 @@ const pauseJob = async (req: any, res: any, next: any) => {
   res.status(200).json(ujob);
 };
 
-const unpauseJob = async (req: any, res: any, next: any) => {
+const unpauseJob = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const jobId = req.params.jid;
   const uid = req.userId;
   let job, ujob;
@@ -248,9 +249,9 @@ const unpauseJob = async (req: any, res: any, next: any) => {
   res.status(200).json(ujob);
 };
 
-const resumeWorkflow = async (req: any, res: any, next: any) => {
+const resumeWorkflow = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const workflowId = req.params.wid;
-  const uid = req.userUd;
+  const uid = req.userId;
   let jobs, uworkflow;
   let ujobs = [];
   try {
@@ -274,7 +275,7 @@ const resumeWorkflow = async (req: any, res: any, next: any) => {
   res.status(200).json({ jobs: ujobs, workflow: uworkflow });
 };
 
-const pauseWokflow = async (req: any, res: any, next: any) => {
+const pauseWokflow = async (req: Request, res: Response, next: NextFunction) => {
   const workflowId = req.params.wid;
   let workflow, uworkflow;
   let jobs;
@@ -300,7 +301,7 @@ const pauseWokflow = async (req: any, res: any, next: any) => {
   res.status(200).json({ jobs: ujobs, workflow: uworkflow });
 };
 
-const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
+const updateWorkflowPlacements = async (req: Request, res: Response, next: NextFunction) => {
   const { placements } = req.body;
   const workflowId = req.params.wid;
   try {
@@ -320,7 +321,7 @@ const updateWorkflowPlacements = async (req: any, res: any, next: any) => {
   }
 };
 
-const upateJobDependencies = async (req: any, res: any, next: any) => {
+const upateJobDependencies = async (req: Request, res: Response, next: NextFunction) => {
   const { jobId, successors, dependencies } = req.body;
   try {
     const job = await prisma.jobTemplate.update({
@@ -340,7 +341,7 @@ const upateJobDependencies = async (req: any, res: any, next: any) => {
   }
 };
 
-const initWorkflow = async (req: any, res: any, next: any) => {
+const initWorkflow = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let workflow: IWorkflow | undefined;
   let firstJobsId: number[] | undefined;
   const { name, templateId, projectId } = req.body;
@@ -368,7 +369,7 @@ const initWorkflow = async (req: any, res: any, next: any) => {
   res.status(201).json(workflow);
 };
 
-const setOutputParams = async (req: any, res: any, next: any) => {
+const setOutputParams = async (req: Request, res: Response, next: NextFunction) => {
   const { params } = req.body;
   try {
     await prisma.outputParams.createMany({
@@ -384,7 +385,7 @@ const setOutputParams = async (req: any, res: any, next: any) => {
   }
 };
 
-const setInputParams = async (req: any, res: any, next: any) => {
+const setInputParams = async (req: Request, res: Response, next: NextFunction) => {
   const { params } = req.body;
   try {
     await prisma.inputParams.createMany({
@@ -399,7 +400,7 @@ const setInputParams = async (req: any, res: any, next: any) => {
   }
 };
 
-const setWorkflowParams = async (req: any, res: any, next: any) => {
+const setWorkflowParams = async (req: Request, res: Response, next: NextFunction) => {
   const { params } = req.body;
   try {
     await prisma.workflowTemplateParam.createMany({
@@ -412,7 +413,7 @@ const setWorkflowParams = async (req: any, res: any, next: any) => {
     return next(error);
   }
 };
-const getJTInputParams = async (req: any, res: any, next: any) => {
+const getJTInputParams = async (req: Request, res: Response, next: NextFunction) => {
   const jtid = req.params.jtid;
   try {
     const params = await prisma.inputParams.findMany({
@@ -434,7 +435,7 @@ const getJTInputParams = async (req: any, res: any, next: any) => {
   }
 };
 
-const getJTOutputParams = async (req: any, res: any, next: any) => {
+const getJTOutputParams = async (req: Request, res: Response, next: NextFunction) => {
   const jtid = req.params.jtid;
   try {
     const params = await prisma.outputParams.findMany({

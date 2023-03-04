@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import { Request, Response, NextFunction } from "express";
 import { createClient } from "redis";
 import { getTokenId } from "./utils/decode-token";
 const { Server } = require("socket.io");
@@ -30,13 +31,13 @@ app.use("/api/v1/containers", containerRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/workflow", workflowRoutes);
 
-app.use((req: any, res: any, next: any) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   const error = new HttpError("Could not find this route.", 404);
   throw error;
 });
 
-app.use((error: any, req: any, res: any, next: any) => {
-  if (res.headerSent) {
+app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+  if (res.headersSent) {
     return next(error);
   }
   res.status(error?.code || 500);

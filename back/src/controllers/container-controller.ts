@@ -1,10 +1,12 @@
+import { Request, Response, NextFunction } from "express";
 import axios from "axios";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const HttpError = require("../utils/http-error");
 import { pauseContainer as pause, unpauseContainer as unpause } from "../services/container-services";
 import { messageOneUser } from "../utils/socket";
-const listImages = async (req: any, res: any, next: any) => {
+import { RequestWithUserId } from "../types";
+const listImages = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port } = req.body;
   const url = `http://${host}:${port}/images/json`;
   try {
@@ -24,7 +26,7 @@ const listImages = async (req: any, res: any, next: any) => {
   }
 };
 
-const listContainers = async (req: any, res: any, next: any) => {
+const listContainers = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port } = req.body;
   const url = `http://localhost:2375/containers/json?all=true`;
   try {
@@ -44,7 +46,7 @@ const listContainers = async (req: any, res: any, next: any) => {
   }
 };
 
-const createContainer = async (req: any, res: any, next: any) => {
+const createContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, image, CMD, name, hostName, domainName, User, Env } = req.body;
   // const url = `http://localhost:2375/images/create?fromImage=${image}`;
   // const response = await axios.post(url);
@@ -74,7 +76,7 @@ const createContainer = async (req: any, res: any, next: any) => {
   // }
 };
 
-const runContainer = async (req: any, res: any, next: any) => {
+const runContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
     const url = `http://localhost:2375/containers/${containerId}/start`;
@@ -91,7 +93,7 @@ const runContainer = async (req: any, res: any, next: any) => {
   }
 };
 
-const removeContainer = async (req: any, res: any, next: any) => {
+const removeContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   const url = `http://localhost:2375/containers/${containerId}?force=true`;
   const response = await axios.delete(url);
@@ -102,7 +104,7 @@ const removeContainer = async (req: any, res: any, next: any) => {
   res.status(204).json({ container: response.data });
 };
 
-const getContainerLogs = async (req: any, res: any, next: any) => {
+const getContainerLogs = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   const uid = req.userId;
   try {
@@ -133,7 +135,7 @@ const getContainerLogs = async (req: any, res: any, next: any) => {
   }
 };
 
-const waitContainer = async (req: any, res: any, next: any) => {
+const waitContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
     const url = `http://localhost:2375/containers/${containerId}/wait`;
@@ -149,7 +151,7 @@ const waitContainer = async (req: any, res: any, next: any) => {
   }
 };
 
-const inspectContainer = async (req: any, res: any, next: any) => {
+const inspectContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
     const url = `http://localhost:2375/containers/${containerId}/json`;
@@ -164,7 +166,7 @@ const inspectContainer = async (req: any, res: any, next: any) => {
     return next(error);
   }
 };
-const pauseContainer = async (req: any, res: any, next: any) => {
+const pauseContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
     await pause(containerId);
@@ -175,7 +177,7 @@ const pauseContainer = async (req: any, res: any, next: any) => {
   }
 };
 
-const unpauseContainer = async (req: any, res: any, next: any) => {
+const unpauseContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
     await unpause(containerId);
@@ -186,7 +188,7 @@ const unpauseContainer = async (req: any, res: any, next: any) => {
   }
 };
 
-const saveContainer = async (req: any, res: any, next: any) => {
+const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
     const url = `http://localhost:2375/containers/${containerId}/json`;
@@ -221,7 +223,7 @@ const saveContainer = async (req: any, res: any, next: any) => {
   }
 };
 
-const getSavedContainers = async (req: any, res: any, next: any) => {
+const getSavedContainers = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   try {
     const savedContainers = await prisma.container.findMany({
       where: {
@@ -239,12 +241,12 @@ const getSavedContainers = async (req: any, res: any, next: any) => {
   }
 };
 
-const getOneContainer = async (req: any, res: any, next: any) => {
+const getOneContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const container = req.params.cid;
   try {
     const savedContainer = await prisma.container.findUnique({
       where: {
-        id: container,
+        id: parseInt(container),
       },
     });
     if (!savedContainer) {
