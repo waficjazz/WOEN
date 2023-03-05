@@ -11,9 +11,11 @@ interface Props {
   value?: string;
   defaultValue?: string;
   disabled?: boolean;
+  onFocus?: any;
+  onBlur?: any;
 }
 
-const Input = ({ onChange, name, placeholder, className, label, style, value, defaultValue, disabled }: Props) => {
+const Input = ({ onChange, name, placeholder, className, label, style, value, defaultValue, disabled, onFocus, onBlur }: Props) => {
   return (
     <div className={"input_container " + className}>
       <label className="input_label">{label}</label>
@@ -25,6 +27,8 @@ const Input = ({ onChange, name, placeholder, className, label, style, value, de
         value={value}
         defaultValue={defaultValue}
         disabled={disabled}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
     </div>
   );
