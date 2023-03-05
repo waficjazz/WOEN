@@ -227,7 +227,7 @@ const CTemplate = () => {
                   })}
               </>
             </div>
-            {selectedJob !== undefined && <TJobDetails {...jobs.find((j) => j.id === selectedJob)!!} />}
+            {selectedJob !== undefined && <TJobDetails {...jobs.find((j) => j.id === selectedJob)!!} templateParams={template.parameters} />}
             {showDetails && <TemplateDetails {...template} />}
           </div>
         </div>
