@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "STATUS" AS ENUM ('sucess', 'failed', 'paused', 'skiped', 'running', 'pending');
+
 -- CreateTable
 CREATE TABLE "user" (
     "id" SERIAL NOT NULL,
@@ -67,6 +70,27 @@ CREATE TABLE "workflow_template" (
 );
 
 -- CreateTable
+CREATE TABLE "workflowTemplateParam" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "workflowTemplateId" INTEGER NOT NULL,
+    "required" BOOLEAN NOT NULL DEFAULT false,
+    "default" TEXT NOT NULL,
+
+    CONSTRAINT "workflowTemplateParam_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "workflowParam" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+    "workflowId" INTEGER NOT NULL,
+
+    CONSTRAINT "workflowParam_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "job_template" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -93,9 +117,9 @@ CREATE TABLE "outputParams" (
 -- CreateTable
 CREATE TABLE "inputParams" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "path" TEXT NOT NULL,
+    "name" TEXT,
     "jobTemplateId" INTEGER,
+    "outputParamsId" INTEGER NOT NULL,
 
     CONSTRAINT "inputParams_pkey" PRIMARY KEY ("id")
 );
@@ -104,8 +128,9 @@ CREATE TABLE "inputParams" (
 CREATE TABLE "outputParamsValue" (
     "id" SERIAL NOT NULL,
     "value" TEXT NOT NULL,
-    "jobId" INTEGER,
     "outputParamsId" INTEGER NOT NULL,
+    "jobId" INTEGER,
+    "workflowId" INTEGER NOT NULL,
 
     CONSTRAINT "outputParamsValue_pkey" PRIMARY KEY ("id")
 );
@@ -120,7 +145,7 @@ CREATE TABLE "workflow" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "startedAt" TIMESTAMP(3),
     "finishedAt" TIMESTAMP(3),
-    "status" TEXT NOT NULL DEFAULT 'pending',
+    "status" "STATUS" NOT NULL DEFAULT 'pending',
     "placements" JSONB,
     "workflowTemplateId" INTEGER,
     "jidsMap" JSONB,
@@ -134,7 +159,7 @@ CREATE TABLE "workflow" (
 CREATE TABLE "job" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'pending',
+    "status" "STATUS" NOT NULL DEFAULT 'pending',
     "successors" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "dependencies" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -223,22 +248,31 @@ ALTER TABLE "workflow_template" ADD CONSTRAINT "workflow_template_userId_fkey" F
 ALTER TABLE "workflow_template" ADD CONSTRAINT "workflow_template_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "project"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "workflowTemplateParam" ADD CONSTRAINT "workflowTemplateParam_workflowTemplateId_fkey" FOREIGN KEY ("workflowTemplateId") REFERENCES "workflow_template"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "workflowParam" ADD CONSTRAINT "workflowParam_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "workflow"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "job_template" ADD CONSTRAINT "job_template_containerId_fkey" FOREIGN KEY ("containerId") REFERENCES "container"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "job_template" ADD CONSTRAINT "job_template_workflowTemplateId_fkey" FOREIGN KEY ("workflowTemplateId") REFERENCES "workflow_template"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "outputParams" ADD CONSTRAINT "outputParams_jobTemplateId_fkey" FOREIGN KEY ("jobTemplateId") REFERENCES "job_template"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "outputParams" ADD CONSTRAINT "outputParams_jobTemplateId_fkey" FOREIGN KEY ("jobTemplateId") REFERENCES "job_template"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "inputParams" ADD CONSTRAINT "inputParams_jobTemplateId_fkey" FOREIGN KEY ("jobTemplateId") REFERENCES "job_template"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "outputParamsValue" ADD CONSTRAINT "outputParamsValue_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "job"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "inputParams" ADD CONSTRAINT "inputParams_outputParamsId_fkey" FOREIGN KEY ("outputParamsId") REFERENCES "outputParams"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "outputParamsValue" ADD CONSTRAINT "outputParamsValue_outputParamsId_fkey" FOREIGN KEY ("outputParamsId") REFERENCES "outputParams"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "outputParamsValue" ADD CONSTRAINT "outputParamsValue_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "job"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "workflow" ADD CONSTRAINT "workflow_workflowTemplateId_fkey" FOREIGN KEY ("workflowTemplateId") REFERENCES "workflow_template"("id") ON DELETE SET NULL ON UPDATE CASCADE;

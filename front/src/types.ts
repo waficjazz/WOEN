@@ -64,7 +64,7 @@ export interface IConnection {
 export interface IWorkflow {
   id: string;
   name: string;
-  owner: string;
+  owner: IUser;
   status: string;
   placements?: any;
   totalJobs: number;
@@ -98,7 +98,7 @@ export interface IWTemplate {
   placements: IPlacement;
   createdAt: string;
   updatedAt: string;
-  owner?: string;
+  owner?: IUser;
   parameters?: ITemplateParam[];
 }
 export interface ICWTemplate {
@@ -116,7 +116,7 @@ export interface IProject {
 export interface IGroup {
   id?: number;
   name: string;
-  owner?: string;
+  owner?: IUser;
   description?: string;
   createdAt?: string;
   updatedAt?: string;

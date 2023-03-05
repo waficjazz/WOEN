@@ -26,7 +26,7 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
     return (
       <>
         {status === "pending" && <FontAwesomeIcon icon={faClock} size="sm" />}
-        {status === "finished" && <FontAwesomeIcon icon={faCircleCheck} size="sm" color="green" />}
+        {status === "success" && <FontAwesomeIcon icon={faCircleCheck} size="sm" color="green" />}
         {status === "paused" && <FontAwesomeIcon icon={faCirclePause} size="sm" color="rgb(255, 174, 0)" />}
         {status === "running" && (
           <ColorRing
