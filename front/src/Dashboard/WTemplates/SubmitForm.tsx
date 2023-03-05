@@ -42,8 +42,7 @@ const SubmitForm = ({ close, init, params }: Props) => {
         <Button
           onClick={(e) => {
             e.stopPropagation();
-            console.log(workflowParams);
-            // init(workflowParams);
+            init(workflowParams);
           }}>
           Submit
         </Button>

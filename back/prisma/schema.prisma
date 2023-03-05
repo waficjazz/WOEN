@@ -103,7 +103,7 @@ model workflowParam {
   id         Int      @id @default(autoincrement())
   name       String
   value      String
-  workflow   workflow @relation(fields: [workflowId], references: [id])
+  workflow   workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   workflowId Int
 }
 

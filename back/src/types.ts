@@ -19,3 +19,8 @@ export interface IJob {
   successors: string[];
   dependencies: string[];
 }
+
+export interface IWParams {
+  name: string;
+  value: any;
+}

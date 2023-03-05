@@ -359,7 +359,7 @@ const initWorkflow = async (req: RequestWithUserId, res: Response, next: NextFun
       await Promise.all(
         firstJobsId.map(async (id) => {
           if (workflow !== undefined) {
-            await runJob(req.userId, templateId, workflow.id, id);
+            await runJob(req.userId, templateId, workflow.id, id, params);
           }
         })
       );

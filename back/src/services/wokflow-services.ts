@@ -1,9 +1,10 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { createWorkflowContainer } from "./container-services";
 import { redisc } from "..";
-import { IJob, IWorkflow } from "../types";
+import { IJob, IWorkflow, IWParams } from "../types";
 import { messageOneUser } from "../utils/socket";
 import { updateJob } from "./job-services";
+import { pushParamsArgs } from "@redis/search/dist/commands";
 const prisma = new PrismaClient();
 
 export const setWorkflowParams = async (wid: number, params: [any]) => {
@@ -157,7 +158,7 @@ export const getFirstJobs = async (wid: number) => {
   }
 };
 
-export const runJob = async (uid: number, jtid: number, wid: number, jid: number) => {
+export const runJob = async (uid: number, jtid: number, wid: number, jid: number, wparams: IWParams[] | null) => {
   let job;
   try {
     if (jid > 0) {
@@ -197,6 +198,13 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
         name: string | null;
         value: string;
       }
+      ///this part is where we apply workflow params
+      if (wparams !== null && wparams.length > 0) {
+        wparams.map((param) => {
+          const regex = new RegExp(`{{workflow.${param.name}}}`, "g");
+          container!!.commands[2] = container!!.commands[2].replace(regex, param.value);
+        });
+      }
       let result: IInput[] = [];
       if (job.jobTemplate?.inputParams) {
         ///this part is where we get inputs value
@@ -229,7 +237,7 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
         }
       }
       let cname = container?.name + Math.random().toString(36).substring(2, 6);
-      createWorkflowContainer(uid, container!!.image, container!!.commands, cname, wid, job.id);
+      createWorkflowContainer(uid, wparams, container!!.image, container!!.commands, cname, wid, job.id);
     }
   } catch (err) {
     return err;

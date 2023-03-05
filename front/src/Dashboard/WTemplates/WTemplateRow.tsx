@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { IWTemplate } from "../../types";
+import { IWorkflowParam, IWTemplate } from "../../types";
 import "./WTemplates.css";
 import { dateStyle } from "../../utils/time-format";
 import ReactTimeAgo from "react-time-ago";
@@ -20,14 +20,14 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt, parameters }: Props) => 
     navigate(`/cw-template/${id}`);
   };
 
-  const initWorkflow = async () => {
+  const initWorkflow = async (params: IWorkflowParam) => {
     try {
       let rand = Math.random().toString(36).substring(2, 6);
       setShowSubmit(false);
-      // const response = await api.initWorkflow({ name: name + rand, templateId: id, projectId: project.id });
-      // if (response.data) {
-      //   navigate(`/one-workflow/${response.data.id}`);
-      // }
+      const response = await api.initWorkflow({ name: name + rand, templateId: id, projectId: project.id, params });
+      if (response.data) {
+        navigate(`/one-workflow/${response.data.id}`);
+      }
     } catch (err) {
       console.log(err);
     }
