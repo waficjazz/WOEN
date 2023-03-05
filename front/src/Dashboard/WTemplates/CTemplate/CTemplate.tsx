@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./CTemplate.css";
 import { useParams } from "react-router-dom";
-import { IConnection, IJob, IPlacement } from "../../../types";
+import { IConnection, IJob, IPlacement, IWorkflow, IWTemplate } from "../../../types";
 import { useAtom } from "jotai";
 import { aJobs, aShowMenu, aConnect, aDepends } from "../../../store";
 import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
@@ -10,14 +10,16 @@ import Job from "./Job";
 import Button from "../../../shared/Buttons/Button";
 import * as api from "../api";
 import TJobDetails from "./TJobDeatils";
+import TemplateDetails from "./TemplateDetails";
 
 const CTemplate = () => {
   const { id } = useParams();
   const [showMenu, setShowMenu] = useAtom(aShowMenu);
   const [jobs, setJobs] = useAtom(aJobs);
+  const [template, setTemplate] = useState<IWTemplate>({} as IWTemplate);
   const [connections, setConnections] = useAtom(aConnect);
   const [dependencies, setDependencies] = useAtom(aDepends);
-
+  const [showDetails, setShowDetails] = useState(false);
   let biggestY = useRef(-1);
   let x = 0;
   let y = 0;
@@ -40,6 +42,7 @@ const CTemplate = () => {
       const response = await api.getTemplate(id!!);
       if (response.data) {
         setJobs(response.data.workflow.jobTemplates);
+        setTemplate(response.data.workflow);
         let jobs: IJob[] = response.data.workflow.jobTemplates;
         let tmpConnection: IConnection = {};
         let tmpDepends: IConnection = {};
@@ -171,6 +174,9 @@ const CTemplate = () => {
             <Button onClick={savePlacement} style={{ height: "30px" }}>
               SAVE
             </Button>
+            <Button onClick={() => setShowDetails(!showDetails)} style={{ height: "30px" }}>
+              Details
+            </Button>
           </div>
           <div className="one_workflow_content">
             <div className="jobs_container" id="jobscontainer">
@@ -222,6 +228,7 @@ const CTemplate = () => {
               </>
             </div>
             {selectedJob !== undefined && <TJobDetails {...jobs.find((j) => j.id === selectedJob)!!} />}
+            {showDetails && <TemplateDetails {...template} />}
           </div>
         </div>
       </Xwrapper>

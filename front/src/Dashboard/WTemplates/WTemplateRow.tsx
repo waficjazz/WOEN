@@ -1,26 +1,30 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { IWTemplate } from "../../types";
+import { IWorkflowParam, IWTemplate } from "../../types";
 import "./WTemplates.css";
 import { dateStyle } from "../../utils/time-format";
 import ReactTimeAgo from "react-time-ago";
 import * as api from "./api";
 import { useAtom } from "jotai";
 import { aProject } from "../../store";
+import SubmitForm from "./SubmitForm";
 interface Props extends IWTemplate {}
 
-const WTemplateRow = ({ id, name, createdAt, updatedAt }: Props) => {
+const WTemplateRow = ({ id, name, createdAt, updatedAt, parameters }: Props) => {
+  const [showSubmit, setShowSubmit] = useState(false);
   const [project, setProject] = useAtom(aProject);
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/cw-template/${id}`);
   };
 
-  const initWorkflow = async () => {
+  const initWorkflow = async (params: IWorkflowParam) => {
     try {
       let rand = Math.random().toString(36).substring(2, 6);
-      const response = await api.initWorkflow({ name: name + rand, templateId: id, projectId: project.id });
+      setShowSubmit(false);
+      const response = await api.initWorkflow({ name: name + rand, templateId: id, projectId: project.id, params });
       if (response.data) {
         navigate(`/one-workflow/${response.data.id}`);
       }
@@ -32,6 +36,7 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt }: Props) => {
   return (
     <>
       <div className="workflow_row" onClick={handleClick}>
+        {showSubmit && <SubmitForm close={() => setShowSubmit(false)} init={initWorkflow} params={parameters!!} />}
         <div style={{ width: "25%" }}>{name}</div>
         <div style={{ width: "30%" }}>
           <ReactTimeAgo date={new Date(createdAt)} locale="en-US" timeStyle={dateStyle} />
@@ -43,7 +48,7 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt }: Props) => {
           icon={faPlus}
           onClick={(e) => {
             e.stopPropagation();
-            initWorkflow();
+            setShowSubmit(true);
           }}
           size="lg"
           className="template_submit_icon"

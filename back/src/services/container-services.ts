@@ -7,12 +7,14 @@ import { redisc } from "..";
 import { io } from "../index";
 import { messageOneUser } from "../utils/socket";
 import { updateJob, saveOutputParamsValue } from "./job-services";
+import { IWParams } from "../types";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
 
 export const createWorkflowContainer = async (
   uid: number,
+  wparams: IWParams[] | null,
   image: string,
   CMD: string[],
   name: string,
@@ -39,14 +41,14 @@ export const createWorkflowContainer = async (
       }
       //TO DO// separate run workflow from create &&  commun funcition for job and container
       await updateJob(jid, { containerInstance: response.data.Id });
-      runWorkflowContainer(uid, response.data.Id, wid, jid);
+      runWorkflowContainer(uid, response.data.Id, wid, jid, wparams);
     }
   } catch (err) {
     console.log(err);
   }
 };
 
-export const waitContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
+export const waitContainer = async (uid: number, containerId: string, wid: number, jid: number, wparams: IWParams[] | null) => {
   let exitCode: number;
   try {
     const url = `http://localhost:2375/containers/${containerId}/wait`;
@@ -102,8 +104,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
                 //// check below two line if moved outside loop parallele job does not update
                 let uJob = await updateJob(jid, { status: "finished", exitCode: exitCode });
                 messageOneUser(uid, `w${wid.toString()}`, uJob);
-                console.log("enter run", wid, j);
-                await runJob(uid, parseInt(j), wid, 0);
+                await runJob(uid, parseInt(j), wid, 0, wparams);
               })
             );
             await redisc.disconnect();
@@ -174,7 +175,7 @@ export const getArchive = async (containerId: string, path: string): Promise<str
   }
 };
 
-const runWorkflowContainer = async (uid: number, containerId: string, wid: number, jid: number) => {
+const runWorkflowContainer = async (uid: number, containerId: string, wid: number, jid: number, wparams: IWParams[] | null) => {
   try {
     // io.emit(`w${wid.toString()}`, job);
     const url = `http://localhost:2375/containers/${containerId}/start`;
@@ -185,7 +186,7 @@ const runWorkflowContainer = async (uid: number, containerId: string, wid: numbe
     }
     let job = await updateJob(jid, { status: "running", startedAt: new Date() });
     messageOneUser(uid, `w${wid.toString()}`, job);
-    waitContainer(uid, containerId, wid, jid);
+    waitContainer(uid, containerId, wid, jid, wparams);
   } catch (err) {
     const error = new HttpError("Could not start container.", 500);
     return error;

@@ -8,6 +8,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import * as api from "./api";
 import { useAtom } from "jotai";
 import { aProject } from "../../store";
+import SubmitForm from "./SubmitForm";
 const WTemplates = () => {
   const [project, setProject] = useAtom(aProject);
   const [workflows, setWorkflows] = useState<IWTemplate[]>([]);
@@ -45,16 +46,7 @@ const WTemplates = () => {
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {
-              return (
-                <WTemplateRow
-                  key={workflow.id}
-                  id={workflow.id}
-                  name={workflow.name}
-                  placements={workflow.placements}
-                  createdAt={workflow.createdAt}
-                  updatedAt={workflow.updatedAt}
-                />
-              );
+              return <WTemplateRow key={workflow.id} {...workflow} />;
             })}
         </div>
       </div>

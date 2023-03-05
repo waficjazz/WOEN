@@ -1,13 +1,15 @@
+import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 const HttpError = require("../utils/http-error");
 import bcrypt from "bcrypt";
+import { RequestWithUserId } from "../types";
 
 const prisma = new PrismaClient();
 
 // const createGroup = async (name : string )
 
-const signup = async (req: any, res: any, next: any) => {
+const signup = async (req: Request, res: Response, next: NextFunction) => {
   const { firstName, lastName, username, email, password } = req.body;
   let user;
   let existingUser;
@@ -82,7 +84,7 @@ const signup = async (req: any, res: any, next: any) => {
   });
 };
 
-const login = async (req: any, res: any, next: any) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
   const { user, password } = req.body;
   try {
     let found;
@@ -136,7 +138,7 @@ const login = async (req: any, res: any, next: any) => {
   }
 };
 
-const createProject = async (req: any, res: any, next: any) => {
+const createProject = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const { name } = req.body;
   let project;
   try {
@@ -153,7 +155,7 @@ const createProject = async (req: any, res: any, next: any) => {
   res.status(201).json(project);
 };
 
-const listProjects = async (req: any, res: any, next: any) => {
+const listProjects = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let userId = req.userId;
   let projects = [];
   try {
@@ -173,7 +175,7 @@ const listProjects = async (req: any, res: any, next: any) => {
   res.status(200).json(projects);
 };
 
-const createGroup = async (req: any, res: any, next: any) => {
+const createGroup = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let userId = req.userId;
   let { name, description } = req.body;
   let group;
@@ -192,7 +194,7 @@ const createGroup = async (req: any, res: any, next: any) => {
   res.status(201).json(group);
 };
 
-const listGroups = async (req: any, res: any, next: any) => {
+const listGroups = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let userId = req.userId;
   let groups;
   try {

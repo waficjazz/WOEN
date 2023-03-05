@@ -1,3 +1,9 @@
+import { Request } from "express";
+
+export interface RequestWithUserId extends Request {
+  userId: number;
+}
+
 export interface IWorkflow {
   id: number;
   name: string;
@@ -12,4 +18,9 @@ export interface IJob {
   workflowId: number;
   successors: string[];
   dependencies: string[];
+}
+
+export interface IWParams {
+  name: string;
+  value: any;
 }

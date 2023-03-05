@@ -64,7 +64,7 @@ export interface IConnection {
 export interface IWorkflow {
   id: string;
   name: string;
-  owner: any;
+  owner: string;
   status: string;
   placements?: any;
   totalJobs: number;
@@ -93,11 +93,13 @@ export interface ISignIn {
 }
 
 export interface IWTemplate {
-  id: number;
+  id: number | string;
   name: string;
   placements: IPlacement;
   createdAt: string;
   updatedAt: string;
+  owner?: string;
+  parameters?: ITemplateParam[];
 }
 export interface ICWTemplate {
   name: string;
@@ -118,4 +120,18 @@ export interface IGroup {
   description?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface ITemplateParam {
+  name: string;
+  default?: string;
+  required?: boolean | false;
+  workflowTemplateId: string | number;
+}
+
+export interface IWorkflowParam {
+  id?: number;
+  workflowId?: number;
+  name: string;
+  value: string;
 }
