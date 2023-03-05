@@ -10,6 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum STATUS {
+  success
+  failed
+  paused
+  skiped
+  running
+  pending
+}
+
 model user {
   id               Int                @id @default(autoincrement())
   firstName        String
@@ -164,7 +173,7 @@ model workflow {
   updatedAt          DateTime          @updatedAt
   startedAt          DateTime?
   finishedAt         DateTime?
-  status             String            @default("pending")
+  status             STATUS            @default(pending)
   placements         Json?
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id])
   workflowTemplateId Int?
@@ -179,7 +188,7 @@ model workflow {
 model job {
   id                Int                 @id @default(autoincrement())
   name              String
-  status            String              @default("pending")
+  status            STATUS              @default(pending)
   successors        String[]            @default([])
   dependencies      String[]            @default([])
   createdAt         DateTime            @default(now())

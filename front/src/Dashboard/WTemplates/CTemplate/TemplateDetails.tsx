@@ -58,7 +58,7 @@ const TemplateDetails = (props: IWTemplate) => {
           </div>
           <div>
             <label>OWNER</label>
-            <p>{props.owner}</p>
+            <p>{props.owner?.username}</p>
           </div>
           <div>
             <label>CREATED</label>

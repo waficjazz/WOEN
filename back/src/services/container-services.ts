@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, STATUS } from "@prisma/client";
 import axios from "axios";
 const tar = require("tar");
 const stream = require("stream");
@@ -72,7 +72,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
         let updatedWorkflow = await updateWorkflow(wid, { completedJobs: completed });
         if (updatedWorkflow)
           if (updatedWorkflow.totalJobs === completed) {
-            let finishedWorkflow = await updateWorkflow(wid, { status: "finished", finishedAt: new Date() });
+            let finishedWorkflow = await updateWorkflow(wid, { status: STATUS.success, finishedAt: new Date() });
             messageOneUser(uid, "wfs", finishedWorkflow);
           } else {
             messageOneUser(uid, "wfs", updatedWorkflow);
@@ -102,14 +102,14 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
                 await redisc.lPush(`${j}${wid}`, jid.toString());
 
                 //// check below two line if moved outside loop parallele job does not update
-                let uJob = await updateJob(jid, { status: "finished", exitCode: exitCode });
+                let uJob = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
                 messageOneUser(uid, `w${wid.toString()}`, uJob);
                 await runJob(uid, parseInt(j), wid, 0, wparams);
               })
             );
             await redisc.disconnect();
           } else {
-            let job = await updateJob(jid, { status: "finished", exitCode: exitCode });
+            let job = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
             // io.emit(`w${wid.toString()}`, job);
             messageOneUser(uid, `w${wid.toString()}`, job);
             console.log("done");
@@ -118,7 +118,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
           return err;
         }
       } else {
-        let fJob = await updateJob(jid, { status: "failed", exitCode: exitCode });
+        let fJob = await updateJob(jid, { status: STATUS.failed, exitCode: exitCode });
         messageOneUser(uid, `w${wid.toString()}`, fJob);
       }
     }
@@ -184,7 +184,7 @@ const runWorkflowContainer = async (uid: number, containerId: string, wid: numbe
       const error = new HttpError("Could not start container.", 500);
       return error;
     }
-    let job = await updateJob(jid, { status: "running", startedAt: new Date() });
+    let job = await updateJob(jid, { status: STATUS.running, startedAt: new Date() });
     messageOneUser(uid, `w${wid.toString()}`, job);
     waitContainer(uid, containerId, wid, jid, wparams);
   } catch (err) {

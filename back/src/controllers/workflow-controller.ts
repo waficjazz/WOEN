@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-import { createWorkflow, getFirstJobs, runJob, setWorkflowParams, updateWorkflow } from "../services/wokflow-services";
+import { PrismaClient, STATUS } from "@prisma/client";
+import { createWorkflow, getFirstJobs, runJob, updateWorkflow } from "../services/wokflow-services";
 import { pauseContainer, unpauseContainer, waitContainer } from "../services/container-services";
 import { messageOneUser } from "../utils/socket";
 import { IWorkflow, RequestWithUserId } from "../types";
@@ -219,7 +219,7 @@ const pauseJob = async (req: Request, res: Response, next: NextFunction) => {
       },
     });
     await pauseContainer(job?.containerInstance!!);
-    ujob = await updateJob(parseInt(jobId), { status: "paused" });
+    ujob = await updateJob(parseInt(jobId), { status: STATUS.paused });
   } catch (err) {
     const error = new HttpError("Could not pause job.", 500);
     return next(error);
@@ -241,8 +241,8 @@ const unpauseJob = async (req: RequestWithUserId, res: Response, next: NextFunct
       },
     });
     await unpauseContainer(job?.containerInstance!!);
-    ujob = await updateJob(parseInt(jobId), { status: "running" });
-    if (job?.workflow.status === "paused") await updateWorkflow(job?.workflow.id, { status: "running" });
+    ujob = await updateJob(parseInt(jobId), { status: STATUS.running });
+    if (job?.workflow.status === STATUS.paused) await updateWorkflow(job?.workflow.id, { status: STATUS.running });
     //TODO waiting container http request already , so it will not be enable again (other solution is close connection once paused)
     // if (job) waitContainer(uid, job?.containerInstance!!, job?.workflowId, parseInt(jobId));
   } catch (err) {
@@ -261,16 +261,16 @@ const resumeWorkflow = async (req: RequestWithUserId, res: Response, next: NextF
     jobs = await prisma.job.findMany({
       where: {
         workflowId: parseInt(workflowId),
-        status: "paused",
+        status: STATUS.paused,
       },
     });
     for (let i = 0; i < jobs.length; i++) {
       let ujob;
       await unpauseContainer(jobs[i].containerInstance!!);
-      ujob = await updateJob(jobs[i].id, { status: "running" });
+      ujob = await updateJob(jobs[i].id, { status: STATUS.running });
       ujobs.push(ujob);
     }
-    uworkflow = await updateWorkflow(parseInt(workflowId), { status: "running" });
+    uworkflow = await updateWorkflow(parseInt(workflowId), { status: STATUS.running });
   } catch (err) {
     const error = new HttpError("Could not resume workflow.", 500);
     return next(error);
@@ -287,16 +287,16 @@ const pauseWokflow = async (req: Request, res: Response, next: NextFunction) => 
     jobs = await prisma.job.findMany({
       where: {
         workflowId: parseInt(workflowId),
-        status: "running",
+        status: STATUS.running,
       },
     });
     for (let i = 0; i < jobs.length; i++) {
       let ujob;
       await pauseContainer(jobs[i].containerInstance!!);
-      ujob = await updateJob(jobs[i].id, { status: "paused" });
+      ujob = await updateJob(jobs[i].id, { status: STATUS.paused });
       ujobs.push(ujob);
     }
-    uworkflow = await updateWorkflow(parseInt(workflowId), { status: "paused" });
+    uworkflow = await updateWorkflow(parseInt(workflowId), { status: STATUS.paused });
   } catch (err) {
     const error = new HttpError("Could not pause workflow.", 500);
     return next(error);
@@ -349,8 +349,7 @@ const initWorkflow = async (req: RequestWithUserId, res: Response, next: NextFun
   let firstJobsId: number[] | undefined;
   const { name, templateId, projectId, params } = req.body;
   try {
-    workflow = await createWorkflow(req.userId, name, templateId, projectId);
-    if (workflow) await setWorkflowParams(workflow.id, params);
+    workflow = await createWorkflow(req.userId, name, templateId, projectId, params);
     messageOneUser(req.userId, "wfs", workflow);
     if (workflow !== undefined) {
       firstJobsId = await getFirstJobs(workflow.id);
@@ -363,7 +362,7 @@ const initWorkflow = async (req: RequestWithUserId, res: Response, next: NextFun
           }
         })
       );
-    let updatedWorkflow = await updateWorkflow(workflow!!.id, { status: "running" });
+    let updatedWorkflow = await updateWorkflow(workflow!!.id, { status: STATUS.running });
     messageOneUser(req.userId, "wfs", updatedWorkflow);
   } catch (err) {
     const error = new HttpError("Could not update job.", 500);

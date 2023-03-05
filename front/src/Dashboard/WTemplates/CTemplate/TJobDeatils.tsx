@@ -1,23 +1,54 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, ChangeEvent } from "react";
 import * as api from "../api";
 import Input from "../../../shared/Inputs/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../shared/Buttons/Button";
-import { IJob, InputEvent, inputsParams, IWJob, outputsParams } from "../../../types";
+import { IJob, InputEvent, inputsParams, ITemplateParam, IWJob, outputsParams } from "../../../types";
 import { useAtom } from "jotai";
 import { aDepends, aJobs } from "../../../store";
 import ReactTimeAgo from "react-time-ago";
 import { dateStyle } from "../../../utils/time-format";
-const TJobDetails = (props: IJob) => {
+
+interface Props extends IJob {
+  templateParams?: ITemplateParam[];
+}
+const TJobDetails = (props: Props) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
   const [jobs, setJobs] = useAtom(aJobs);
   const [fullDependencies, setFullDependencies] = useState<string[]>([]);
   const [selectedJob, setSelectedJob] = useState<IJob>({} as IJob);
   const [selectedOutput, setSelectedOutput] = useState<string>("");
   const [inputParamName, setInputParamName] = useState<string>("");
-
   const [option, setOption] = useState<number>(1);
+  const [expression, setExpression] = useState<string[]>(["("]);
+  const [expValue, setExpValue] = useState("");
+  const beforeParams = ["==", "!=", "(", "||", "&&"];
+  const beforComb = ["(", "==", "!==", "&&", "||"];
+
+  const handleExpValue = () => {
+    const lastValue = expression[expression.length - 1];
+    if (!beforeParams.includes(lastValue)) return;
+    setExpression((prev) => [...prev, '"' + expValue + '"']);
+    setExpValue("");
+  };
+
+  const handleExpression = (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const lastValue = expression[expression.length - 1];
+
+    if (value == "") return;
+    if (name === "params") {
+      if (!beforeParams.includes(lastValue)) return;
+    }
+    if (name == "operator") {
+      if (value == lastValue) return;
+      if ((value == "||" || value == "&&") && beforComb.includes(lastValue)) return;
+      if (value != "||" && value != "&&" && value != "(" && [...beforComb, ")"].includes(lastValue)) return;
+    }
+    setExpression((prev) => [...prev, value]);
+    e.target.value = "";
+  };
 
   const selectedStyle = {
     borderBottom: "1px solid white ",
@@ -127,6 +158,8 @@ const TJobDetails = (props: IJob) => {
       setInputs([]);
     };
   }, [props.id]);
+  const [inputPosition, setInputPosition] = useState({ left: 0, top: 0 });
+
   return (
     <div className="job_details_container">
       <div className="job_details_options">
@@ -241,6 +274,41 @@ const TJobDetails = (props: IJob) => {
                     <Input label="path" name="path" onChange={(e) => handleOutputsPair(e)} value={currentOutput.path} />
                   </div>
                   <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={handleLocalOutput} />
+                </div>
+                <div>
+                  <Input label="Value" onChange={(e) => setExpValue(e.target.value)} value={expValue} />
+                  <Button onClick={handleExpValue}>add</Button>
+                  <select name="operator" onChange={(e) => handleExpression(e)}>
+                    <option value="">Operator</option>
+                    {["(", ")", "==", "!=", "||", "&&"].map((inp) => {
+                      return (
+                        <option value={inp} key={inp}>
+                          {inp}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <select name="params" onChange={(e) => handleExpression(e)}>
+                    <option value="">Input Param</option>
+                    {inputs?.map((inp) => {
+                      return (
+                        <option value={inp.id} key={inp.name}>
+                          {inp.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <select name="params" onChange={(e) => handleExpression(e)}>
+                    <option value="">Workflow Param</option>
+                    {props.templateParams?.map((param) => {
+                      return (
+                        <option value={param.name} key={param.name}>
+                          {param.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div>{expression}</div>
                 </div>
                 <div>
                   <Button onClick={handleOutSave}>Save</Button>
