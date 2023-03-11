@@ -9,6 +9,7 @@ export interface IWorkflow {
   name: string;
   jobs?: any;
   status: string;
+  workflowParam?: IWParams[];
 }
 
 export interface IJob {

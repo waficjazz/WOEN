@@ -19,6 +19,24 @@ export const updateJob = async (jid: number, data: any) => {
   }
 };
 
+export const updateJobTemplate = async (jtid: number, data: any) => {
+  try {
+    let job = await prisma.jobTemplate.update({
+      where: {
+        id: jtid,
+      },
+      data,
+    });
+    return job;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const checkCondtion = (condtion: string, wparams: any) => {
+  console.log({ condtion, wparams });
+};
+
 export const saveOutputParamsValue = async (containerId: string, outputParams: any, jid: number, wid: number) => {
   try {
     if (outputParams) {

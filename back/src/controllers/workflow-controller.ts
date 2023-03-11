@@ -4,7 +4,7 @@ import { createWorkflow, getFirstJobs, runJob, updateWorkflow } from "../service
 import { pauseContainer, unpauseContainer, waitContainer } from "../services/container-services";
 import { messageOneUser } from "../utils/socket";
 import { IWorkflow, RequestWithUserId } from "../types";
-import { updateJob } from "../services/job-services";
+import { updateJob, updateJobTemplate } from "../services/job-services";
 const HttpError = require("../utils/http-error");
 
 const prisma = new PrismaClient();
@@ -416,6 +416,25 @@ const setTemplateParams = async (req: Request, res: Response, next: NextFunction
     return next(error);
   }
 };
+
+const setJobCondition = async (req: Request, res: Response, next: NextFunction) => {
+  const jtid = req.params.jtid;
+  const { condition } = req.body;
+  let job, ujob;
+  try {
+    job = await prisma.jobTemplate.findUnique({
+      where: {
+        id: parseInt(jtid),
+      },
+    });
+    ujob = await updateJobTemplate(parseInt(jtid), { condition: condition });
+  } catch (err) {
+    const error = new HttpError("Could not set job condtion.", 500);
+    return next(error);
+  }
+  res.status(200).json(ujob);
+};
+
 const getJTInputParams = async (req: Request, res: Response, next: NextFunction) => {
   const jtid = req.params.jtid;
   try {
@@ -481,4 +500,5 @@ module.exports = {
   pauseWokflow,
   resumeWorkflow,
   setTemplateParams,
+  setJobCondition,
 };

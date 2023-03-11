@@ -106,9 +106,17 @@ const TJobDetails = (props: Props) => {
 
   const handleOutSave = async () => {
     try {
-      console.log(outputSubmit);
       const response = await api.setOutParams(outputSubmit);
       if (response.status === 201) updateJobOutputs(props.id, response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCondSave = async () => {
+    try {
+      const response = await api.setCondition(props.id.toString(), expression.join(""));
+      // if (response.status === 201) updateJobOutputs(props.id, response.data);
     } catch (err) {
       console.log(err);
     }
@@ -276,6 +284,9 @@ const TJobDetails = (props: Props) => {
                   <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={handleLocalOutput} />
                 </div>
                 <div>
+                  <Button onClick={handleOutSave}>Save</Button>
+                </div>
+                <div>
                   <Input label="Value" onChange={(e) => setExpValue(e.target.value)} value={expValue} />
                   <Button onClick={handleExpValue}>add</Button>
                   <select name="operator" onChange={(e) => handleExpression(e)}>
@@ -302,7 +313,7 @@ const TJobDetails = (props: Props) => {
                     <option value="">Workflow Param</option>
                     {props.templateParams?.map((param) => {
                       return (
-                        <option value={param.name} key={param.name}>
+                        <option value={"workflow." + param.name} key={param.name}>
                           {param.name}
                         </option>
                       );
@@ -310,8 +321,9 @@ const TJobDetails = (props: Props) => {
                   </select>
                   <div>{expression}</div>
                 </div>
+
                 <div>
-                  <Button onClick={handleOutSave}>Save</Button>
+                  <Button onClick={handleCondSave}>Save</Button>
                 </div>
               </div>
             </div>

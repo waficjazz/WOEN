@@ -3,7 +3,7 @@ import { createWorkflowContainer } from "./container-services";
 import { redisc } from "..";
 import { IJob, IWorkflow, IWParams } from "../types";
 import { messageOneUser } from "../utils/socket";
-import { updateJob } from "./job-services";
+import { checkCondtion, updateJob } from "./job-services";
 import { pushParamsArgs } from "@redis/search/dist/commands";
 const prisma = new PrismaClient();
 
@@ -35,6 +35,9 @@ export const createWorkflow = async (
           },
         },
       },
+      include: {
+        workflowParam: true,
+      },
     });
   } catch (err) {
     return err as undefined;
@@ -43,6 +46,7 @@ export const createWorkflow = async (
     let jobs: IJob[] = [];
     if (jobsTemplate.length > 0)
       jobsTemplate?.map((jt, i) => {
+        if (jt.condition) checkCondtion(jt.condition, workflow.workflowParam as any);
         let containerId = jt["containerId"] || 0;
         let jobTemplateId = jt["id"];
         let workflowId = workflow.id;
