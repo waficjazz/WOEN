@@ -18,7 +18,14 @@ const WorkflowJob = (props: IProps) => {
           <FontAwesomeIcon fill="white" icon={faClock} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
         )}
         {props.status === "skiped" && (
-          <FontAwesomeIcon fill="white" icon={faForward} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
+          <FontAwesomeIcon
+            fill="white"
+            icon={faForward}
+            size="lg"
+            color={statusColor(props.status)}
+            className="workflow_job_icon"
+            style={{ top: "-9px" }}
+          />
         )}
         {props.status === "success" && (
           <FontAwesomeIcon icon={faCircleCheck} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
