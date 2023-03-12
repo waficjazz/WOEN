@@ -103,7 +103,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
 
                 //// check below two line if moved outside loop parallele job does not update
                 let uJob = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
-                messageOneUser(uid, `w${wid.toString()}`, uJob);
+                await messageOneUser(uid, `w${wid.toString()}`, uJob);
                 await runJob(uid, parseInt(j), wid, 0, wparams);
               })
             );
@@ -111,7 +111,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
           } else {
             let job = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
             // io.emit(`w${wid.toString()}`, job);
-            messageOneUser(uid, `w${wid.toString()}`, job);
+            await messageOneUser(uid, `w${wid.toString()}`, job);
             console.log("done");
           }
         } catch (err) {

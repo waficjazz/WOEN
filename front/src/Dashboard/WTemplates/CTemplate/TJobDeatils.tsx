@@ -21,15 +21,15 @@ const TJobDetails = (props: Props) => {
   const [selectedOutput, setSelectedOutput] = useState<string>("");
   const [inputParamName, setInputParamName] = useState<string>("");
   const [option, setOption] = useState<number>(1);
-  const [expression, setExpression] = useState<string[]>(["("]);
+  const [expression, setExpression] = useState<string[]>([props.condition || ""]);
   const [expValue, setExpValue] = useState("");
-  const beforeParams = ["==", "!=", "(", "||", "&&"];
-  const beforComb = ["(", "==", "!==", "&&", "||"];
+  const beforeParams = ["==", "!=", " ( ", " || ", " && "];
+  const beforComb = [" ( ", "==", "!=", " && ", " || "];
 
   const handleExpValue = () => {
     const lastValue = expression[expression.length - 1];
     if (!beforeParams.includes(lastValue)) return;
-    setExpression((prev) => [...prev, '"' + expValue + '"']);
+    setExpression((prev) => [...prev, expValue]);
     setExpValue("");
   };
 
@@ -43,8 +43,8 @@ const TJobDetails = (props: Props) => {
     }
     if (name == "operator") {
       if (value == lastValue) return;
-      if ((value == "||" || value == "&&") && beforComb.includes(lastValue)) return;
-      if (value != "||" && value != "&&" && value != "(" && [...beforComb, ")"].includes(lastValue)) return;
+      if ((value == " || " || value == " && ") && beforComb.includes(lastValue)) return;
+      if (value != " || " && value != " && " && value != "(" && [...beforComb, ")"].includes(lastValue)) return;
     }
     setExpression((prev) => [...prev, value]);
     e.target.value = "";
@@ -106,9 +106,17 @@ const TJobDetails = (props: Props) => {
 
   const handleOutSave = async () => {
     try {
-      console.log(outputSubmit);
       const response = await api.setOutParams(outputSubmit);
       if (response.status === 201) updateJobOutputs(props.id, response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCondSave = async () => {
+    try {
+      const response = await api.setCondition(props.id.toString(), expression.join(""));
+      // if (response.status === 201) updateJobOutputs(props.id, response.data);
     } catch (err) {
       console.log(err);
     }
@@ -276,11 +284,14 @@ const TJobDetails = (props: Props) => {
                   <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={handleLocalOutput} />
                 </div>
                 <div>
+                  <Button onClick={handleOutSave}>Save</Button>
+                </div>
+                <div>
                   <Input label="Value" onChange={(e) => setExpValue(e.target.value)} value={expValue} />
                   <Button onClick={handleExpValue}>add</Button>
                   <select name="operator" onChange={(e) => handleExpression(e)}>
                     <option value="">Operator</option>
-                    {["(", ")", "==", "!=", "||", "&&"].map((inp) => {
+                    {[" ( ", " ) ", "==", "!=", " || ", " && "].map((inp) => {
                       return (
                         <option value={inp} key={inp}>
                           {inp}
@@ -292,7 +303,7 @@ const TJobDetails = (props: Props) => {
                     <option value="">Input Param</option>
                     {inputs?.map((inp) => {
                       return (
-                        <option value={inp.id} key={inp.name}>
+                        <option value={"inputs." + inp.name} key={inp.name}>
                           {inp.name}
                         </option>
                       );
@@ -302,7 +313,7 @@ const TJobDetails = (props: Props) => {
                     <option value="">Workflow Param</option>
                     {props.templateParams?.map((param) => {
                       return (
-                        <option value={param.name} key={param.name}>
+                        <option value={"workflow." + param.name} key={param.name}>
                           {param.name}
                         </option>
                       );
@@ -310,8 +321,9 @@ const TJobDetails = (props: Props) => {
                   </select>
                   <div>{expression}</div>
                 </div>
+
                 <div>
-                  <Button onClick={handleOutSave}>Save</Button>
+                  <Button onClick={handleCondSave}>Save</Button>
                 </div>
               </div>
             </div>

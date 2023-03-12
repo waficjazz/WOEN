@@ -130,6 +130,7 @@ model jobTemplate {
   jobs               job[]
   outputParams       outputParams[]
   inputParams        inputParams[]
+  condition          String?
 
   @@map("job_template")
 }

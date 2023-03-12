@@ -8,5 +8,6 @@ export const messageOneUser = async (uid: number, event: string, data: any) => {
   // await redisc.disconnect();
   if (socketId !== null) {
     io.to(socketId).emit(event, data);
+    // console.log("emit", socketId, event, data);
   }
 };

@@ -56,3 +56,7 @@ export const getTemplate = (id: string) => {
 export const addWorkflowParam = (data: ITemplateParam[]) => {
   return Axios.post("/workflow/addParams", { params: data });
 };
+
+export const setCondition = (id: string, condition: string) => {
+  return Axios.post(`/workflow/job/${id}/setCond`, { condition });
+};
