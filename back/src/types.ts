@@ -1,3 +1,4 @@
+import { STATUS } from "@prisma/client";
 import { Request } from "express";
 
 export interface RequestWithUserId extends Request {
@@ -19,6 +20,7 @@ export interface IJob {
   workflowId: number;
   successors: string[];
   dependencies: string[];
+  status: STATUS;
 }
 
 export interface IWParams {

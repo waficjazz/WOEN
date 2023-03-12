@@ -17,6 +17,9 @@ const WorkflowJob = (props: IProps) => {
         {props.status === "pending" && (
           <FontAwesomeIcon fill="white" icon={faClock} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
         )}
+        {props.status === "skipped" && (
+          <FontAwesomeIcon fill="white" icon={faClock} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
+        )}
         {props.status === "success" && (
           <FontAwesomeIcon icon={faCircleCheck} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
         )}
@@ -35,6 +38,8 @@ const WorkflowJob = (props: IProps) => {
 
   const statusColor = (status: string | undefined) => {
     switch (status) {
+      case "skipped":
+        return "black";
       case "success":
         return "green";
       case "failed":

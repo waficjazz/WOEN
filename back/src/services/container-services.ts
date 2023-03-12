@@ -40,8 +40,8 @@ export const createWorkflowContainer = async (
         console.log("error2");
       }
       //TO DO// separate run workflow from create &&  commun funcition for job and container
-      await updateJob(jid, { containerInstance: response.data.Id });
-      runWorkflowContainer(uid, response.data.Id, wid, jid, wparams);
+      let job = await updateJob(jid, { containerInstance: response.data.Id });
+      if (job?.status !== STATUS.skiped) runWorkflowContainer(uid, response.data.Id, wid, jid, wparams);
     }
   } catch (err) {
     console.log(err);

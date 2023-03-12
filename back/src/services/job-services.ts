@@ -35,19 +35,35 @@ export const updateJobTemplate = async (jtid: number, data: any) => {
 
 export const checkCondtion = (cond: string, wparams: any) => {
   let arr = cond.split(/\s+/);
-  console.log(cond, wparams);
+  const pattern = /\bworkflow\.(\w+)([!=~]{1,2})(\w+)\b/;
+  // const pattern = /\bworkflow\.[^\s]([!=~]{1,2})+\b/;
+  let operator = "==";
   arr.map((e) => {
-    if (/\bworkflow\.[^\s]+\b/.test(e)) {
+    const match = e.match(pattern);
+    if (match) {
+      operator = match[2];
+    }
+    if (pattern.test(e)) {
       cond = cond.replace(e, isWorkflowFirsEqual(wparams, e));
     }
   });
   function isWorkflowFirsEqual(wparams: any, e: string) {
-    let kv = e.split("workflow.")[1].split("==");
-    console.log(kv);
-    return wparams.some((obj: any) => obj.name === kv[0] && obj.value === kv[1]);
-  }
+    let kv = e.split("workflow.")[1].split(operator);
+    let valueCheck = false;
 
-  console.log(cond, eval(cond));
+    return wparams.some((obj: any) => {
+      if (operator == "==") {
+        valueCheck = obj.value === kv[1];
+      }
+      if (operator == "!=") {
+        valueCheck = obj.value !== kv[1];
+      }
+      if (obj.name === kv[0]) {
+        return valueCheck;
+      }
+      return false;
+    });
+  }
   return eval(cond);
 };
 

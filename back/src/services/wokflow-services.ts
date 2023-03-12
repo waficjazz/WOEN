@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, STATUS } from "@prisma/client";
 import { createWorkflowContainer } from "./container-services";
 import { redisc } from "..";
 import { IJob, IWorkflow, IWParams } from "../types";
@@ -46,14 +46,18 @@ export const createWorkflow = async (
     let jobs: IJob[] = [];
     if (jobsTemplate.length > 0)
       jobsTemplate?.map((jt, i) => {
-        if (jt.condition) checkCondtion(jt.condition, workflow.workflowParam as any);
+        let status: STATUS = STATUS.pending;
+        if (jt.condition) {
+          let check = checkCondtion(jt.condition, workflow.workflowParam as any);
+          if (!check) status = STATUS.skiped;
+        }
         let containerId = jt["containerId"] || 0;
         let jobTemplateId = jt["id"];
         let workflowId = workflow.id;
         let name = jt["name"];
         let successors = jt["successors"];
         let dependencies = jt["dependencies"];
-        jobs.push({ jobTemplateId, workflowId, name, successors, dependencies, containerId });
+        jobs.push({ jobTemplateId, workflowId, name, successors, dependencies, containerId, status });
       });
     let response = await prisma.job.createMany({ data: jobs });
   } catch (err) {
