@@ -21,15 +21,15 @@ const TJobDetails = (props: Props) => {
   const [selectedOutput, setSelectedOutput] = useState<string>("");
   const [inputParamName, setInputParamName] = useState<string>("");
   const [option, setOption] = useState<number>(1);
-  const [expression, setExpression] = useState<string[]>(["("]);
+  const [expression, setExpression] = useState<string[]>([props.condition || ""]);
   const [expValue, setExpValue] = useState("");
-  const beforeParams = ["==", "!=", "(", "||", "&&"];
-  const beforComb = ["(", "==", "!==", "&&", "||"];
+  const beforeParams = ["==", "!=", " ( ", " || ", " && "];
+  const beforComb = [" ( ", "==", "!=", " && ", " || "];
 
   const handleExpValue = () => {
     const lastValue = expression[expression.length - 1];
     if (!beforeParams.includes(lastValue)) return;
-    setExpression((prev) => [...prev, '"' + expValue + '"']);
+    setExpression((prev) => [...prev, expValue]);
     setExpValue("");
   };
 
@@ -43,8 +43,8 @@ const TJobDetails = (props: Props) => {
     }
     if (name == "operator") {
       if (value == lastValue) return;
-      if ((value == "||" || value == "&&") && beforComb.includes(lastValue)) return;
-      if (value != "||" && value != "&&" && value != "(" && [...beforComb, ")"].includes(lastValue)) return;
+      if ((value == " || " || value == " && ") && beforComb.includes(lastValue)) return;
+      if (value != " || " && value != " && " && value != "(" && [...beforComb, ")"].includes(lastValue)) return;
     }
     setExpression((prev) => [...prev, value]);
     e.target.value = "";
@@ -291,7 +291,7 @@ const TJobDetails = (props: Props) => {
                   <Button onClick={handleExpValue}>add</Button>
                   <select name="operator" onChange={(e) => handleExpression(e)}>
                     <option value="">Operator</option>
-                    {["(", ")", "==", "!=", "||", "&&"].map((inp) => {
+                    {[" ( ", " ) ", "==", "!=", " || ", " && "].map((inp) => {
                       return (
                         <option value={inp} key={inp}>
                           {inp}
@@ -303,7 +303,7 @@ const TJobDetails = (props: Props) => {
                     <option value="">Input Param</option>
                     {inputs?.map((inp) => {
                       return (
-                        <option value={inp.id} key={inp.name}>
+                        <option value={"inputs." + inp.name} key={inp.name}>
                           {inp.name}
                         </option>
                       );

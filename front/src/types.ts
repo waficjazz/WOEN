@@ -32,11 +32,11 @@ export interface IJob {
   commands?: string[];
   dependencies?: string[];
   successors?: string[];
-  status?: string;
   outputParams?: outputsParams[];
   container?: ISContainer;
   createdAt?: string;
   updatedAt?: string;
+  condition?: string;
 }
 
 export interface IWJob {

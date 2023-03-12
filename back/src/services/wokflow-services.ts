@@ -197,55 +197,87 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
         },
       });
     }
-    if (job) {
-      let container = job.container;
-      interface IInput {
-        name: string | null;
-        value: string;
-      }
-      ///this part is where we apply workflow params
-      if (wparams !== null && wparams.length > 0) {
-        wparams.map((param) => {
-          const regex = new RegExp(`{{workflow.${param.name}}}`, "g");
-          container!!.commands[2] = container!!.commands[2].replace(regex, param.value);
-        });
-      }
-      let result: IInput[] = [];
-      if (job.jobTemplate?.inputParams) {
-        ///this part is where we get inputs value
-        let inputParams = job.jobTemplate.inputParams;
-        if (inputParams.length > 0) {
-          await Promise.all(
-            inputParams.map(async (param) => {
-              let paramValue = await prisma.outputParamsValue.findFirst({
-                where: {
-                  outputParamsId: param.outputParamsId,
-                  workflowId: wid,
-                },
-              });
-              if (paramValue) {
-                result.push({ name: param.name, value: paramValue.value });
-              }
-            })
-          );
-          result.forEach((input) => {
-            const regex = new RegExp(`{{${input.name}}}`, "g");
-            container!!.commands[2] = container!!.commands[2].replace(regex, input.value);
+    if (job)
+      if (job?.status !== STATUS.skiped) {
+        let checkCond = true;
+        let container = job.container;
+        interface IInput {
+          name: string | null;
+          value: string;
+        }
+        ///this part is where we apply workflow params
+        if (wparams !== null && wparams.length > 0) {
+          wparams.map((param) => {
+            const regex = new RegExp(`{{workflow.${param.name}}}`, "g");
+            container!!.commands[2] = container!!.commands[2].replace(regex, param.value);
           });
         }
-        ////////
-        if (job.dependencies.length !== 0) {
-          if (!redisc.isOpen) await redisc.connect();
-          let l = await redisc.lLen(`${jtid}${wid}`);
-          await redisc.disconnect();
-          if (job.dependencies.length != l) return;
+        let result: IInput[] = [];
+        if (job.jobTemplate?.inputParams) {
+          ///this part is where we get inputs value
+          ///checkk skip here
+          let inputParams = job.jobTemplate.inputParams;
+          if (inputParams.length > 0) {
+            await Promise.all(
+              inputParams.map(async (param) => {
+                let paramValue = await prisma.outputParamsValue.findFirst({
+                  where: {
+                    outputParamsId: param.outputParamsId,
+                    workflowId: wid,
+                  },
+                });
+                if (paramValue) {
+                  result.push({ name: param.name, value: paramValue.value });
+                }
+              })
+            );
+            if (job.jobTemplate.condition) {
+              checkCond = checkCondtion(job.jobTemplate.condition, wparams, result);
+            }
+            if (checkCond) {
+              result.forEach((input) => {
+                const regex = new RegExp(`{{${input.name}}}`, "g");
+                container!!.commands[2] = container!!.commands[2].replace(regex, input.value);
+              });
+            }
+          }
         }
+        if (checkCond) {
+          if (job.dependencies.length !== 0) {
+            if (!redisc.isOpen) await redisc.connect();
+            let l = await redisc.lLen(`${jtid}${wid}`);
+            await redisc.disconnect();
+            if (job.dependencies.length != l) return;
+          }
+
+          let cname = container?.name + Math.random().toString(36).substring(2, 6);
+          createWorkflowContainer(uid, wparams, container!!.image, container!!.commands, cname, wid, job.id);
+        } else {
+          let uJob = await updateJob(job.id, { status: STATUS.skiped });
+          await messageOneUser(uid, `w${wid.toString()}`, uJob);
+          await triggerNextJobs(uid, job as IJob, wid, jid, wparams);
+        }
+      } else {
+        await triggerNextJobs(uid, job as IJob, wid, jid, wparams);
       }
-      let cname = container?.name + Math.random().toString(36).substring(2, 6);
-      createWorkflowContainer(uid, wparams, container!!.image, container!!.commands, cname, wid, job.id);
-    }
   } catch (err) {
     return err;
+  }
+};
+
+export const triggerNextJobs = async (uid: number, job: IJob, wid: number, jid: number, wparams: IWParams[] | null) => {
+  if (job && job.successors.length > 0) {
+    if (!redisc.isOpen) await redisc.connect();
+
+    await Promise.all(
+      job.successors.map(async (j) => {
+        await redisc.lPush(`${j}${wid}`, jid.toString());
+        await runJob(uid, parseInt(j), wid, 0, wparams);
+      })
+    );
+    await redisc.disconnect();
+  } else {
+    console.log("done");
   }
 };
 

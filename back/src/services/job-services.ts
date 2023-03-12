@@ -21,6 +21,7 @@ export const updateJob = async (jid: number, data: any) => {
 
 export const updateJobTemplate = async (jtid: number, data: any) => {
   try {
+    console.log(data);
     let job = await prisma.jobTemplate.update({
       where: {
         id: jtid,
@@ -33,22 +34,31 @@ export const updateJobTemplate = async (jtid: number, data: any) => {
   }
 };
 
-export const checkCondtion = (cond: string, wparams: any) => {
+export const checkCondtion = (cond: string, wparams: any, inparams?: any) => {
+  ////handle double quotes from front as well as add automatic spaces
   let arr = cond.split(/\s+/);
-  const pattern = /\bworkflow\.(\w+)([!=~]{1,2})(\w+)\b/;
+  const pattern1 = /\bworkflow\.(\w+)([!=~]{1,2})(\w+)\b/;
+  const pattern2 = /\binputs\.(\w+)([!=~]{1,2})(\w+)\b/;
+  const opPattern = /(\w+)([!=~]{1,2})(\w+)/;
   // const pattern = /\bworkflow\.[^\s]([!=~]{1,2})+\b/;
   let operator = "==";
   arr.map((e) => {
-    const match = e.match(pattern);
+    const match = e.match(opPattern);
     if (match) {
       operator = match[2];
     }
-    if (pattern.test(e)) {
-      cond = cond.replace(e, isWorkflowFirsEqual(wparams, e));
+    if (pattern1.test(e)) {
+      cond = cond.replace(e, isPresent(wparams, e, "workflow."));
+    }
+    if (pattern2.test(e)) {
+      if (!inparams || inparams.length == 0) cond = cond.replace(e, "true");
+      else {
+        cond = cond.replace(e, isPresent(inparams, e, "inputs."));
+      }
     }
   });
-  function isWorkflowFirsEqual(wparams: any, e: string) {
-    let kv = e.split("workflow.")[1].split(operator);
+  function isPresent(wparams: any, e: string, type: "workflow." | "inputs.") {
+    let kv = e.split(type)[1].split(operator);
     let valueCheck = false;
 
     return wparams.some((obj: any) => {
@@ -76,7 +86,7 @@ export const saveOutputParamsValue = async (containerId: string, outputParams: a
           await prisma.outputParamsValue.create({
             data: {
               outputParamsId: param.id,
-              value: value,
+              value: value.slice(0, -1), //remove the \n
               jobId: jid,
               workflowId: wid,
             },

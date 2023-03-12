@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "STATUS" AS ENUM ('sucess', 'failed', 'paused', 'skiped', 'running', 'pending');
+CREATE TYPE "STATUS" AS ENUM ('success', 'failed', 'paused', 'skiped', 'running', 'pending');
 
 -- CreateTable
 CREATE TABLE "user" (
@@ -100,6 +100,7 @@ CREATE TABLE "job_template" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "workflowTemplateId" INTEGER,
+    "condition" TEXT,
 
     CONSTRAINT "job_template_pkey" PRIMARY KEY ("id")
 );

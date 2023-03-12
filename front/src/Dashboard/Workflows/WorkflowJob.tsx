@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faGear, faClock, faCircleXmark, faCirclePause } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faGear, faClock, faCircleXmark, faCirclePause, faForward } from "@fortawesome/free-solid-svg-icons";
 import { IPlacement, IWJob } from "../../types";
 import "./Workflows.css";
 interface IProps extends IWJob {
@@ -17,8 +17,8 @@ const WorkflowJob = (props: IProps) => {
         {props.status === "pending" && (
           <FontAwesomeIcon fill="white" icon={faClock} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
         )}
-        {props.status === "skipped" && (
-          <FontAwesomeIcon fill="white" icon={faClock} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
+        {props.status === "skiped" && (
+          <FontAwesomeIcon fill="white" icon={faForward} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
         )}
         {props.status === "success" && (
           <FontAwesomeIcon icon={faCircleCheck} size="lg" color={statusColor(props.status)} className="workflow_job_icon" />
@@ -38,8 +38,8 @@ const WorkflowJob = (props: IProps) => {
 
   const statusColor = (status: string | undefined) => {
     switch (status) {
-      case "skipped":
-        return "black";
+      case "skiped":
+        return "white";
       case "success":
         return "green";
       case "failed":
