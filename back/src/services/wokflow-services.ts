@@ -246,7 +246,6 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
           if (job.dependencies.length !== 0) {
             if (!redisc.isOpen) await redisc.connect();
             let l = await redisc.lLen(`${jtid}${wid}`);
-            await redisc.disconnect();
             if (job.dependencies.length != l) return;
           }
 
