@@ -200,7 +200,6 @@ const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFu
     const container = response.data;
     const name = container.Name;
     const { Cmd, Image, Env, User, WorkingDir } = container.Config;
-    console.log(name.slice(1), Image, Cmd, Env, User, WorkingDir);
     const savedContainer = await prisma.container.create({
       data: {
         userId: req.userId,
