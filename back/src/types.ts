@@ -27,3 +27,13 @@ export interface IWParams {
   name: string;
   value: any;
 }
+
+export interface ITParams {
+  name: string;
+  default: string;
+}
+
+export interface ISworkflowTemplate {
+  name: string;
+  params?: IWParams[];
+}

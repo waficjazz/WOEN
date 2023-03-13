@@ -124,25 +124,6 @@ const getWorkflow = async (req: Request, res: Response, next: NextFunction) => {
   }
   res.json(workflow);
 };
-const createWorkflowTemplate = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
-  //get user id for jwt token
-
-  const { name, projectId } = req.body;
-  let workflow;
-  try {
-    workflow = await prisma.workflowTemplate.create({
-      data: {
-        projectId: projectId,
-        userId: req.userId,
-        name,
-      },
-    });
-  } catch (err) {
-    const error = new HttpError("Could not create workflow.", 500);
-    return next(error);
-  }
-  res.status(201).json(workflow);
-};
 
 const getAllWorkflowsTemplates = async (req: Request, res: Response, next: NextFunction) => {
   let workflows;
@@ -486,7 +467,6 @@ module.exports = {
   getWorkflow,
   createJobTemplate,
   getWorkflowTemplate,
-  createWorkflowTemplate,
   getAllWorkflowsTemplates,
   upateJobDependencies,
   updateWorkflowPlacements,
