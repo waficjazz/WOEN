@@ -1,0 +1,14 @@
+{
+  "name": "dd",
+  "projectId": 1,
+  "jobs": [
+    {
+      "name": "dd",
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
+    }
+  ]
+}

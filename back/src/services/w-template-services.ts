@@ -1,7 +1,7 @@
 import { jobTemplate, PrismaClient, workflowTemplate, container } from "@prisma/client";
 import { createWorkflowContainer } from "./container-services";
 import { redisc } from "..";
-import { IJob, ITParams, IWorkflow, IWParams } from "../types";
+import { IFJOB, IJob, ITParams, IWorkflow, IWParams } from "../types";
 import { messageOneUser } from "../utils/socket";
 import { checkCondtion, updateJob } from "./job-services";
 import { pushParamsArgs } from "@redis/search/dist/commands";
@@ -32,27 +32,24 @@ export const initTemplate = async (name: string, uid: number, projectId: number,
   return workflow;
 };
 
-export const createJobTemplate = async (j: jobTemplate, wtid: number, uid: number, container: container) => {
-  let job: jobTemplate;
+export const createJobTemplate = async (j: IFJOB, wtid: number) => {
+  let container: container;
   try {
-    job = await prisma.jobTemplate.create({
+    container = await prisma.container.create({
       data: {
-        name: j.name,
-        condition: j.condition,
-        workflowTemplate: {
-          connect: {
-            id: wtid,
+        ...j.container,
+        jobtemplates: {
+          create: {
+            name: j.name,
+            workflowTemplateId: wtid,
           },
-        },
-        container: {
-          create: container,
         },
       },
     });
   } catch (err) {
     throw err;
   }
-  return job;
+  return container;
 };
 
 // userId: req.userId,

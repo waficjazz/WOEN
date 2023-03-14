@@ -1,5 +1,6 @@
 import { STATUS } from "@prisma/client";
 import { Request } from "express";
+import { jobTemplate, PrismaClient, workflowTemplate, container } from "@prisma/client";
 
 export interface RequestWithUserId extends Request {
   userId: number;
@@ -36,4 +37,8 @@ export interface ITParams {
 export interface ISworkflowTemplate {
   name: string;
   params?: IWParams[];
+}
+
+export interface IFJOB extends jobTemplate {
+  container: container;
 }

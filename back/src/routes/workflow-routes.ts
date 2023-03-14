@@ -20,6 +20,7 @@ router.post("/:wid/placement", auth, workflowController.updateWorkflowPlacements
 router.post("/:wid/pause", auth, workflowController.pauseWokflow);
 router.post("/:wid/resume", auth, workflowController.resumeWorkflow);
 router.post("/create", auth, wTemplateController.createWorkflowTemplate);
+router.post("/submit", auth, wTemplateController.submitWorkflowTemplate);
 router.post("/job/:jid/pause", auth, workflowController.pauseJob);
 router.post("/job/:jid/unpause", auth, workflowController.unpauseJob);
 router.post("/addParams", auth, workflowController.setTemplateParams);

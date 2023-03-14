@@ -1,22 +1,42 @@
 import { Request, Response, NextFunction } from "express";
-import { RequestWithUserId } from "../types";
+import { IFJOB, IJob, RequestWithUserId } from "../types";
 import { updateJob, updateJobTemplate } from "../services/job-services";
+import { jobTemplate, PrismaClient, workflowTemplate, container } from "@prisma/client";
 const HttpError = require("../utils/http-error");
-import { initTemplate } from "../services/w-template-services";
+import { createJobTemplate, initTemplate } from "../services/w-template-services";
 
-const createWorkflowTemplate = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
-  const { name, projectId, params } = req.body;
-  let workflow;
+const submitWorkflowTemplate = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
+  const { name, projectId, params, jobs } = req.body;
+  let template: workflowTemplate;
   try {
-    workflow = await initTemplate(name, req.userId, projectId, params);
+    template = await initTemplate(name, req.userId, projectId, params);
+    await Promise.all(
+      jobs.map(async (job: IFJOB) => {
+        await createJobTemplate(job, template.id);
+      })
+    );
   } catch (err) {
     const error = new HttpError("Could not create workflow template.", 500);
     console.log(err);
     return next(error);
   }
-  res.status(201).json(workflow);
+  res.status(201).json(template);
+};
+
+const createWorkflowTemplate = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
+  const { name, projectId, params } = req.body;
+  let template: workflowTemplate;
+  try {
+    template = await initTemplate(name, req.userId, projectId, params);
+  } catch (err) {
+    const error = new HttpError("Could not create workflow template.", 500);
+    console.log(err);
+    return next(error);
+  }
+  res.status(201).json(template);
 };
 
 module.exports = {
   createWorkflowTemplate,
+  submitWorkflowTemplate,
 };
