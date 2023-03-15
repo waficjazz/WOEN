@@ -102,7 +102,7 @@ model workflowTemplate {
 model workflowTemplateParam {
   id                 Int              @id @default(autoincrement())
   name               String
-  workflowTemplate   workflowTemplate @relation(fields: [workflowTemplateId], references: [id])
+  workflowTemplate   workflowTemplate @relation(fields: [workflowTemplateId], references: [id], onDelete: Cascade)
   workflowTemplateId Int
   required           Boolean          @default(false)
   default            String           @default("")

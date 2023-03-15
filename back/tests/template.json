@@ -9,6 +9,145 @@
         "image": "alpine:latest",
         "commands": ["sh", "-c", "sleep 10"]
       }
+    },
+    {
+      "name": "kk",
+      "depends": ["dd"],
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
+    },
+    {
+      "name": "jj",
+      "depends": ["dd"],
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
     }
   ]
 }
+
+const jobArray = [
+  {
+      "name": "en",
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
+    },
+    {
+      "name": "dd",
+      "depends": ["en"],
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
+    },
+     {
+      "name": "cc",
+      "depends": ["dd","en"],
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
+    },
+    {
+      "name": "kk",
+      "depends": ["dd",'en'],
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
+    },
+    {
+      "name": "jj",
+      "depends": ["dd","en"],
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
+    },
+      {
+      "name": "uu",
+      "depends": ["jj","en"],
+      "container": {
+        "name": "newcdd",
+        "image": "alpine:latest",
+        "commands": ["sh", "-c", "sleep 10"]
+      }
+    }
+  ];
+
+  let drawed: string[] = [];
+interface succers {
+  [key: string] : string[]
+}
+let succers : succers = {};
+jobArray.map((job) => {
+  if(job.depends){
+    job.depends.map((dep) => {
+      if(succers[dep])
+      succers[dep] = [...succers[dep], job.name];
+      else
+      succers[dep] = [job.name]
+    })
+  }
+})
+
+
+type Placement = [number, number];
+  let levels: Levels = {};
+  interface Levels {
+    [key: number]: string[];
+  }
+let   root = "en" ; 
+
+function getDependencyPlacement(json: {[key: string]: string[] }) {
+
+   let tmp: string[] = [];
+    let i = 0;
+    levels[0] = [root];
+    let nextLevel: string[] = [];
+    nextLevel = nextLevel.concat([root]);
+    while (nextLevel.length > 0) {
+      tmp = [];
+      i++;
+      nextLevel.forEach((element) => {
+        if (json === undefined) return 0;
+        if (json[element] !== undefined) {
+          tmp = tmp.concat(json[element]);
+        }
+      });
+      levels[i] = [...new Set(tmp)];
+      nextLevel = tmp;
+    }
+    Object.entries(levels).forEach(([key, value]) => {
+      value.forEach((e: string) => {
+        if (!drawed.includes(e)) {
+          drawed.push(e);
+        } else {
+          Object.entries(levels).forEach(([key1, value1]) => {
+            value1.forEach((e1: string) => {
+              if (key !== key1) {
+                if (e1 === e) {
+                  value1.splice(value1.indexOf(e1), 1);
+                }
+              }
+            });
+          });
+        }
+      });
+    });
+    return levels
+
+}
+console.log(getDependencyPlacement(succers))
