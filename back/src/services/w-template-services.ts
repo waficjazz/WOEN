@@ -5,6 +5,7 @@ import { IFJOB, IJob, ITParams, IWorkflow, IWParams } from "../types";
 import { messageOneUser } from "../utils/socket";
 import { checkCondtion, updateJob } from "./job-services";
 import { pushParamsArgs } from "@redis/search/dist/commands";
+import { Key } from "readline";
 const prisma = new PrismaClient();
 
 let drawed: string[] = [];
@@ -43,35 +44,50 @@ export const initTemplate = async (name: string, uid: number, projectId: number,
   return workflow;
 };
 
+export const updateTemplate = async (tid: number, data: any) => {
+  let template: workflowTemplate;
+  try {
+    template = await prisma.workflowTemplate.update({
+      where: {
+        id: tid,
+      },
+      data,
+    });
+  } catch (err) {
+    throw err;
+  }
+  return template;
+};
+
 export const createJobTemplate = async (j: IFJOB, wtid: number) => {
   let container: container;
+  let jobTemplate: jobTemplate;
   try {
     container = await prisma.container.create({
       data: {
         ...j.container,
-        jobtemplates: {
-          create: {
-            name: j.name,
-            workflowTemplateId: wtid,
-          },
-        },
+      },
+    });
+    jobTemplate = await prisma.jobTemplate.create({
+      data: {
+        name: j.name,
+        workflowTemplateId: wtid,
+        containerId: container.id,
       },
     });
   } catch (err) {
     throw err;
   }
-  return container;
+  return jobTemplate;
 };
 
 function getRoot(jobArray: IJob[]) {
-  console.log(jobArray);
   let arr: string[] = [];
   jobArray.map((job) => {
     if (job.dependencies && job.dependencies.length == 0) {
       arr.push(job.name);
     }
   });
-  console.log(arr);
   return arr;
 }
 
@@ -120,18 +136,16 @@ function getDependencyPlacement(jobArray: IJob[]) {
       }
     });
   });
-  return levels;
+  return { levels, succers };
 }
 
 interface coor {
   [key: string]: [number, number];
 }
-let coors: coor = {};
 
-export const getCoords = (jobArray: IJob[]) => {
-  console.log("see coors", jobArray);
-  let levels = getDependencyPlacement(jobArray);
-  console.log("see levels", levels);
+export const getCoords = (jobArray: IJob[]): { coors: coor; succers: succers } => {
+  let coors: coor = {};
+  let { levels, succers } = getDependencyPlacement(jobArray);
   Object.entries(levels).forEach(([key, value]) => {
     let x = 0;
     value.map((val: string, i: number) => {
@@ -144,7 +158,7 @@ export const getCoords = (jobArray: IJob[]) => {
       }
     });
   });
-  return coors;
+  return { coors, succers };
 };
 
 // userId: req.userId,

@@ -3,23 +3,39 @@ import { IFJOB, IJob, RequestWithUserId } from "../types";
 import { updateJob, updateJobTemplate } from "../services/job-services";
 import { jobTemplate, PrismaClient, workflowTemplate, container } from "@prisma/client";
 const HttpError = require("../utils/http-error");
-import { createJobTemplate, initTemplate, getCoords } from "../services/w-template-services";
+import { createJobTemplate, initTemplate, getCoords, updateTemplate } from "../services/w-template-services";
 
 const submitWorkflowTemplate = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const { name, projectId, params, jobs } = req.body;
   let template: workflowTemplate;
-  let coords = {};
+  let jobMapping: { [key: string]: number } = {};
+  // let coords;
   try {
-    // template = await initTemplate(name, req.userId, projectId, params);
-    coords = getCoords(jobs);
-    console.log("coors", coords);
+    template = await initTemplate(name, req.userId, projectId, params);
+    const { coors, succers } = getCoords(jobs);
     await Promise.all(
-      jobs.map(async (job: IFJOB) => {
-        await createJobTemplate(job, template.id);
+      jobs.map(async (j: IFJOB) => {
+        let job = await createJobTemplate(j, template.id);
+        jobMapping[job.name] = job.id;
       })
     );
-    //update template with placements
-    //update jobs with dependencies and successors
+    let placements: { [key: string]: [number, number] } = {};
+    Object.entries(coors).map(([key, value]) => {
+      let k = jobMapping[key].toString();
+      placements[k] = value;
+    });
+    await updateTemplate(template.id, { placements });
+    await Promise.all(
+      jobs.map(async (j: IFJOB) => {
+        let dependencies = j.dependencies?.map((dep) => {
+          return jobMapping[dep].toString();
+        });
+        let successors = succers[j.name]?.map((succ) => {
+          return jobMapping[succ].toString();
+        });
+        await updateJobTemplate(jobMapping[j.name], { successors: successors || [], dependencies: dependencies || [] });
+      })
+    );
   } catch (err) {
     const error = new HttpError("Could not create workflow template.", 500);
     console.log(err);
