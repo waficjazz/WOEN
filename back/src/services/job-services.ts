@@ -21,7 +21,6 @@ export const updateJob = async (jid: number, data: any) => {
 
 export const updateJobTemplate = async (jtid: number, data: any) => {
   try {
-    console.log(data);
     let job = await prisma.jobTemplate.update({
       where: {
         id: jtid,

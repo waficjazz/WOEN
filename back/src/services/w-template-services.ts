@@ -73,6 +73,11 @@ export const createJobTemplate = async (j: IFJOB, wtid: number) => {
         name: j.name,
         workflowTemplateId: wtid,
         containerId: container.id,
+        outputParams: {
+          createMany: {
+            data: j.outputs ?? [],
+          },
+        },
       },
     });
   } catch (err) {
