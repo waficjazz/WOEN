@@ -46,7 +46,7 @@ CREATE TABLE "container" (
     "commands" TEXT[],
     "envs" TEXT[],
     "workingDir" TEXT[],
-    "user" TEXT NOT NULL,
+    "user" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" INTEGER,
@@ -75,7 +75,7 @@ CREATE TABLE "workflowTemplateParam" (
     "name" TEXT NOT NULL,
     "workflowTemplateId" INTEGER NOT NULL,
     "required" BOOLEAN NOT NULL DEFAULT false,
-    "default" TEXT NOT NULL,
+    "default" TEXT NOT NULL DEFAULT '',
 
     CONSTRAINT "workflowTemplateParam_pkey" PRIMARY KEY ("id")
 );
@@ -249,7 +249,7 @@ ALTER TABLE "workflow_template" ADD CONSTRAINT "workflow_template_userId_fkey" F
 ALTER TABLE "workflow_template" ADD CONSTRAINT "workflow_template_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "project"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "workflowTemplateParam" ADD CONSTRAINT "workflowTemplateParam_workflowTemplateId_fkey" FOREIGN KEY ("workflowTemplateId") REFERENCES "workflow_template"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "workflowTemplateParam" ADD CONSTRAINT "workflowTemplateParam_workflowTemplateId_fkey" FOREIGN KEY ("workflowTemplateId") REFERENCES "workflow_template"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "workflowParam" ADD CONSTRAINT "workflowParam_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "workflow"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -264,7 +264,7 @@ ALTER TABLE "job_template" ADD CONSTRAINT "job_template_workflowTemplateId_fkey"
 ALTER TABLE "outputParams" ADD CONSTRAINT "outputParams_jobTemplateId_fkey" FOREIGN KEY ("jobTemplateId") REFERENCES "job_template"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "inputParams" ADD CONSTRAINT "inputParams_jobTemplateId_fkey" FOREIGN KEY ("jobTemplateId") REFERENCES "job_template"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "inputParams" ADD CONSTRAINT "inputParams_jobTemplateId_fkey" FOREIGN KEY ("jobTemplateId") REFERENCES "job_template"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "inputParams" ADD CONSTRAINT "inputParams_outputParamsId_fkey" FOREIGN KEY ("outputParamsId") REFERENCES "outputParams"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

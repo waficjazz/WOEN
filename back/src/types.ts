@@ -43,8 +43,15 @@ export interface outputsCreate {
   name: string;
   path: string;
 }
+export interface inputsCreate {
+  name: string;
+  from?: string;
+  outputParamsId: number;
+  jobTemplateId: number;
+}
 
 export interface IFJOB extends jobTemplate {
   container: container;
   outputs?: outputsCreate[];
+  inputs?: inputsCreate[];
 }

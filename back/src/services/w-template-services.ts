@@ -61,7 +61,7 @@ export const updateTemplate = async (tid: number, data: any) => {
 
 export const createJobTemplate = async (j: IFJOB, wtid: number) => {
   let container: container;
-  let jobTemplate: jobTemplate;
+  let jobTemplate;
   try {
     container = await prisma.container.create({
       data: {
@@ -78,6 +78,9 @@ export const createJobTemplate = async (j: IFJOB, wtid: number) => {
             data: j.outputs ?? [],
           },
         },
+      },
+      include: {
+        outputParams: true,
       },
     });
   } catch (err) {
