@@ -1,0 +1,67 @@
+[
+  {
+    "name": "xxxxas",
+    "projectId": 1,
+    "jobs": [
+      {
+        "name": "xxtteee",
+        "dependencies": [],
+        "outputs": [
+          {
+            "name": "dout",
+            "path": "/tmp/ff"
+          },
+          {
+            "name": "dout1",
+            "path": "/tmp/ff"
+          }
+        ],
+        "container": {
+          "name": "xxxxxsa",
+          "image": "alpine:latest",
+          "commands": ["sh", "-c", "echo hii > /tmp/ff"]
+        }
+      },
+      {
+        "name": "xxaas",
+        "dependencies": ["xxtteee"],
+        "inputs": [
+          {
+            "name": "innn",
+            "from": "xxtteee.dout"
+          }
+        ],
+        "container": {
+          "name": "xxxttdee",
+          "image": "alpine:latest",
+          "commands": ["sh", "-c", "echo {{innn}}"]
+        }
+      }
+    ]
+  },
+  {
+    "name": "eedf",
+    "params": [
+      {
+        "name": "first",
+        "default": "normal"
+      },
+      {
+        "name": "secomd",
+        "default": "dd"
+      }
+    ],
+    "projectId": 1,
+    "jobs": [
+      {
+        "condition": "( workflow.first==aa )",
+        "name": "ccv",
+        "container": {
+          "name": "vv",
+          "image": "alpine:latest",
+          "commands": ["sh", "-c", "echo hii"]
+        }
+      }
+    ]
+  }
+]

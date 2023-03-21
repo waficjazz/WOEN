@@ -70,7 +70,7 @@ model container {
   commands     String[]
   envs         String[]
   workingDir   String[]
-  user         String
+  user         String?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   jobtemplates jobTemplate[]
@@ -102,10 +102,10 @@ model workflowTemplate {
 model workflowTemplateParam {
   id                 Int              @id @default(autoincrement())
   name               String
-  workflowTemplate   workflowTemplate @relation(fields: [workflowTemplateId], references: [id])
+  workflowTemplate   workflowTemplate @relation(fields: [workflowTemplateId], references: [id], onDelete: Cascade)
   workflowTemplateId Int
   required           Boolean          @default(false)
-  default            String
+  default            String           @default("")
 }
 
 model workflowParam {
@@ -148,7 +148,7 @@ model outputParams {
 model inputParams {
   id             Int          @id @default(autoincrement())
   name           String?
-  jobTemplate    jobTemplate? @relation(fields: [jobTemplateId], references: [id])
+  jobTemplate    jobTemplate? @relation(fields: [jobTemplateId], references: [id], onDelete: Cascade)
   jobTemplateId  Int?
   outputParams   outputParams @relation(fields: [outputParamsId], references: [id])
   outputParamsId Int
