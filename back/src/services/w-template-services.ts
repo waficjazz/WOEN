@@ -71,6 +71,7 @@ export const createJobTemplate = async (j: IFJOB, wtid: number) => {
     jobTemplate = await prisma.jobTemplate.create({
       data: {
         name: j.name,
+        condition: j.condition,
         workflowTemplateId: wtid,
         containerId: container.id,
         outputParams: {

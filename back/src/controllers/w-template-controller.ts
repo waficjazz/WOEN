@@ -62,7 +62,7 @@ const submitWorkflowTemplate = async (req: RequestWithUserId, res: Response, nex
     console.log(err);
     return next(error);
   }
-  res.status(201).json({});
+  res.status(201).json({ message: "template created" });
 };
 
 const createWorkflowTemplate = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
