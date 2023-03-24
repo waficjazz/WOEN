@@ -21,11 +21,6 @@
     "/user/login": {
       "post": {
         "summary": "Login",
-        // "security": [
-        //   {
-        //     "BearerAuth": []
-        //   }
-        // ],
         "parameters": [
           {
             "name": "body",
