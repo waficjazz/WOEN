@@ -4,6 +4,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import * as api from "./api";
 import SavedContainerRow from "./SavedContainerRow";
 import { ISContainer } from "../../types";
+import ContainerForm from "../LiveContainerBoard/ContainerForm";
 
 const ContainerTable = () => {
   const [containers, setContainers] = useState<ISContainer[]>();
@@ -42,7 +43,7 @@ const ContainerBoard = () => {
         <p>Containers</p>
         {!showForm && <Button onClick={() => setShowForm(true)}>Create</Button>}
       </div>
-      <ContainerTable />
+      {showForm ? <ContainerForm show={showForm} close={setShowForm} /> : <ContainerTable />}
     </div>
   );
 };

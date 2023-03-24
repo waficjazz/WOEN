@@ -203,6 +203,7 @@ const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFu
     }
     res.status(201).json(savedContainer);
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Could not save container.", 500);
     return next(error);
   }

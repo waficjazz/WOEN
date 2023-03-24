@@ -93,9 +93,10 @@ const ContainerForm = ({ show, close }: Props) => {
       let cmds = parseCommands(commandTxt);
       let arr = [shellType, "-c", cmds];
       let obj = { image: container.image, name: container.name, commands: arr, envs: Env };
-      const response = await api.createContainer(obj);
+      const response = await api.containerSave(obj);
       if (response.status === 201) {
-        close(false);
+        console.log(response.data);
+        // close(false);
       }
     } catch (err) {
       console.log(err);
@@ -146,7 +147,7 @@ const ContainerForm = ({ show, close }: Props) => {
             value={commandTxt}
             onChange={(e) => setCommandTxt(e.target.value)}
           />
-          <Button onClick={handleSubmit}>submit</Button>
+          <Button onClick={handleSave}>submit</Button>
         </div>
       </div>
     </>
