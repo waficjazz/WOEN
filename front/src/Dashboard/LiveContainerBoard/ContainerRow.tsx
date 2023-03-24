@@ -50,7 +50,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
 
   async function saveContainer() {
     try {
-      const response = await api.containerSave({ containerId: id });
+      const response = await api.containerSaveLive({ containerId: id });
     } catch (err) {
       console.log(err);
     }

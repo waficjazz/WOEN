@@ -189,6 +189,26 @@ const unpauseContainer = async (req: Request, res: Response, next: NextFunction)
 };
 
 const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
+  const { container } = req.body;
+  try {
+    const savedContainer = await prisma.container.create({
+      data: {
+        ...container,
+        userId: req.userId,
+      },
+    });
+    if (!savedContainer) {
+      const error = new HttpError("Could not save container.", 500);
+      return next(error);
+    }
+    res.status(201).json(savedContainer);
+  } catch (err) {
+    const error = new HttpError("Could not save container.", 500);
+    return next(error);
+  }
+};
+
+const saveLiveContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
     const url = `http://localhost:2375/containers/${containerId}/json`;
@@ -261,7 +281,7 @@ const getOneContainer = async (req: RequestWithUserId, res: Response, next: Next
 
 module.exports = {
   getSavedContainers,
-  saveContainer,
+  saveLiveContainer,
   inspectContainer,
   waitContainer,
   getContainerLogs,
@@ -272,4 +292,5 @@ module.exports = {
   listContainers,
   pauseContainer,
   unpauseContainer,
+  saveContainer,
 };

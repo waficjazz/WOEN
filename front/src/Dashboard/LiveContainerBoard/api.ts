@@ -16,8 +16,8 @@ export const conatainerLogs = (data: any) => {
   return Axios.post("/containers/logs", data);
 };
 
-export const containerSave = (data: any) => {
-  return Axios.post("/containers/save", data);
+export const containerSaveLive = (data: any) => {
+  return Axios.post("/containers/saveLive", data);
 };
 
 export const containerPause = (data: any) => {

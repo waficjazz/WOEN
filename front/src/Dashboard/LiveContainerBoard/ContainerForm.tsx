@@ -87,6 +87,21 @@ const ContainerForm = ({ show, close }: Props) => {
     }
   };
 
+  const handleSave = async () => {
+    try {
+      let Env = parseEnvPairs(envPair);
+      let cmds = parseCommands(commandTxt);
+      let arr = [shellType, "-c", cmds];
+      let obj = { image: container.image, name: container.name, commands: arr, envs: Env };
+      const response = await api.createContainer(obj);
+      if (response.status === 201) {
+        close(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <div className="container_form">
