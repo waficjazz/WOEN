@@ -11,6 +11,12 @@ const workflowRoutes = require("./routes/workflow-routes");
 const containerRoutes = require("./routes/container-routes");
 const app = express();
 const server = http.createServer(app);
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
+
+var options = {
+  explorer: true,
+};
 
 export const redisc = createClient();
 export const io = new Server(server, {
@@ -18,6 +24,8 @@ export const io = new Server(server, {
     origin: "http://127.0.0.1:5173",
   },
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
