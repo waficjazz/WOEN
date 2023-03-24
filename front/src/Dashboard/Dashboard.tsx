@@ -1,17 +1,17 @@
 import { useEffect } from "react";
 import SideBar from "./SideBar/SideBar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ContainerBoard from "./ContainerBoard/ContainerBoard";
 import "./Dashboard.css";
 import { useAtom } from "jotai";
 import { aJobs, aProject } from "../store";
-import CWorkflow from "./WTemplates/CTemplate/CTemplate";
 import Projects from "./Projects/ProjectBoard";
 import WTemplates from "./WTemplates/WTemplates";
 import Workflows from "./Workflows/Workflows";
 import CTemplate from "./WTemplates/CTemplate/CTemplate";
 import OneWorkflow from "./Workflows/OneWorkflow";
 import Groups from "./Groups/Groups";
+import LiveContainerBoard from "./LiveContainerBoard/LiveContainerBoard";
+import ContainerBoard from "./ContainerBoard/ContainerBoard";
 const Dashboard = () => {
   const [jobs, setJobs] = useAtom(aJobs);
   const [project, setProject] = useAtom(aProject);
@@ -25,6 +25,7 @@ const Dashboard = () => {
       <SideBar />
       <div className="dashboard_content">
         <Routes>
+          <Route path=":project/livecontainers" element={<LiveContainerBoard />} />
           <Route path=":project/containers" element={<ContainerBoard />} />
           <Route path="/groups" element={<Groups />} />
           <Route path=":project/w-templates" element={<WTemplates />} />

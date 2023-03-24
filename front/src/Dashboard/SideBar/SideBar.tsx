@@ -15,6 +15,7 @@ const SideBar = () => {
       <SideTile txt="Groups" route="/groups" />
       {project !== null && (
         <>
+          <SideTile txt="Live Containers" route={`/${project.name}/livecontainers`} />
           <SideTile txt="Containers" route={`/${project.name}/containers`} />
           <SideTile txt="Templates" route={`/${project.name}/w-templates`} />
           <SideTile txt="Workflows" route={`/${project.name}/workflows`} />

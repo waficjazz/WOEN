@@ -4,7 +4,7 @@ import { getDuration, dateStyle } from "../../utils/time-format";
 import ReactTimeAgo from "react-time-ago";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { socket } from "../../Socket";
-import * as capi from "../ContainerBoard/api";
+import * as capi from "../LiveContainerBoard/api";
 import { ThreeDots } from "react-loader-spinner";
 interface IProps extends IWJob {}
 const JobDetails = ({ ...props }: IProps) => {
