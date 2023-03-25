@@ -9,6 +9,8 @@ import { messageOneUser } from "../utils/socket";
 import { updateJob, saveOutputParamsValue } from "./job-services";
 import { IWParams } from "../types";
 const HttpError = require("../utils/http-error");
+const DHOST = process.env.DHOST || "localhost";
+const DPORT = process.env.DPORT || "2375";
 
 const prisma = new PrismaClient();
 
@@ -23,13 +25,13 @@ export const createWorkflowContainer = async (
   hostName?: string,
   domainName?: string
 ) => {
-  const url = `http://localhost:2375/images/create?fromImage=${image}`;
+  const url = `http://${DHOST}:${DPORT}/images/create?fromImage=${image}`;
   try {
     const response = await axios.post(url);
     if (!response || response.status !== 200) {
       console.log("err");
     } else {
-      const url = `http://localhost:2375/containers/create?name=${name}`;
+      const url = `http://${DHOST}:${DPORT}/containers/create?name=${name}`;
       const response = await axios.post(url, {
         Hostname: hostName,
         Domainname: domainName,
@@ -51,7 +53,7 @@ export const createWorkflowContainer = async (
 export const waitContainer = async (uid: number, containerId: string, wid: number, jid: number, wparams: IWParams[] | null) => {
   let exitCode: number;
   try {
-    const url = `http://localhost:2375/containers/${containerId}/wait`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/wait`;
     const response = await axios.post(url);
     if (!response || response.status !== 200) {
       const error = new HttpError("Could not wait for container.", 500);
@@ -130,7 +132,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
 
 export const pauseContainer = async (containerId: string) => {
   try {
-    const url = `http://localhost:2375/containers/${containerId}/pause`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/pause`;
     const response = await axios.post(url);
     return response;
   } catch (err) {
@@ -141,7 +143,7 @@ export const pauseContainer = async (containerId: string) => {
 
 export const unpauseContainer = async (containerId: string) => {
   try {
-    const url = `http://localhost:2375/containers/${containerId}/unpause`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/unpause`;
     const response = await axios.post(url);
     return response;
   } catch (err) {
@@ -152,7 +154,7 @@ export const unpauseContainer = async (containerId: string) => {
 
 export const getArchive = async (containerId: string, path: string): Promise<string> => {
   try {
-    const url = `http://localhost:2375/containers/${containerId}/archive?path=${path}`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/archive?path=${path}`;
     const response = await axios.get(url, { responseType: "stream" });
     const tarParser = new tar.Parse();
     const contentStream = new stream.Writable();
@@ -178,7 +180,7 @@ export const getArchive = async (containerId: string, path: string): Promise<str
 const runWorkflowContainer = async (uid: number, containerId: string, wid: number, jid: number, wparams: IWParams[] | null) => {
   try {
     // io.emit(`w${wid.toString()}`, job);
-    const url = `http://localhost:2375/containers/${containerId}/start`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/start`;
     const response = await axios.post(url);
     if (!response || response.status !== 204) {
       const error = new HttpError("Could not start container.", 500);
