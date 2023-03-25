@@ -13,6 +13,18 @@ const WTemplates = () => {
   const [project, setProject] = useAtom(aProject);
   const [workflows, setWorkflows] = useState<IWTemplate[]>([]);
   const [templateRef] = useAutoAnimate<HTMLDivElement>();
+  const [selectedTemplates, setSelectedTemplates] = useState<Map<string, string>>(new Map());
+
+  async function removeTemplate() {
+    try {
+      for (const id of selectedTemplates.keys()) {
+        let response = await api.deleteTemplate(id);
+        setWorkflows((prev) => prev?.filter((w) => w.id !== id));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
   const getTemplates = async () => {
     try {
       const response = await api.getAllTemplates(project?.id);
@@ -21,6 +33,16 @@ const WTemplates = () => {
       }
     } catch (err) {
       console.log(err);
+    }
+  };
+  const selectTemplate = (id: string) => {
+    const currentlySelected: Map<string, string> = selectedTemplates;
+    if (currentlySelected.has(id)) {
+      currentlySelected.delete(id);
+      setSelectedTemplates(new Map<string, string>(currentlySelected));
+    } else {
+      currentlySelected.set(id, id);
+      setSelectedTemplates(new Map<string, string>(currentlySelected));
     }
   };
 
@@ -36,9 +58,29 @@ const WTemplates = () => {
           <p>Workflows Templates</p>
           <Button onClick={() => setShowForm(true)}>Create</Button>
         </div>
-        <div className="one_workflow_tools"></div>
+        <div className="one_workflow_tools">
+          <Button onClick={removeTemplate}>DELETE</Button>
+        </div>
         <div className="workflow_table" ref={templateRef}>
           <div className="workflow_table_header ">
+            <div style={{ width: "3%" }}>
+              <input
+                type="checkbox"
+                checked={workflows.length === selectedTemplates.size}
+                onClick={(e) => e.stopPropagation()}
+                onChange={() => {
+                  if (workflows.length === selectedTemplates.size) {
+                    setSelectedTemplates(new Map<string, string>());
+                  } else {
+                    const newSelected: Map<string, string> = new Map<string, string>();
+                    workflows.forEach((workflow) => {
+                      newSelected.set(workflow.id, workflow.id);
+                    });
+                    setSelectedTemplates(newSelected);
+                  }
+                }}
+              />
+            </div>
             <div style={{ width: "25%" }}>NAME</div>
             <div style={{ width: "30%" }}>CREATED</div>
             <div style={{ width: "30%" }}>LAST UPDATE</div>
@@ -46,7 +88,15 @@ const WTemplates = () => {
           {workflows &&
             workflows.length > 0 &&
             workflows.map((workflow) => {
-              return <WTemplateRow key={workflow.id} {...workflow} />;
+              return (
+                <WTemplateRow
+                  key={workflow.id}
+                  {...workflow}
+                  checked={selectedTemplates.has(workflow.id)}
+                  select={() => selectTemplate(workflow.id)}
+                  remove={removeTemplate}
+                />
+              );
             })}
         </div>
       </div>

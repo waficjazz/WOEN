@@ -11,7 +11,7 @@ import ReactTimeAgo from "react-time-ago";
 
 interface IProps extends IWorkflow {
   placements: any;
-  remove: any;
+  remove: () => void;
   checked: boolean;
   select: () => void;
 }

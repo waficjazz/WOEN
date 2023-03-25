@@ -94,7 +94,7 @@ export interface ISignIn {
 }
 
 export interface IWTemplate {
-  id: number | string;
+  id: string;
   name: string;
   placements: IPlacement;
   createdAt: string;
