@@ -45,8 +45,12 @@ export const getInParams = (jtid: number) => {
   return Axios.get(`/workflow/job/inParams/${jtid}`);
 };
 
-export const deleteTemplate = (id: number) => {
+export const deleteTemplate = (id: string) => {
   return Axios.delete(`/workflow/template/${id}`);
+};
+
+export const deleteJobTemplate = (id: number) => {
+  return Axios.delete(`/workflow/jobtemplate/${id}`);
 };
 
 export const getTemplate = (id: string) => {

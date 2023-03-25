@@ -10,9 +10,13 @@ import * as api from "./api";
 import { useAtom } from "jotai";
 import { aProject } from "../../store";
 import SubmitForm from "./SubmitForm";
-interface Props extends IWTemplate {}
+interface Props extends IWTemplate {
+  remove: () => void;
+  checked: boolean;
+  select: () => void;
+}
 
-const WTemplateRow = ({ id, name, createdAt, updatedAt, parameters }: Props) => {
+const WTemplateRow = ({ id, name, createdAt, updatedAt, parameters, select, checked }: Props) => {
   const [showSubmit, setShowSubmit] = useState(false);
   const [project, setProject] = useAtom(aProject);
   const navigate = useNavigate();
@@ -37,6 +41,18 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt, parameters }: Props) => 
     <>
       <div className="workflow_row" onClick={handleClick}>
         {showSubmit && <SubmitForm close={() => setShowSubmit(false)} init={initWorkflow} params={parameters!!} />}
+        <div style={{ width: "3%" }}>
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={() => {
+              select();
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          />
+        </div>
         <div style={{ width: "25%" }}>{name}</div>
         <div style={{ width: "30%" }}>
           <ReactTimeAgo date={new Date(createdAt)} locale="en-US" timeStyle={dateStyle} />

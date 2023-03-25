@@ -19,6 +19,7 @@ const deleteWorkflowTemplate = async (req: Request, res: Response, next: NextFun
     });
     res.status(200).json({ message: "Template deleted." });
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Could not delete template.", 500);
     return next(error);
   }
