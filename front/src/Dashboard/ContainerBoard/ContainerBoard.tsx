@@ -43,7 +43,7 @@ const ContainerBoard = () => {
         <p>Containers</p>
         {!showForm && <Button onClick={() => setShowForm(true)}>Create</Button>}
       </div>
-      {showForm ? <ContainerForm show={showForm} close={setShowForm} /> : <ContainerTable />}
+      {showForm ? <ContainerForm show={showForm} close={setShowForm} save={true} /> : <ContainerTable />}
     </div>
   );
 };

@@ -10,11 +10,10 @@ import * as api from "./api";
 interface Props {
   show: boolean;
   close: any;
+  save?: boolean;
+  create?: boolean;
 }
-const ContainerForm = ({ show, close }: Props) => {
-  type TextAreaEvent = React.ChangeEvent<HTMLTextAreaElement>;
-  type KeyUpEvent = React.KeyboardEvent<HTMLTextAreaElement>;
-
+const ContainerForm = ({ show, close, save, create }: Props) => {
   interface envPair {
     [key: string]: string;
   }
@@ -28,7 +27,8 @@ const ContainerForm = ({ show, close }: Props) => {
   const [envPair, setEnvPair] = useState<envPair[]>([]);
   const [commandTxt, setCommandTxt] = useState("");
   const [shellType, setShellType] = useState("bash");
-
+  const [saveContainer, setSaveContainer] = useState(save || false);
+  const [createContainer, setCreateContainer] = useState(create || false);
   const handleChange = (e: InputEvent) => {
     const { name, value } = e.target;
 
@@ -74,30 +74,18 @@ const ContainerForm = ({ show, close }: Props) => {
 
   const handleSubmit = async () => {
     try {
+      let response1;
+      let response2;
       let Env = parseEnvPairs(envPair);
       let cmds = parseCommands(commandTxt);
       let arr = [shellType, "-c", cmds];
       let obj = { ...container, CMD: arr, Env };
-      const response = await api.createContainer(obj);
-      if (response.status === 201) {
-        close(false);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      let Env = parseEnvPairs(envPair);
-      let cmds = parseCommands(commandTxt);
-      let arr = [shellType, "-c", cmds];
-      let obj = { image: container.image, name: container.name, commands: arr, envs: Env };
-      const response = await api.containerSave(obj);
-      if (response.status === 201) {
-        console.log(response.data);
-        // close(false);
-      }
+      let objSave = { image: container.image, name: container.name, commands: arr, envs: Env };
+      if (createContainer) response1 = await api.createContainer(obj);
+      if (saveContainer) response2 = await api.containerSave(objSave);
+      if (createContainer && saveContainer) if (response1?.status === 201 && response2?.status === 201) close(false);
+      if (createContainer && !saveContainer) if (response1?.status === 201) close(false);
+      if (!createContainer && saveContainer) if (response2?.status === 201) close(false);
     } catch (err) {
       console.log(err);
     }
@@ -132,6 +120,21 @@ const ContainerForm = ({ show, close }: Props) => {
                 );
               })}
             </div>
+            <div>
+              {!save && (
+                <>
+                  <input type="checkbox" onChange={() => setSaveContainer(!saveContainer)} checked={saveContainer} />
+                  <label>Save Container</label>
+                </>
+              )}
+
+              {!create && (
+                <>
+                  <input type="checkbox" onChange={() => setCreateContainer(!createContainer)} checked={createContainer} />
+                  <label htmlFor="tty">Create Live container</label>
+                </>
+              )}
+            </div>
           </div>
         </div>
         <div>
@@ -147,7 +150,7 @@ const ContainerForm = ({ show, close }: Props) => {
             value={commandTxt}
             onChange={(e) => setCommandTxt(e.target.value)}
           />
-          <Button onClick={handleSave}>submit</Button>
+          <Button onClick={handleSubmit}>submit</Button>
         </div>
       </div>
     </>

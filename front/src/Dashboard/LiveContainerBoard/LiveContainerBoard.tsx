@@ -70,7 +70,7 @@ const LiveContainerBoard = () => {
         <p>Containers</p>
         {!showForm && <Button onClick={() => setShowForm(true)}>Create</Button>}
       </div>
-      {showForm ? <ContainerForm show={showForm} close={setShowForm} /> : <ContainerTable />}
+      {showForm ? <ContainerForm show={showForm} close={setShowForm} create={true} /> : <ContainerTable />}
     </div>
   );
 };
