@@ -6,9 +6,13 @@ const HttpError = require("../utils/http-error");
 import { pauseContainer as pause, unpauseContainer as unpause } from "../services/container-services";
 import { messageOneUser } from "../utils/socket";
 import { RequestWithUserId } from "../types";
+
+const DHOST = process.env.DHOST || "localhost";
+const DPORT = process.env.DPORT || "2375";
+
 const listImages = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port } = req.body;
-  const url = `http://${host}:${port}/images/json`;
+  const url = `http://${DHOST}:${DPORT}/images/json`;
   try {
     const response = await axios.get(url);
     if (!response || response.status !== 200) {
@@ -28,7 +32,7 @@ const listImages = async (req: Request, res: Response, next: NextFunction) => {
 
 const listContainers = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port } = req.body;
-  const url = `http://localhost:2375/containers/json?all=true`;
+  const url = `http://${DHOST}:${DPORT}/containers/json?all=true`;
   try {
     const response = await axios.get(url);
     if (!response || response.status !== 200) {
@@ -48,13 +52,13 @@ const listContainers = async (req: Request, res: Response, next: NextFunction) =
 
 const createContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, image, CMD, name, hostName, domainName, User, Env } = req.body;
-  // const url = `http://localhost:2375/images/create?fromImage=${image}`;
+  // const url = `http://${DHOST}:${DPORT}/images/create?fromImage=${image}`;
   // const response = await axios.post(url);
   // if (!response) {
   //   const error = new HttpError("Could not pull image.", 500);
   //   return next(error);
   // } else {
-  const url = `http://localhost:2375/containers/create?name=${name}`;
+  const url = `http://${DHOST}:${DPORT}/containers/create?name=${name}`;
   try {
     const response = await axios.post(url, {
       Hostname: hostName,
@@ -79,7 +83,7 @@ const createContainer = async (req: Request, res: Response, next: NextFunction) 
 const runContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
-    const url = `http://localhost:2375/containers/${containerId}/start`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/start`;
     const response = await axios.post(url);
     if (!response || response.status !== 204) {
       console.log(response);
@@ -95,7 +99,7 @@ const runContainer = async (req: Request, res: Response, next: NextFunction) => 
 
 const removeContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
-  const url = `http://localhost:2375/containers/${containerId}?force=true`;
+  const url = `http://${DHOST}:${DPORT}/containers/${containerId}?force=true`;
   const response = await axios.delete(url);
   if (!response || response.status !== 204) {
     const error = new HttpError("Could not remove container.", 500);
@@ -108,7 +112,7 @@ const getContainerLogs = async (req: RequestWithUserId, res: Response, next: Nex
   const { host, port, containerId } = req.body;
   const uid = req.userId;
   try {
-    const url = `http://localhost:2375/containers/${containerId}/logs?stdout=true&stderr=true&follow=1`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/logs?stdout=true&stderr=true&follow=1`;
 
     const response = await axios.get(url, {
       responseType: "stream",
@@ -138,7 +142,7 @@ const getContainerLogs = async (req: RequestWithUserId, res: Response, next: Nex
 const waitContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
-    const url = `http://localhost:2375/containers/${containerId}/wait`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/wait`;
     const response = await axios.post(url);
     if (!response || response.status !== 200) {
       const error = new HttpError("Could not wait for container.", 500);
@@ -154,7 +158,7 @@ const waitContainer = async (req: Request, res: Response, next: NextFunction) =>
 const inspectContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
-    const url = `http://localhost:2375/containers/${containerId}/json`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/json`;
     const response = await axios.get(url);
     if (!response || response.status !== 200) {
       const error = new HttpError("Could not inspect container.", 500);
@@ -212,7 +216,7 @@ const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFu
 const saveLiveContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const { host, port, containerId } = req.body;
   try {
-    const url = `http://localhost:2375/containers/${containerId}/json`;
+    const url = `http://${DHOST}:${DPORT}/containers/${containerId}/json`;
     const response = await axios.get(url);
     if (!response || response.status !== 200) {
       const error = new HttpError("Could not inspect container.", 500);
