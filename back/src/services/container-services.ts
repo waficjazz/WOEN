@@ -2,12 +2,12 @@ import { PrismaClient, STATUS } from "@prisma/client";
 import axios from "axios";
 const tar = require("tar");
 const stream = require("stream");
-import { runJob, updateWorkflow } from "./wokflow-services";
+import { runJob, triggerNextJobs, updateWorkflow } from "./wokflow-services";
 import { redisc } from "..";
 import { io } from "../index";
 import { messageOneUser } from "../utils/socket";
 import { updateJob, saveOutputParamsValue } from "./job-services";
-import { IWParams } from "../types";
+import { IJob, IWParams } from "../types";
 const HttpError = require("../utils/http-error");
 const DHOST = process.env.DHOST || "localhost";
 const DPORT = process.env.DPORT || "2375";
@@ -65,6 +65,9 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
       if (exitCode === 0) {
         /// add redis check if job is retry
 
+        let uJob = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
+        await messageOneUser(uid, `w${wid.toString()}`, uJob);
+
         let workflow = await prisma.workflow.findUnique({
           where: {
             id: wid,
@@ -95,33 +98,39 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
           });
           if (job) if (job.jobTemplate?.outputParams) await saveOutputParamsValue(containerId, job.jobTemplate?.outputParams, jid, wid);
           if (job && job.successors.length > 0) {
-            if (!redisc.isOpen) await redisc.connect();
+            await triggerNextJobs(uid, job as IJob, wid, job.id, wparams);
+            // if (!redisc.isOpen) await redisc.connect();
 
-            await Promise.all(
-              job.successors.map(async (j) => {
-                /// successsor job id are template ids
-                // TODO check for duplictate entry as multple wait could exist for same conatainer
-                await redisc.lPush(`${j}${wid}`, jid.toString());
+            // await Promise.all(
+            //   job.successors.map(async (j) => {
+            //     /// successsor job id are template ids
+            //     // TODO check for duplictate entry as multple wait could exist for same conatainer
+            //     await redisc.lPush(`${j}${wid}`, jid.toString());
 
-                //// check below two line if moved outside loop parallele job does not update
-                let uJob = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
-                await messageOneUser(uid, `w${wid.toString()}`, uJob);
-                await runJob(uid, parseInt(j), wid, 0, wparams);
-              })
-            );
-            await redisc.disconnect();
-          } else {
-            let job = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
-            // io.emit(`w${wid.toString()}`, job);
-            await messageOneUser(uid, `w${wid.toString()}`, job);
-            console.log("done");
+            //     //// check below two line if moved outside loop parallele job does not update
+            //     let uJob = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
+            //     await messageOneUser(uid, `w${wid.toString()}`, uJob);
+            //     await runJob(uid, parseInt(j), wid, 0, wparams);
+            //   })
+            // );
+            // await redisc.disconnect();
           }
         } catch (err) {
           return err;
         }
       } else {
-        let fJob = await updateJob(jid, { status: STATUS.failed, exitCode: exitCode });
+        const fJob = await updateJob(jid, { status: STATUS.failed, exitCode: exitCode });
         messageOneUser(uid, `w${wid.toString()}`, fJob);
+        const runningJobs = await prisma.job.findMany({
+          where: {
+            workflowId: wid,
+            status: STATUS.running,
+          },
+        });
+        if (runningJobs.length === 0) {
+          const fWorkflow = await updateWorkflow(wid, { status: STATUS.failed, finishedAt: new Date() });
+          messageOneUser(uid, "wfs", fWorkflow);
+        }
       }
     }
   } catch (err) {

@@ -26,7 +26,6 @@ const submitWorkflowTemplate = async (req: RequestWithUserId, res: Response, nex
         });
       })
     );
-    console.log("see", outputs);
     let placements: { [key: string]: [number, number] } = {};
     Object.entries(coors).map(([key, value]) => {
       let k = jobMapping[key].toString();
