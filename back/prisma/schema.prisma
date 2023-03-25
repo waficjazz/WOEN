@@ -150,14 +150,14 @@ model inputParams {
   name           String?
   jobTemplate    jobTemplate? @relation(fields: [jobTemplateId], references: [id], onDelete: Cascade)
   jobTemplateId  Int?
-  outputParams   outputParams @relation(fields: [outputParamsId], references: [id])
+  outputParams   outputParams @relation(fields: [outputParamsId], references: [id], onDelete: Cascade)
   outputParamsId Int
 }
 
 model outputParamsValue {
   id             Int          @id @default(autoincrement())
   value          String
-  outputParams   outputParams @relation(fields: [outputParamsId], references: [id])
+  outputParams   outputParams @relation(fields: [outputParamsId], references: [id], onDelete: Cascade)
   outputParamsId Int
   job            job?         @relation(fields: [jobId], references: [id])
   jobId          Int?

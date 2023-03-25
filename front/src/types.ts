@@ -7,6 +7,7 @@ export interface ISContainer {
   commands?: string[];
   envs?: string[];
   createdAt?: string;
+  updateAt?: string;
 }
 
 export interface inputsParams {
