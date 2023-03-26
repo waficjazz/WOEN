@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan, faCircleCheck, faClock, faCirclePause } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faCircleCheck, faClock, faCirclePause, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { ColorRing } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import "./Workflows.css";
@@ -25,6 +25,7 @@ const WorkflowRow = ({ id, name, remove, owner, status, totalJobs, completedJobs
   const IconStatus = () => {
     return (
       <>
+        {status === "failed" && <FontAwesomeIcon icon={faCircleXmark} size="sm" color="red" />}
         {status === "pending" && <FontAwesomeIcon icon={faClock} size="sm" />}
         {status === "success" && <FontAwesomeIcon icon={faCircleCheck} size="sm" color="green" />}
         {status === "paused" && <FontAwesomeIcon icon={faCirclePause} size="sm" color="rgb(255, 174, 0)" />}
