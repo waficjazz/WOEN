@@ -49,6 +49,8 @@ model project {
   container        container[]
   workflowTemplate workflowTemplate[]
   workflow         workflow[]
+
+  @@unique([name, userId])
 }
 
 model group {
@@ -65,7 +67,7 @@ model group {
 
 model container {
   id           Int           @id @default(autoincrement())
-  name         String        @unique
+  name         String
   image        String
   commands     String[]
   envs         String[]
@@ -79,11 +81,13 @@ model container {
   userId       Int?
   project      project?      @relation(fields: [projectId], references: [id])
   projectId    Int?
+
+  @@unique([name, projectId])
 }
 
 model workflowTemplate {
   id           Int                     @id @default(autoincrement())
-  name         String                  @unique
+  name         String
   jobTemplates jobTemplate[]
   createdAt    DateTime                @default(now())
   updatedAt    DateTime                @updatedAt
@@ -96,6 +100,7 @@ model workflowTemplate {
   projectId    Int?
   parameters   workflowTemplateParam[]
 
+  @@unique([name, projectId])
   @@map("workflow_template")
 }
 
@@ -118,7 +123,7 @@ model workflowParam {
 
 model jobTemplate {
   id                 Int               @id @default(autoincrement())
-  name               String            @unique
+  name               String
   container          container?        @relation(fields: [containerId], references: [id])
   containerId        Int?
   successors         String[]
@@ -166,7 +171,7 @@ model outputParamsValue {
 
 model workflow {
   id                 Int               @id @default(autoincrement())
-  name               String            @unique
+  name               String
   jobs               job[]
   totalJobs          Int               @default(0)
   completedJobs      Int               @default(0)
@@ -184,6 +189,8 @@ model workflow {
   project            project?          @relation(fields: [projectId], references: [id])
   projectId          Int?
   workflowParam      workflowParam[]
+
+  @@unique([name, projectId])
 }
 
 model job {
