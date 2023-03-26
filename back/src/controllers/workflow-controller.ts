@@ -329,9 +329,23 @@ const upateJobDependencies = async (req: Request, res: Response, next: NextFunct
 const initWorkflow = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let workflow: IWorkflow | undefined;
   let firstJobsId: number[] | undefined;
-  const { name, templateId, projectId, params } = req.body;
+  const { name, templateName, projectId, params } = req.body;
   try {
-    workflow = await createWorkflow(req.userId, name, templateId, projectId, params);
+    let wname = name;
+    const template = await prisma.workflowTemplate.findUnique({
+      where: {
+        name_projectId: {
+          name: templateName,
+          projectId: parseInt(projectId),
+        },
+      },
+    });
+    if (wname == undefined) {
+      let rand = Math.random().toString(36).substring(2, 6);
+      wname = templateName + rand;
+    }
+    if (template === null) throw new Error("Template not found");
+    workflow = await createWorkflow(req.userId, wname, template.id, projectId, params);
     messageOneUser(req.userId, "wfs", workflow);
     if (workflow !== undefined) {
       firstJobsId = await getFirstJobs(workflow.id);
@@ -340,18 +354,17 @@ const initWorkflow = async (req: RequestWithUserId, res: Response, next: NextFun
       await Promise.all(
         firstJobsId.map(async (id) => {
           if (workflow !== undefined) {
-            await runJob(req.userId, templateId, workflow.id, id, params);
+            await runJob(req.userId, template.id, workflow.id, id, params);
           }
         })
       );
-    let updatedWorkflow = await updateWorkflow(workflow!!.id, { status: STATUS.running });
+    const updatedWorkflow = await updateWorkflow(workflow!!.id, { status: STATUS.running });
     messageOneUser(req.userId, "wfs", updatedWorkflow);
+    res.status(201).json(updatedWorkflow);
   } catch (err) {
-    const error = new HttpError("Could not update job.", 500);
+    const error = new HttpError("Could not init workflow.", 500);
     return next(error);
   }
-
-  res.status(201).json(workflow);
 };
 
 const setOutputParams = async (req: Request, res: Response, next: NextFunction) => {

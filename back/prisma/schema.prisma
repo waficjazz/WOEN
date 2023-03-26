@@ -189,8 +189,6 @@ model workflow {
   project            project?          @relation(fields: [projectId], references: [id])
   projectId          Int?
   workflowParam      workflowParam[]
-
-  @@unique([name, projectId])
 }
 
 model job {
