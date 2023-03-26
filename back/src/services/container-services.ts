@@ -99,21 +99,6 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
           if (job) if (job.jobTemplate?.outputParams) await saveOutputParamsValue(containerId, job.jobTemplate?.outputParams, jid, wid);
           if (job && job.successors.length > 0) {
             await triggerNextJobs(uid, job as IJob, wid, job.id, wparams);
-            // if (!redisc.isOpen) await redisc.connect();
-
-            // await Promise.all(
-            //   job.successors.map(async (j) => {
-            //     /// successsor job id are template ids
-            //     // TODO check for duplictate entry as multple wait could exist for same conatainer
-            //     await redisc.lPush(`${j}${wid}`, jid.toString());
-
-            //     //// check below two line if moved outside loop parallele job does not update
-            //     let uJob = await updateJob(jid, { status: STATUS.success, exitCode: exitCode });
-            //     await messageOneUser(uid, `w${wid.toString()}`, uJob);
-            //     await runJob(uid, parseInt(j), wid, 0, wparams);
-            //   })
-            // );
-            // await redisc.disconnect();
           }
         } catch (err) {
           return err;
@@ -121,16 +106,8 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
       } else {
         const fJob = await updateJob(jid, { status: STATUS.failed, exitCode: exitCode });
         messageOneUser(uid, `w${wid.toString()}`, fJob);
-        const runningJobs = await prisma.job.findMany({
-          where: {
-            workflowId: wid,
-            status: STATUS.running,
-          },
-        });
-        if (runningJobs.length === 0) {
-          const fWorkflow = await updateWorkflow(wid, { status: STATUS.failed, finishedAt: new Date() });
-          messageOneUser(uid, "wfs", fWorkflow);
-        }
+        const fWorkflow = await updateWorkflow(wid, { status: STATUS.failed, finishedAt: new Date() });
+        messageOneUser(uid, "wfs", fWorkflow);
       }
     }
   } catch (err) {
