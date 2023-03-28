@@ -5,7 +5,7 @@ const HttpError = require("../utils/http-error");
 import bcrypt from "bcrypt";
 import { RequestWithUserId } from "../types";
 import { db } from "../db/db";
-import { NewUser, User, user as userTable, project, NewProject, Project } from "../db/schema";
+import { NewUser, User, user as userTable, project, NewProject, Project, NewGroup, Group, group } from "../db/schema";
 import { eq } from "drizzle-orm/expressions";
 
 const prisma = new PrismaClient();
@@ -165,31 +165,26 @@ const listProjects = async (req: RequestWithUserId, res: Response, next: NextFun
 const createGroup = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let userId = req.userId;
   let { name, description } = req.body;
-  let group;
+  let createdGroups: Group[];
+  const newGroup: NewGroup = {
+    name,
+    description,
+    userId,
+  };
   try {
-    group = await prisma.group.create({
-      data: {
-        name: name,
-        description: description,
-        userId: userId,
-      },
-    });
+    createdGroups = await db.insert(group).values(newGroup).returning();
   } catch (err) {
     const error = new HttpError("Failed creating group", 500);
     return next(error);
   }
-  res.status(201).json(group);
+  res.status(201).json(createdGroups[0]!);
 };
 
 const listGroups = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let userId = req.userId;
   let groups;
   try {
-    groups = await prisma.group.findMany({
-      where: {
-        userId: userId,
-      },
-    });
+    groups = await db.select().from(group).where(eq(group.userId, userId));
     if (groups.length === 0) {
       const error = new HttpError("No groups found", 404);
       return next(error);
