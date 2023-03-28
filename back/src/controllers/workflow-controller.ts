@@ -6,17 +6,16 @@ import { messageOneUser } from "../utils/socket";
 import { IWorkflow, RequestWithUserId } from "../types";
 import { updateJob, updateJobTemplate } from "../services/job-services";
 const HttpError = require("../utils/http-error");
+import { db } from "../db/db";
+import { workflowTemplate, WorkflowTemplate, NewWorkflowTemplate } from "../db/schema";
+import { eq } from "drizzle-orm/expressions";
 
 const prisma = new PrismaClient();
 
 const deleteWorkflowTemplate = async (req: Request, res: Response, next: NextFunction) => {
   const tid = req.params.tid;
   try {
-    await prisma.workflowTemplate.delete({
-      where: {
-        id: parseInt(tid),
-      },
-    });
+    await db.delete(workflowTemplate).where(eq(workflowTemplate.id, parseInt(tid)));
     res.status(200).json({ message: "Template deleted." });
   } catch (err) {
     console.log(err);

@@ -32,6 +32,9 @@ export type NewGroup = InferModel<typeof group, "insert">;
 export type Container = InferModel<typeof container>;
 export type NewContainer = InferModel<typeof container, "insert">;
 
+export type WorkflowTemplate = InferModel<typeof workflowTemplate>;
+export type NewWorkflowTemplate = InferModel<typeof workflowTemplate, "insert">;
+
 export const user = pgTable(
   "user",
   {
