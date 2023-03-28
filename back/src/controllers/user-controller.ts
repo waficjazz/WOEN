@@ -5,7 +5,7 @@ const HttpError = require("../utils/http-error");
 import bcrypt from "bcrypt";
 import { RequestWithUserId } from "../types";
 import { db } from "../db/db";
-import { NewUser, User, user } from "../db/schema";
+import { NewUser, User, user as userTable, project, NewProject, Project } from "../db/schema";
 import { eq } from "drizzle-orm/expressions";
 
 const prisma = new PrismaClient();
@@ -18,7 +18,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
   let insertedUser: User;
   let existingUser: User[];
   try {
-    existingUser = await db.select().from(user).where(eq(user.username, username));
+    existingUser = await db.select().from(userTable).where(eq(userTable.username, username));
   } catch (err) {
     console.log(err);
     const error = new HttpError("Signing up failed, please try again later.", 500);
@@ -29,7 +29,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
   try {
-    existingUser = await db.select().from(user).where(eq(user.email, email));
+    existingUser = await db.select().from(userTable).where(eq(userTable.email, email));
   } catch (err) {
     const error = new HttpError("Signing up failed, please try again later.", 500);
     return next(error);
@@ -55,7 +55,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       email,
       password: hashedPassword,
     };
-    insertedUsers = await db.insert(user).values(newUser).returning();
+    insertedUsers = await db.insert(userTable).values(newUser).returning();
     insertedUser = insertedUsers[0]!;
   } catch (err) {
     console.log(err);
@@ -84,27 +84,21 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   const { user, password } = req.body;
+  let existingUsers: User[];
   try {
     let found;
-    found = await prisma.user.findUnique({
-      where: {
-        username: user,
-      },
-    });
-    if (!found) {
-      found = await prisma.user.findUnique({
-        where: {
-          email: user,
-        },
-      });
-      if (!found) {
+    existingUsers = await db.select().from(userTable).where(eq(userTable.username, user));
+    if (existingUsers.length == 0) {
+      existingUsers = await db.select().from(userTable).where(eq(userTable.email, user));
+      if (existingUsers.length == 0) {
         const error = new HttpError("Could not find this user.", 404);
         return next(error);
       }
     }
     let isValidPassword = false;
+    const existingUser = existingUsers[0]!;
     try {
-      isValidPassword = await bcrypt.compare(password, found.password);
+      isValidPassword = await bcrypt.compare(password, existingUser.password);
     } catch (err) {
       const error = new HttpError("Could not log you in, please check your credentials and try again.", 500);
       return next(error);
@@ -115,7 +109,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
     let token;
     try {
-      token = jwt.sign({ userId: found.id, email: found.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
+      token = jwt.sign({ userId: existingUser.id, email: existingUser.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
     } catch (err) {
       const error = new HttpError("Invalid credentials, could not log you in.", 401);
       return next(error);
@@ -123,11 +117,11 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     res.status(201).json({
       token: token,
       user: {
-        firstName: found.firstName,
-        lastName: found.lastName,
-        username: found.username,
-        email: found.email,
-        createdAt: found.createdAt,
+        firstName: existingUser.firstName,
+        lastName: existingUser.lastName,
+        username: existingUser.username,
+        email: existingUser.email,
+        createdAt: existingUser.createdAt,
       },
     });
   } catch (err) {
@@ -138,30 +132,25 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const createProject = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const { name } = req.body;
-  let project;
+  let createdProjects: Project[];
+  const newProject: NewProject = {
+    name,
+    userId: req.userId,
+  };
   try {
-    project = await prisma.project.create({
-      data: {
-        name: name,
-        userId: req.userId,
-      },
-    });
+    createdProjects = await db.insert(project).values(newProject).returning();
   } catch (err) {
     const error = new HttpError("Failed to create project", 500);
     return next(error);
   }
-  res.status(201).json(project);
+  res.status(201).json(createdProjects[0]!);
 };
 
 const listProjects = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   let userId = req.userId;
-  let projects = [];
+  let projects: Project[] = [];
   try {
-    projects = await prisma.project.findMany({
-      where: {
-        userId: userId,
-      },
-    });
+    projects = await db.select().from(project).where(eq(project.userId, userId));
     if (projects.length === 0) {
       const error = new HttpError("No projects found", 404);
       return next(error);

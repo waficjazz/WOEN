@@ -23,6 +23,9 @@ import { sql } from "drizzle-orm/sql";
 export type User = InferModel<typeof user>;
 export type NewUser = InferModel<typeof user, "insert">;
 
+export type Project = InferModel<typeof project>;
+export type NewProject = InferModel<typeof project, "insert">;
+
 export const user = pgTable(
   "user",
   {
@@ -64,7 +67,7 @@ export const container = pgTable(
     workingDir: text("workingDir").array(),
     user: text("user"),
     createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).notNull(),
+    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
     userId: integer("userId").references(() => user.id, { onDelete: "set null", onUpdate: "cascade" }),
     projectId: integer("projectId").references(() => project.id, { onDelete: "set null", onUpdate: "cascade" }),
   },
@@ -124,7 +127,7 @@ export const project = pgTable(
     id: serial("id").notNull(),
     name: text("name").notNull(),
     createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).notNull(),
+    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
     userId: integer("userId")
       .notNull()
       .references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" }),
@@ -142,7 +145,7 @@ export const workflowTemplate = pgTable(
     id: serial("id").notNull(),
     name: text("name").notNull(),
     createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).notNull(),
+    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
     initJob: text("initJob").default("init").notNull(),
     placements: jsonb("placements"),
     userId: integer("userId").references(() => user.id, { onDelete: "set null", onUpdate: "cascade" }),
@@ -162,7 +165,7 @@ export const jobTemplate = pgTable("job_template", {
   successors: text("successors").array(),
   dependencies: text("dependencies").array(),
   createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).notNull(),
+  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
   workflowTemplateId: integer("workflowTemplateId").references(() => workflowTemplate.id, { onDelete: "cascade", onUpdate: "cascade" }),
   condition: text("condition"),
 });
@@ -191,7 +194,7 @@ export const workflow = pgTable("workflow", {
   totalJobs: integer("totalJobs").notNull(),
   completedJobs: integer("completedJobs").notNull(),
   createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).notNull(),
+  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
   startedAt: timestamp("startedAt", { precision: 3, mode: "string" }),
   finishedAt: timestamp("finishedAt", { precision: 3, mode: "string" }),
   status: status("status").default("pending").notNull(),
@@ -217,7 +220,7 @@ export const group = pgTable("group", {
   name: text("name").notNull(),
   description: text("description"),
   createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).notNull(),
+  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
   userId: integer("userId")
     .notNull()
     .references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" }),
@@ -239,7 +242,7 @@ export const job = pgTable("job", {
   successors: text("successors").default("RRAY[").array(),
   dependencies: text("dependencies").default("RRAY[").array(),
   createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).notNull(),
+  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
   startedAt: timestamp("startedAt", { precision: 3, mode: "string" }),
   finishedAt: timestamp("finishedAt", { precision: 3, mode: "string" }),
   workflowId: integer("workflowId")

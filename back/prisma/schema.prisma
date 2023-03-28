@@ -27,7 +27,7 @@ model user {
   email            String             @unique
   password         String
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now()) @updatedAt()
+  updatedAt        DateTime           @default(now()) @updatedAt
   group            group[]            @relation("group_users")
   container        container[]
   workflowTemplate workflowTemplate[]
@@ -41,7 +41,7 @@ model project {
   id               Int                @id @default(autoincrement())
   name             String
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  updatedAt        DateTime           @default(now()) @updatedAt
   owner            user?              @relation("project_owner", fields: [userId], references: [id])
   userId           Int
   group            group[]
@@ -58,7 +58,7 @@ model group {
   name        String
   description String?
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now()) @updatedAt
   owner       user?     @relation("group_owner", fields: [userId], references: [id])
   userId      Int
   user        user[]    @relation("group_users")
@@ -74,7 +74,7 @@ model container {
   workingDir   String[]
   user         String?
   createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  updatedAt    DateTime      @default(now()) @updatedAt
   jobtemplates jobTemplate[]
   jobs         job[]
   owner        user?         @relation(fields: [userId], references: [id])
@@ -90,7 +90,7 @@ model workflowTemplate {
   name         String
   jobTemplates jobTemplate[]
   createdAt    DateTime                @default(now())
-  updatedAt    DateTime                @updatedAt
+  updatedAt    DateTime                @default(now()) @updatedAt
   initJob      String                  @default("init")
   placements   Json?
   workflows    workflow[]
@@ -129,7 +129,7 @@ model jobTemplate {
   successors         String[]
   dependencies       String[]
   createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  updatedAt          DateTime          @default(now()) @updatedAt
   workflowTemplate   workflowTemplate? @relation(fields: [workflowTemplateId], references: [id], onDelete: Cascade)
   workflowTemplateId Int?
   jobs               job[]
@@ -176,7 +176,7 @@ model workflow {
   totalJobs          Int               @default(0)
   completedJobs      Int               @default(0)
   createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  updatedAt          DateTime          @default(now()) @updatedAt
   startedAt          DateTime?
   finishedAt         DateTime?
   status             STATUS            @default(pending)
@@ -198,7 +198,7 @@ model job {
   successors        String[]            @default([])
   dependencies      String[]            @default([])
   createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+  updatedAt         DateTime            @default(now()) @updatedAt
   startedAt         DateTime?
   finishedAt        DateTime?
   workflow          workflow            @relation(fields: [workflowId], references: [id], onDelete: Cascade)
