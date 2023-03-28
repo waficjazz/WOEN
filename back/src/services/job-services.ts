@@ -85,7 +85,7 @@ export const saveOutputParamsValue = async (containerId: string, outputParams: a
           await prisma.outputParamsValue.create({
             data: {
               outputParamsId: param.id,
-              value: value.slice(0, -1), //remove the \n
+              value: value.slice(0, -1), //remove the \n .
               jobId: jid,
               workflowId: wid,
             },
