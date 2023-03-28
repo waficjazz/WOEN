@@ -4,6 +4,9 @@ import jwt from "jsonwebtoken";
 const HttpError = require("../utils/http-error");
 import bcrypt from "bcrypt";
 import { RequestWithUserId } from "../types";
+import { db } from "../db/db";
+import { NewUser, User, user } from "../db/schema";
+import { eq } from "drizzle-orm/expressions";
 
 const prisma = new PrismaClient();
 
@@ -11,33 +14,27 @@ const prisma = new PrismaClient();
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   const { firstName, lastName, username, email, password } = req.body;
-  let user;
-  let existingUser;
+  let insertedUsers: User[];
+  let insertedUser: User;
+  let existingUser: User[];
   try {
-    existingUser = await prisma.user.findUnique({
-      where: {
-        username: username,
-      },
-    });
+    existingUser = await db.select().from(user).where(eq(user.username, username));
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Signing up failed, please try again later.", 500);
     return next(error);
   }
-  if (existingUser) {
+  if (existingUser.length > 0) {
     const error = new HttpError("User exists already, please login instead.", 422);
     return next(error);
   }
   try {
-    existingUser = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
+    existingUser = await db.select().from(user).where(eq(user.email, email));
   } catch (err) {
     const error = new HttpError("Signing up failed, please try again later.", 500);
     return next(error);
   }
-  if (existingUser) {
+  if (existingUser.length > 0) {
     const error = new HttpError("User exists already, please login instead.", 422);
     return next(error);
   }
@@ -51,22 +48,23 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
   try {
-    user = await prisma.user.create({
-      data: {
-        lastName,
-        firstName,
-        username: username,
-        email: email,
-        password: hashedPassword,
-      },
-    });
+    const newUser: NewUser = {
+      firstName,
+      lastName,
+      username,
+      email,
+      password: hashedPassword,
+    };
+    insertedUsers = await db.insert(user).values(newUser).returning();
+    insertedUser = insertedUsers[0]!;
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Signing up failed, please try again later.", 500);
     return next(error);
   }
   let token;
   try {
-    token = jwt.sign({ userId: user.id, email: user.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
+    token = jwt.sign({ userId: insertedUser.id, email: insertedUser.email }, "JazzPriavteKey", { expiresIn: "9999 years" });
   } catch (err) {
     const error = new HttpError("Invalid credentials, could not log you in.", 401);
     return next(error);
@@ -75,11 +73,11 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
   res.status(201).json({
     token: token,
     user: {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      username: user.username,
-      email: user.email,
-      createdAt: user.createdAt,
+      firstName: insertedUser.firstName,
+      lastName: insertedUser.lastName,
+      username: insertedUser.username,
+      email: insertedUser.email,
+      createdAt: insertedUser.createdAt,
     },
   });
 };

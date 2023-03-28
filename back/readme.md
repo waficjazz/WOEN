@@ -35,3 +35,6 @@ await sub.unsubscribe("channel");
 doWork();
 
 continueWork();
+
+// generate drizzle schema from existing db
+npx drizzle-kit introspect:pg --out=migrations/ --connectionString=postgresql://1234:1234@localhost:5432/public

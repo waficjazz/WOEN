@@ -27,7 +27,7 @@ model user {
   email            String             @unique
   password         String
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  updatedAt        DateTime           @default(now()) @updatedAt()
   group            group[]            @relation("group_users")
   container        container[]
   workflowTemplate workflowTemplate[]
