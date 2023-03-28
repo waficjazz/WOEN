@@ -54,6 +54,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       username,
       email,
       password: hashedPassword,
+      createdAt: new Date(),
     };
     insertedUsers = await db.insert(userTable).values(newUser).returning();
     insertedUser = insertedUsers[0]!;

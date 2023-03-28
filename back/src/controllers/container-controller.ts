@@ -199,6 +199,7 @@ const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFu
   const newContainer: NewContainer = {
     ...container,
     userId: req.userId,
+    createdAt: new Date(),
   };
   let createdContainers: Container[];
   try {
@@ -235,6 +236,7 @@ const saveLiveContainer = async (req: RequestWithUserId, res: Response, next: Ne
       envs: Env,
       user: User,
       workingDir: WorkingDir,
+      createdAt: new Date(),
     };
     const createdContainers: Container[] = await db.insert(containerTable).values(newContainer).returning();
     if (!createdContainers || createdContainers.length == 0) {

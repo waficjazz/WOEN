@@ -41,8 +41,8 @@ export const user = pgTable(
     username: text("username").notNull(),
     email: text("email").notNull(),
     password: text("password").notNull(),
-    createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => {
     return {
@@ -72,8 +72,8 @@ export const container = pgTable(
     envs: text("envs").array(),
     workingDir: text("workingDir").array(),
     user: text("user"),
-    createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     userId: integer("userId").references(() => user.id, { onDelete: "set null", onUpdate: "cascade" }),
     projectId: integer("projectId").references(() => project.id, { onDelete: "set null", onUpdate: "cascade" }),
   },
@@ -132,8 +132,8 @@ export const project = pgTable(
   {
     id: serial("id").notNull(),
     name: text("name").notNull(),
-    createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     userId: integer("userId")
       .notNull()
       .references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" }),
@@ -150,8 +150,8 @@ export const workflowTemplate = pgTable(
   {
     id: serial("id").notNull(),
     name: text("name").notNull(),
-    createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     initJob: text("initJob").default("init").notNull(),
     placements: jsonb("placements"),
     userId: integer("userId").references(() => user.id, { onDelete: "set null", onUpdate: "cascade" }),
@@ -170,8 +170,8 @@ export const jobTemplate = pgTable("job_template", {
   containerId: integer("containerId").references(() => container.id, { onDelete: "set null", onUpdate: "cascade" }),
   successors: text("successors").array(),
   dependencies: text("dependencies").array(),
-  createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   workflowTemplateId: integer("workflowTemplateId").references(() => workflowTemplate.id, { onDelete: "cascade", onUpdate: "cascade" }),
   condition: text("condition"),
 });
@@ -199,8 +199,8 @@ export const workflow = pgTable("workflow", {
   name: text("name").notNull(),
   totalJobs: integer("totalJobs").notNull(),
   completedJobs: integer("completedJobs").notNull(),
-  createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   startedAt: timestamp("startedAt", { precision: 3, mode: "string" }),
   finishedAt: timestamp("finishedAt", { precision: 3, mode: "string" }),
   status: status("status").default("pending").notNull(),
@@ -225,8 +225,8 @@ export const group = pgTable("group", {
   id: serial("id").notNull(),
   name: text("name").notNull(),
   description: text("description"),
-  createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   userId: integer("userId")
     .notNull()
     .references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" }),
@@ -247,8 +247,8 @@ export const job = pgTable("job", {
   status: status("status").default("pending").notNull(),
   successors: text("successors").default("RRAY[").array(),
   dependencies: text("dependencies").default("RRAY[").array(),
-  createdAt: timestamp("createdAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt", { precision: 3, mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   startedAt: timestamp("startedAt", { precision: 3, mode: "string" }),
   finishedAt: timestamp("finishedAt", { precision: 3, mode: "string" }),
   workflowId: integer("workflowId")
