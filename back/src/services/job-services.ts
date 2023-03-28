@@ -15,7 +15,7 @@ export const updateJob = async (jid: number, data: any) => {
     });
     return job;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -29,7 +29,7 @@ export const updateJobTemplate = async (jtid: number, data: any) => {
     });
     return job;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -85,7 +85,7 @@ export const saveOutputParamsValue = async (containerId: string, outputParams: a
           await prisma.outputParamsValue.create({
             data: {
               outputParamsId: param.id,
-              value: value.slice(0, -1), //remove the \n
+              value: value.slice(0, -1), //remove the \n .
               jobId: jid,
               workflowId: wid,
             },
@@ -94,6 +94,6 @@ export const saveOutputParamsValue = async (containerId: string, outputParams: a
       );
     }
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };

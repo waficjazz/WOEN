@@ -28,7 +28,7 @@ const WTemplateRow = ({ id, name, createdAt, updatedAt, parameters, select, chec
     try {
       let rand = Math.random().toString(36).substring(2, 6);
       setShowSubmit(false);
-      const response = await api.initWorkflow({ name: name + rand, templateId: id, projectId: project.id, params });
+      const response = await api.initWorkflow({ name: name + rand, templateName: name, projectId: project.id, params });
       if (response.data) {
         navigate(`/one-workflow/${response.data.id}`);
       }

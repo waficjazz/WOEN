@@ -16,7 +16,7 @@ const prisma = new PrismaClient();
 
 export const createWorkflowContainer = async (
   uid: number,
-  wparams: IWParams[] | null,
+  wparams: IWParams[] | null | undefined,
   image: string,
   CMD: string[],
   name: string,
@@ -46,11 +46,11 @@ export const createWorkflowContainer = async (
       runWorkflowContainer(uid, response.data.Id, wid, jid, wparams);
     }
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
-export const waitContainer = async (uid: number, containerId: string, wid: number, jid: number, wparams: IWParams[] | null) => {
+export const waitContainer = async (uid: number, containerId: string, wid: number, jid: number, wparams: IWParams[] | null | undefined) => {
   let exitCode: number;
   try {
     const url = `http://${DHOST}:${DPORT}/containers/${containerId}/wait`;
@@ -101,7 +101,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
             await triggerNextJobs(uid, job as IJob, wid, job.id, wparams);
           }
         } catch (err) {
-          return err;
+          throw err;
         }
       } else {
         const fJob = await updateJob(jid, { status: STATUS.failed, exitCode: exitCode });
@@ -112,7 +112,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
     }
   } catch (err) {
     const error = new HttpError("Could not wait for container.", 500);
-    return error;
+    throw err;
   }
 };
 
@@ -123,7 +123,7 @@ export const pauseContainer = async (containerId: string) => {
     return response;
   } catch (err) {
     console.log(err);
-    return err;
+    throw err;
   }
 };
 
@@ -134,7 +134,7 @@ export const unpauseContainer = async (containerId: string) => {
     return response;
   } catch (err) {
     console.log(err);
-    return err;
+    throw err;
   }
 };
 
@@ -159,11 +159,11 @@ export const getArchive = async (containerId: string, path: string): Promise<str
     });
   } catch (err) {
     console.log(err);
-    return err as any;
+    throw err;
   }
 };
 
-const runWorkflowContainer = async (uid: number, containerId: string, wid: number, jid: number, wparams: IWParams[] | null) => {
+const runWorkflowContainer = async (uid: number, containerId: string, wid: number, jid: number, wparams: IWParams[] | null | undefined) => {
   try {
     // io.emit(`w${wid.toString()}`, job);
     const url = `http://${DHOST}:${DPORT}/containers/${containerId}/start`;
@@ -177,6 +177,6 @@ const runWorkflowContainer = async (uid: number, containerId: string, wid: numbe
     waitContainer(uid, containerId, wid, jid, wparams);
   } catch (err) {
     const error = new HttpError("Could not start container.", 500);
-    return error;
+    throw error;
   }
 };

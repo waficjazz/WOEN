@@ -31,7 +31,7 @@ export const createWorkflow = async (
         projectId: pid,
         workflowParam: {
           createMany: {
-            data: params,
+            data: params ?? [],
           },
         },
       },
@@ -40,7 +40,7 @@ export const createWorkflow = async (
       },
     });
   } catch (err) {
-    return err as undefined;
+    throw err;
   }
   try {
     let jobs: IJob[] = [];
@@ -61,7 +61,7 @@ export const createWorkflow = async (
       });
     let response = await prisma.job.createMany({ data: jobs });
   } catch (err) {
-    console.log(err);
+    throw err;
   }
   await setJobsMapping(workflow.id);
   await setworkflowPlacemet(workflow.id, templateId);
@@ -96,7 +96,7 @@ export const setJobsMapping = async (wid: number) => {
       },
     });
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -141,7 +141,7 @@ const setworkflowPlacemet = async (wid: number, wtid: number) => {
     });
     return updatedJob;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -159,11 +159,11 @@ export const getFirstJobs = async (wid: number) => {
     });
     return firstJobsId;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
-export const runJob = async (uid: number, jtid: number, wid: number, jid: number, wparams: IWParams[] | null) => {
+export const runJob = async (uid: number, jtid: number, wid: number, jid: number, wparams: IWParams[] | null | undefined) => {
   let job;
   try {
     if (jid > 0) {
@@ -206,7 +206,7 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
           value: string;
         }
         ///this part is where we apply workflow params
-        if (wparams !== null && wparams.length > 0) {
+        if (wparams && wparams.length > 0) {
           wparams.map((param) => {
             const regex = new RegExp(`{{workflow.${param.name}}}`, "g");
             container!!.commands[2] = container!!.commands[2].replace(regex, param.value);
@@ -260,11 +260,11 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
         await triggerNextJobs(uid, job as IJob, wid, jid, wparams);
       }
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
-export const triggerNextJobs = async (uid: number, job: IJob, wid: number, jid: number, wparams: IWParams[] | null) => {
+export const triggerNextJobs = async (uid: number, job: IJob, wid: number, jid: number, wparams: IWParams[] | null | undefined) => {
   if (job && job.successors.length > 0) {
     if (!redisc.isOpen) await redisc.connect();
 
@@ -299,6 +299,6 @@ export const updateWorkflow = async (wid: number, data: any) => {
     });
     return workflow;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };

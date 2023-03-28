@@ -37,6 +37,31 @@
           }
         }
       }
+    },
+    "/workflow/init": {
+      "post": {
+        "summary": "Init Workflow",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WorkflowInit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -48,6 +73,23 @@
         },
         "password": {
           "type": "string"
+        }
+      }
+    },
+    "WorkflowInit": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "temolateName": {
+          "type": "string"
+        },
+        "projectId": {
+          "type": "integer"
+        },
+        "params": {
+          "type": "object"
         }
       }
     }
