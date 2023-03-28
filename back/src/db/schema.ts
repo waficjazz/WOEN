@@ -29,6 +29,9 @@ export type NewProject = InferModel<typeof project, "insert">;
 export type Group = InferModel<typeof group>;
 export type NewGroup = InferModel<typeof group, "insert">;
 
+export type Container = InferModel<typeof container>;
+export type NewContainer = InferModel<typeof container, "insert">;
+
 export const user = pgTable(
   "user",
   {

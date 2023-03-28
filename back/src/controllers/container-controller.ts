@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
 const HttpError = require("../utils/http-error");
 import { pauseContainer as pause, unpauseContainer as unpause } from "../services/container-services";
 import { messageOneUser } from "../utils/socket";
 import { RequestWithUserId } from "../types";
+import { db } from "../db/db";
+import { container as containerTable, Container, NewContainer } from "../db/schema";
+import { eq } from "drizzle-orm/expressions";
 
 const DHOST = process.env.DHOST || "localhost";
 const DPORT = process.env.DPORT || "2375";
@@ -194,18 +195,19 @@ const unpauseContainer = async (req: Request, res: Response, next: NextFunction)
 
 const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   const { container } = req.body;
+
+  const newContainer: NewContainer = {
+    ...container,
+    userId: req.userId,
+  };
+  let createdContainers: Container[];
   try {
-    const savedContainer = await prisma.container.create({
-      data: {
-        ...container,
-        userId: req.userId,
-      },
-    });
-    if (!savedContainer) {
+    createdContainers = await db.insert(containerTable).values(newContainer).returning();
+    if (createdContainers.length == 0) {
       const error = new HttpError("Could not save container.", 500);
       return next(error);
     }
-    res.status(201).json(savedContainer);
+    res.status(201).json(createdContainers[0]!);
   } catch (err) {
     console.log(err);
     const error = new HttpError("Could not save container.", 500);
@@ -225,22 +227,21 @@ const saveLiveContainer = async (req: RequestWithUserId, res: Response, next: Ne
     const container = response.data;
     const name = container.Name;
     const { Cmd, Image, Env, User, WorkingDir } = container.Config;
-    const savedContainer = await prisma.container.create({
-      data: {
-        userId: req.userId,
-        name: name.slice(1),
-        image: Image,
-        commands: Cmd,
-        envs: Env,
-        user: User,
-        workingDir: WorkingDir,
-      },
-    });
-    if (!savedContainer) {
+    const newContainer: NewContainer = {
+      userId: req.userId,
+      name: name.slice(1),
+      image: Image,
+      commands: Cmd,
+      envs: Env,
+      user: User,
+      workingDir: WorkingDir,
+    };
+    const createdContainers: Container[] = await db.insert(containerTable).values(newContainer).returning();
+    if (!createdContainers || createdContainers.length == 0) {
       const error = new HttpError("Could not save container.", 500);
       return next(error);
     }
-    res.status(201).json({ container: savedContainer });
+    res.status(201).json({ container: createdContainers[0]! });
   } catch (err) {
     const error = new HttpError("Could not save container.", 500);
     return next(error);
@@ -249,12 +250,9 @@ const saveLiveContainer = async (req: RequestWithUserId, res: Response, next: Ne
 
 const getSavedContainers = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
   try {
-    const savedContainers = await prisma.container.findMany({
-      where: {
-        userId: req.userId,
-      },
-    });
-    if (!savedContainers) {
+    const savedContainers: Container[] = await db.select().from(containerTable).where(eq(containerTable.userId, req.userId));
+
+    if (!savedContainers || savedContainers.length == 0) {
       const error = new HttpError("Could not get saved containers.", 500);
       return next(error);
     }
@@ -266,18 +264,18 @@ const getSavedContainers = async (req: RequestWithUserId, res: Response, next: N
 };
 
 const getOneContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
-  const container = req.params.cid;
+  const containerId = req.params.cid;
   try {
-    const savedContainer = await prisma.container.findUnique({
-      where: {
-        id: parseInt(container),
-      },
-    });
-    if (!savedContainer) {
+    const savedContainers: Container[] = await db
+      .select()
+      .from(containerTable)
+      .where(eq(containerTable.id, parseInt(containerId)));
+
+    if (!savedContainers || savedContainers.length == 0) {
       const error = new HttpError("Could not get saved container.", 500);
       return next(error);
     }
-    res.status(200).json(savedContainer);
+    res.status(200).json(savedContainers[0]!);
   } catch (err) {
     const error = new HttpError("Could not get saved container.", 500);
     return next(error);
