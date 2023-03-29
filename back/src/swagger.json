@@ -82,7 +82,7 @@
         "name": {
           "type": "string"
         },
-        "temolateName": {
+        "templateName": {
           "type": "string"
         },
         "projectId": {
@@ -91,7 +91,8 @@
         "params": {
           "type": "object"
         }
-      }
+      },
+      "required": ["name", "templateName", "projectId"]
     }
   }
 }
