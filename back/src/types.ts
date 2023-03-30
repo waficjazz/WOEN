@@ -4,6 +4,7 @@ import { jobTemplate, PrismaClient, outputParams, container } from "@prisma/clie
 
 export interface RequestWithUserId extends Request {
   userId: number;
+  projectId?: number;
 }
 
 export interface IWorkflow {
