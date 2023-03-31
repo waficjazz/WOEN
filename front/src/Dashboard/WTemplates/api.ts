@@ -21,8 +21,8 @@ export const updateJob = (data: any) => {
   return Axios.post("/workflow/job/update", data);
 };
 
-export const getSavedContainers = () => {
-  return Axios.get("/containers/saved");
+export const getSavedContainers = (pid: number) => {
+  return Axios.get(`/containers/saved/${pid}`);
 };
 
 export const updatePlacements = (id: string, data: any) => {

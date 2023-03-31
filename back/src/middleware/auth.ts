@@ -34,19 +34,18 @@ const auth = (req: RequestWithUserId, res: Response, next: NextFunction) => {
 };
 
 const projectAuth = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
-  const projectId = req.params.projectId;
+  const projectId = req.params.pid || req.body.projectId;
   const userId = req.userId;
-
-  // Perform the authorization check by querying the database
+  let pid;
   try {
-    const up = await prisma.user.findUnique({
+    pid = await prisma.user.findUnique({
       where: {
         id: userId,
       },
       select: {
-        projects: {
+        project: {
           where: {
-            id: parseInt(projectId),
+            id: parseInt(projectId || "0"),
           },
           select: {
             id: true,
@@ -54,14 +53,11 @@ const projectAuth = async (req: RequestWithUserId, res: Response, next: NextFunc
         },
       },
     });
-    console.log(up);
   } catch (err) {
     console.log(err);
   }
-
-  if (true) {
-    req.projectId = parseInt(projectId);
-    // req.hasAccess = true;
+  if (pid && pid.project.length > 0) {
+    req.projectId = pid.project[0].id;
     next();
   } else {
     res.status(403).send("You do not have access to this project.");
@@ -69,3 +65,4 @@ const projectAuth = async (req: RequestWithUserId, res: Response, next: NextFunc
 };
 
 exports.auth = auth;
+exports.projectAuth = projectAuth;

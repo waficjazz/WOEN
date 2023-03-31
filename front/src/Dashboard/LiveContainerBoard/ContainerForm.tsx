@@ -7,6 +7,8 @@ import { InputEvent } from "../../types";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as api from "./api";
+import { useAtom } from "jotai";
+import { aProject } from "../../store";
 interface Props {
   show: boolean;
   close: any;
@@ -14,6 +16,8 @@ interface Props {
   create?: boolean;
 }
 const ContainerForm = ({ show, close, save, create }: Props) => {
+  const [project, setProject] = useAtom(aProject);
+
   interface envPair {
     [key: string]: string;
   }
@@ -80,7 +84,7 @@ const ContainerForm = ({ show, close, save, create }: Props) => {
       let cmds = parseCommands(commandTxt);
       let arr = [shellType, "-c", cmds];
       let obj = { ...container, CMD: arr, Env };
-      let objSave = { image: container.image, name: container.name, commands: arr, envs: Env };
+      let objSave = { image: container.image, name: container.name, commands: arr, envs: Env, projectId: project.id || 0 };
       if (createContainer) response1 = await api.createContainer(obj);
       if (saveContainer) response2 = await api.containerSave(objSave);
       if (createContainer && saveContainer) if (response1?.status === 201 && response2?.status === 201) close(false);
