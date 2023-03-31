@@ -5,6 +5,7 @@ import { IProject } from "../../types";
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { aProject } from "../../store";
+import Axios from "../../axios";
 interface Props extends IProject {}
 
 const ProjectRow = ({ id, name, createdAt, updatedAt }: Props) => {

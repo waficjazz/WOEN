@@ -5,14 +5,17 @@ import * as api from "./api";
 import SavedContainerRow from "./SavedContainerRow";
 import { ISContainer } from "../../types";
 import ContainerForm from "../LiveContainerBoard/ContainerForm";
+import { useAtom } from "jotai";
+import { aProject } from "../../store";
 
 const ContainerTable = () => {
+  const [project, setProject] = useAtom(aProject);
   const [containers, setContainers] = useState<ISContainer[]>();
 
   const [containerRef] = useAutoAnimate<HTMLDivElement>();
   const getContainers = async () => {
     try {
-      const response = await api.getContainers();
+      const response = await api.getContainers(project.id || 0);
       if (response.data) {
         setContainers(response.data);
       }

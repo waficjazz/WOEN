@@ -1,5 +1,5 @@
 import Axios from "../../axios";
 
-export const getContainers = () => {
-  return Axios.get("/containers/saved");
+export const getContainers = (pid: number) => {
+  return Axios.get(`/containers/saved/${pid}`);
 };

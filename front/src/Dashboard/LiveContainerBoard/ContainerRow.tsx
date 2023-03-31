@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faPlay, faTrashCan, faFloppyDisk, faPause } from "@fortawesome/free-solid-svg-icons";
 import CTextArea from "../../shared/TextAreas/CTextArea";
 import * as api from "./api";
+import { aProject } from "../../store";
+import { useAtom } from "jotai";
 interface Props {
   name: string;
   image: string;
@@ -13,6 +15,7 @@ interface Props {
 }
 
 const ContainerRow = ({ id, name, status, remove, image }: Props) => {
+  const [project, setProject] = useAtom(aProject);
   const [logs, setLogs] = useState("");
   const [hover, setHover] = useState(false);
 
@@ -50,7 +53,7 @@ const ContainerRow = ({ id, name, status, remove, image }: Props) => {
 
   async function saveContainer() {
     try {
-      const response = await api.containerSaveLive({ containerId: id });
+      const response = await api.containerSaveLive({ containerId: id, projectId: project.id || 0 });
     } catch (err) {
       console.log(err);
     }

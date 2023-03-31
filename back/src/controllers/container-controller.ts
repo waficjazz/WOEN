@@ -193,7 +193,7 @@ const unpauseContainer = async (req: Request, res: Response, next: NextFunction)
 };
 
 const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
-  const { container } = req.body;
+  const container = req.body;
   try {
     const savedContainer = await prisma.container.create({
       data: {
@@ -214,7 +214,7 @@ const saveContainer = async (req: RequestWithUserId, res: Response, next: NextFu
 };
 
 const saveLiveContainer = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
-  const { host, port, containerId } = req.body;
+  const { projectId, host, port, containerId } = req.body;
   try {
     const url = `http://${DHOST}:${DPORT}/containers/${containerId}/json`;
     const response = await axios.get(url);
@@ -227,6 +227,7 @@ const saveLiveContainer = async (req: RequestWithUserId, res: Response, next: Ne
     const { Cmd, Image, Env, User, WorkingDir } = container.Config;
     const savedContainer = await prisma.container.create({
       data: {
+        projectId,
         userId: req.userId,
         name: name.slice(1),
         image: Image,
@@ -248,10 +249,11 @@ const saveLiveContainer = async (req: RequestWithUserId, res: Response, next: Ne
 };
 
 const getSavedContainers = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
+  const pid = req.params.pid;
   try {
     const savedContainers = await prisma.container.findMany({
       where: {
-        userId: req.userId,
+        projectId: parseInt(pid),
       },
     });
     if (!savedContainers) {
