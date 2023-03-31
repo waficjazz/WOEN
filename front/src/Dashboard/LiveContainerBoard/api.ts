@@ -21,7 +21,7 @@ export const containerSaveLive = (data: any) => {
 };
 
 export const containerSave = (data: any) => {
-  return Axios.post("/containers/save", { container: data });
+  return Axios.post("/containers/save", data);
 };
 
 export const containerPause = (data: any) => {
