@@ -108,7 +108,7 @@ const CTemplate = () => {
 
   const handleRemove = async (id: number) => {
     try {
-      const response = await api.deleteTemplate(id);
+      const response = await api.deleteJobTemplate(id);
       if (response.status === 200) {
         console.log("Job deleted");
       }
