@@ -9,11 +9,32 @@ import * as api from "./api";
 import { useAtom } from "jotai";
 import { aProject } from "../../store";
 import SubmitForm from "./SubmitForm";
+import { socket } from "../../Socket";
 const WTemplates = () => {
   const [project, setProject] = useAtom(aProject);
   const [workflows, setWorkflows] = useState<IWTemplate[]>([]);
   const [templateRef] = useAutoAnimate<HTMLDivElement>();
   const [selectedTemplates, setSelectedTemplates] = useState<Map<string, string>>(new Map());
+
+  useEffect(() => {
+    socket.on("wts", (workflow) => {
+      updateWorkflows([workflow]);
+    });
+  }, [workflows]);
+
+  //this function to update existing / add workflow from websocket event
+  const updateWorkflows = (uWorkflows: IWTemplate[]) => {
+    const updatedWorkflows = workflows.map((wf) => {
+      const uWorkflow = uWorkflows.find((uw) => uw.id === wf.id);
+      return uWorkflow ? uWorkflow : wf;
+    });
+    uWorkflows.forEach((uw) => {
+      if (!workflows.some((wf) => wf.id === uw.id)) {
+        updatedWorkflows.unshift(uw);
+      }
+    });
+    setWorkflows(updatedWorkflows);
+  };
 
   async function removeTemplate() {
     try {

@@ -17,25 +17,25 @@ const Workflows = () => {
 
   useEffect(() => {
     socket.on("wfs", (workflow) => {
+      console.log("websocket", workflow);
       updateWorkflows([workflow]);
     });
   }, [workflows]);
 
-  const updateWorkflows = (uWorkflow: IWorkflow[]) => {
-    const newWorkflows = [];
-    for (let i = 0; i < workflows.length; i++) {
-      let added = false;
-      for (let j = 0; j < uWorkflow.length; j++) {
-        if (workflows[i].id === uWorkflow[j].id) {
-          newWorkflows.push(uWorkflow[j]);
-          added = true;
-          break;
-        }
+  //this function to update existing / add workflow from websocket event
+  const updateWorkflows = (uWorkflows: IWorkflow[]) => {
+    const updatedWorkflows = workflows.map((wf) => {
+      const uWorkflow = uWorkflows.find((uw) => uw.id === wf.id);
+      return uWorkflow ? uWorkflow : wf;
+    });
+    uWorkflows.forEach((uw) => {
+      if (!workflows.some((wf) => wf.id === uw.id)) {
+        updatedWorkflows.unshift(uw);
       }
-      if (added == false) newWorkflows.push(workflows[i]);
-    }
-    setWorkflows(newWorkflows);
+    });
+    setWorkflows(updatedWorkflows);
   };
+
   async function removeWorkflow() {
     try {
       for (const id of selectedWorkflows.keys()) {
