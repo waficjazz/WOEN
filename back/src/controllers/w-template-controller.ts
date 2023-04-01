@@ -4,6 +4,7 @@ import { updateJob, updateJobTemplate } from "../services/job-services";
 import { jobTemplate, PrismaClient, workflowTemplate } from "@prisma/client";
 const HttpError = require("../utils/http-error");
 import { createJobTemplate, initTemplate, getCoords, updateTemplate } from "../services/w-template-services";
+import { messageOneUser } from "../utils/socket";
 const prisma = new PrismaClient();
 
 const submitWorkflowTemplate = async (req: RequestWithUserId, res: Response, next: NextFunction) => {
@@ -56,6 +57,7 @@ const submitWorkflowTemplate = async (req: RequestWithUserId, res: Response, nex
     await prisma.inputParams.createMany({
       data: inputs,
     });
+    messageOneUser(req.userId, "wts", template);
   } catch (err) {
     const error = new HttpError("Could not create workflow template.", 500);
     console.log(err);
@@ -69,6 +71,7 @@ const createWorkflowTemplate = async (req: RequestWithUserId, res: Response, nex
   let template: workflowTemplate;
   try {
     template = await initTemplate(name, req.userId, projectId, params);
+    messageOneUser(req.userId, "wts", template);
   } catch (err) {
     const error = new HttpError("Could not create workflow template.", 500);
     console.log(err);
