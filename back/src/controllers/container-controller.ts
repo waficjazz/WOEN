@@ -52,14 +52,21 @@ const listContainers = async (req: Request, res: Response, next: NextFunction) =
 
 const createContainer = async (req: Request, res: Response, next: NextFunction) => {
   const { host, port, image, CMD, name, hostName, domainName, User, Env } = req.body;
-  // const url = `http://${DHOST}:${DPORT}/images/create?fromImage=${image}`;
-  // const response = await axios.post(url);
-  // if (!response) {
-  //   const error = new HttpError("Could not pull image.", 500);
-  //   return next(error);
-  // } else {
-  const url = `http://${DHOST}:${DPORT}/containers/create?name=${name}`;
+  const [imageName, tag] = image.split(":");
+  const finalTag = tag ? tag : "latest";
+  console.log("crtt");
+  console.log(imageName, finalTag);
   try {
+    // to do check if image already exist -> do not pull
+    const iurl = `http://${DHOST}:${DPORT}/images/create?fromImage=${imageName}&tag=${finalTag}`;
+    const imageResponse = await axios.post(iurl);
+    console.log("imager", imageResponse);
+    if (!imageResponse) {
+      const error = new HttpError("Could not pull image.", 500);
+      return next(error);
+    }
+    console.log(imageResponse);
+    const url = `http://${DHOST}:${DPORT}/containers/create?name=${name}`;
     const response = await axios.post(url, {
       Hostname: hostName,
       Domainname: domainName,

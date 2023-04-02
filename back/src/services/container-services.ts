@@ -25,9 +25,13 @@ export const createWorkflowContainer = async (
   hostName?: string,
   domainName?: string
 ) => {
-  const url = `http://${DHOST}:${DPORT}/images/create?fromImage=${image}`;
+  const [imageName, tag] = image.split(":");
+  const finalTag = tag ? tag : "latest";
+  const url = `http://${DHOST}:${DPORT}/images/create?fromImage=${imageName}&tag=${finalTag}`;
   try {
+    console.log("before respponse");
     const response = await axios.post(url);
+    console.log("after respponse", response);
     if (!response || response.status !== 200) {
       console.log("err");
     } else {
