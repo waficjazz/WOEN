@@ -12,6 +12,7 @@ import { dateStyle } from "../../../utils/time-format";
 
 interface Props extends IJob {
   templateParams?: ITemplateParam[];
+  close: () => void;
 }
 const TJobDetails = (props: Props) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
@@ -169,7 +170,12 @@ const TJobDetails = (props: Props) => {
   const [inputPosition, setInputPosition] = useState({ left: 0, top: 0 });
 
   return (
-    <div className="job_details_container">
+    <div
+      className="job_details_container"
+      onClick={(e) => {
+        e.stopPropagation();
+      }}>
+      <button onClick={props.close}>close</button>
       <div className="job_details_options">
         <div style={option === 1 ? selectedStyle : {}} className="tab" onClick={() => setOption(1)}>
           Template

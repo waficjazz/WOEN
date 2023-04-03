@@ -9,7 +9,11 @@ import { useAtom } from "jotai";
 import { aDepends, aJobs } from "../../../store";
 import ReactTimeAgo from "react-time-ago";
 import { dateStyle } from "../../../utils/time-format";
-const TemplateDetails = (props: IWTemplate) => {
+
+interface Props extends IWTemplate {
+  close: () => void;
+}
+const TemplateDetails = (props: Props) => {
   const [dependencies, setDependencies] = useAtom(aDepends);
   const [jobs, setJobs] = useAtom(aJobs);
   const [currentParam, setCurrentParam] = useState<ITemplateParam>({ name: "", default: "", required: false, workflowTemplateId: props.id });
@@ -42,6 +46,7 @@ const TemplateDetails = (props: IWTemplate) => {
   };
   return (
     <div className="template_details_container">
+      <button onClick={props.close}>close</button>
       <div className="job_details_options">
         <div style={option === 1 ? selectedStyle : {}} className="tab" onClick={() => setOption(1)}>
           Details

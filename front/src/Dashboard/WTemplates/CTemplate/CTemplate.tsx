@@ -174,7 +174,12 @@ const CTemplate = () => {
             <Button onClick={savePlacement} style={{ height: "30px" }}>
               SAVE
             </Button>
-            <Button onClick={() => setShowDetails(!showDetails)} style={{ height: "30px" }}>
+            <Button
+              onClick={() => {
+                setSelectedJob(undefined);
+                setShowDetails(!showDetails);
+              }}
+              style={{ height: "30px" }}>
               Details
             </Button>
           </div>
@@ -227,8 +232,14 @@ const CTemplate = () => {
                   })}
               </>
             </div>
-            {selectedJob !== undefined && <TJobDetails {...jobs.find((j) => j.id === selectedJob)!!} templateParams={template.parameters} />}
-            {showDetails && <TemplateDetails {...template} />}
+            {selectedJob !== undefined && (
+              <TJobDetails
+                {...jobs.find((j) => j.id === selectedJob)!!}
+                templateParams={template.parameters}
+                close={() => setSelectedJob(undefined)}
+              />
+            )}
+            {showDetails && <TemplateDetails {...template} close={() => setShowDetails(false)} />}
           </div>
         </div>
       </Xwrapper>

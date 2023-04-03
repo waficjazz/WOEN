@@ -81,7 +81,10 @@ const Job = (props: IProps) => {
           ref={nodeRef}
           id={props.id.toString()}
           className={props.isSelected ? "created_job created_job_selected" : "created_job"}
-          onClick={props.onClick}>
+          onClick={(e) => {
+            e.stopPropagation();
+            props.onClick();
+          }}>
           <div className="template_job_name">
             {props.name}
             <FontAwesomeIcon icon={faXmark} size="lg" className="job_remove_icon" onClick={() => props.remove(props.id)} />
