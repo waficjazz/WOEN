@@ -27,7 +27,7 @@ export const createWorkflow = async (
         userId: userId,
         name,
         workflowTemplateId: templateId,
-        totalJobs: jobsTemplate.length,
+        // totalJobs: 0,
         projectId: pid,
         workflowParam: {
           createMany: {
