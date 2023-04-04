@@ -9,6 +9,7 @@ import { useAtom } from "jotai";
 import { aDepends, aJobs } from "../../../store";
 import ReactTimeAgo from "react-time-ago";
 import { dateStyle } from "../../../utils/time-format";
+import { Select } from "../../../shared/Select/Select";
 
 interface Props extends IJob {
   templateParams?: ITemplateParam[];
@@ -245,7 +246,7 @@ const TJobDetails = (props: Props) => {
                 <div>
                   <Input label="name" name="name" onChange={(e) => setInputParamName(e.target.value)} />
                   <label>From</label>
-                  <select onMouseDown={() => getAllDependencies(props.id.toString())} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
+                  <Select onMouseDown={() => getAllDependencies(props.id.toString())} onChange={(e) => setSelectedJob(JSON.parse(e.target.value))}>
                     <option>Select a job</option>
                     {fullDependencies.map((dep) => {
                       const job = jobs.find((job) => job.id === parseInt(dep));
@@ -256,9 +257,9 @@ const TJobDetails = (props: Props) => {
                           </option>
                         );
                     })}
-                  </select>
+                  </Select>
                   <label>Output</label>
-                  <select onChange={(e) => setSelectedOutput(e.target.value)}>
+                  <Select onChange={(e) => setSelectedOutput(e.target.value)}>
                     <option>Select job output</option>
                     {selectedJob?.outputParams?.map((param) => {
                       return (
@@ -267,7 +268,7 @@ const TJobDetails = (props: Props) => {
                         </option>
                       );
                     })}
-                  </select>
+                  </Select>
                   <FontAwesomeIcon className="add_env_button" icon={faCirclePlus} onClick={submitLocalInput} />
                 </div>
                 <Button onClick={handleInSave}>Save</Button>
@@ -295,7 +296,7 @@ const TJobDetails = (props: Props) => {
                 <div>
                   <Input label="Value" onChange={(e) => setExpValue(e.target.value)} value={expValue} />
                   <Button onClick={handleExpValue}>add</Button>
-                  <select name="operator" onChange={(e) => handleExpression(e)}>
+                  <Select name="operator" onChange={(e) => handleExpression(e)}>
                     <option value="">Operator</option>
                     {[" ( ", " ) ", "==", "!=", " || ", " && "].map((inp) => {
                       return (
@@ -304,8 +305,8 @@ const TJobDetails = (props: Props) => {
                         </option>
                       );
                     })}
-                  </select>
-                  <select name="params" onChange={(e) => handleExpression(e)}>
+                  </Select>
+                  <Select name="params" onChange={(e) => handleExpression(e)}>
                     <option value="">Input Param</option>
                     {inputs?.map((inp) => {
                       return (
@@ -314,8 +315,8 @@ const TJobDetails = (props: Props) => {
                         </option>
                       );
                     })}
-                  </select>
-                  <select name="params" onChange={(e) => handleExpression(e)}>
+                  </Select>
+                  <Select name="params" onChange={(e) => handleExpression(e)}>
                     <option value="">Workflow Param</option>
                     {props.templateParams?.map((param) => {
                       return (
@@ -324,7 +325,7 @@ const TJobDetails = (props: Props) => {
                         </option>
                       );
                     })}
-                  </select>
+                  </Select>
                   <div>{expression}</div>
                 </div>
 
