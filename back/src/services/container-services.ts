@@ -175,9 +175,7 @@ const runWorkflowContainer = async (uid: number, containerId: string, wid: numbe
       return error;
     }
     let job = await updateJob(jid, { status: STATUS.running, startedAt: new Date() });
-    // let workflow = await updateWorkflow(wid, { totalJobs: { increment: 1 } });
     messageOneUser(uid, `w${wid.toString()}`, job);
-    // messageOneUser(uid, `wfs`, workflow);
     waitContainer(uid, containerId, wid, jid, wparams);
   } catch (err) {
     const error = new HttpError("Could not start container.", 500);
