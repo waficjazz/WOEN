@@ -76,7 +76,7 @@ export const waitContainer = async (uid: number, containerId: string, wid: numbe
           },
         });
         let completed = workflow!!.completedJobs + 1;
-        let updatedWorkflow = await updateWorkflow(wid, { completedJobs: completed });
+        let updatedWorkflow = await updateWorkflow(wid, { completedJobs: { increment: 1 } });
         if (updatedWorkflow)
           if (updatedWorkflow.totalJobs === completed) {
             let finishedWorkflow = await updateWorkflow(wid, { status: STATUS.success, finishedAt: new Date() });

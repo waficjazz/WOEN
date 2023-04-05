@@ -50,6 +50,8 @@ export const createWorkflow = async (
         if (jt.condition) {
           let check = checkCondtion(jt.condition, workflow.workflowParam as any);
           if (!check) status = STATUS.skiped;
+          const uworkflow = updateWorkflow(workflow.id, { totalJobs: { increment: -1 } });
+          messageOneUser(userId, `wfs`, uworkflow);
         }
         let containerId = jt["containerId"] || 0;
         let jobTemplateId = jt["id"];
@@ -253,6 +255,8 @@ export const runJob = async (uid: number, jtid: number, wid: number, jid: number
           createWorkflowContainer(uid, wparams, container!!.image, container!!.commands, cname, wid, job.id);
         } else {
           let uJob = await updateJob(job.id, { status: STATUS.skiped });
+          const workflow = await updateWorkflow(wid, { totalJobs: { increment: -1 } });
+          messageOneUser(uid, `wfs`, workflow);
           await messageOneUser(uid, `w${wid.toString()}`, uJob);
           await triggerNextJobs(uid, job as IJob, wid, jid, wparams);
         }
