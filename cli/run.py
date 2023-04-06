@@ -3,6 +3,7 @@ import argparse
 import yaml
 import json
 import requests
+from prettytable import PrettyTable
 
 
 
@@ -26,11 +27,19 @@ def list_workflows():
         return None
 
     json_data = response.json()
-    return json_data
+
+    table = PrettyTable(['NAME', 'STATUS'])
+    table.border = False
+    table.align = 'l'
+    for obj in json_data:
+        row = [obj['name'], obj['status']]
+        table.add_row(row)
+
+    print(table)
 
 
 def main(args):
-    print(list_workflows())
+    list_workflows()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Description of your program')
