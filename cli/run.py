@@ -77,13 +77,17 @@ if __name__ == '__main__':
     # parser.add_argument('list',help='Filepath of the YAML file to process' )
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    parser_0 = subparsers.add_parser('list', help='a help'  )
-    parser_0.add_argument('list_args', help='a help' , action='store_const' , const='list')
+    parser_list = subparsers.add_parser('list', help='a help'  )
+    parser_list.add_argument('list_args', help='a help' , action='store_const' , const='list')
 
-    parser_a = subparsers.add_parser('template', help='a help')
-    parser_a.add_argument('templates_args', help='a help' , choices=['list'])
+    parser_template = subparsers.add_parser('template', help='a help')
+    parser_template.add_argument('templates_args', help='a help' , choices=['list'])
 
     
+    parser.set_defaults(func=lambda x: parser.print_help())
+
     args = parser.parse_args()
+
+    args.func(args)
 
     main(args)
