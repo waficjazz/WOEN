@@ -4,6 +4,8 @@ import yaml
 import json
 import requests
 from prettytable import PrettyTable
+from jsonschema import validate
+
 
 
 
@@ -11,6 +13,14 @@ SERVER =  os.environ.get('SERVER', 'http://localhost:5001')
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoid2FmIiwiaWF0IjoxNjgwMjc0MjAxLCJleHAiOjMxNzIyNDcxNjYwMX0.iS8SD0DiyMIPAsZwcNQ87iRvV5YejCV2j9D5iJ8rReQ')
 PROJECT_ID = os.environ.get('PROJECT_ID', '2')
 
+
+
+def parse_yaml(file_path):
+    print("entered parse_yaml")
+    with open(file_path, 'r') as f:
+        data = yaml.safe_load(f)
+    print(file_path)
+    print(data)
 
 def list_workflows():
     url = SERVER + '/api/v1/workflow/all/' + PROJECT_ID
@@ -69,25 +79,39 @@ def main(args):
     if hasattr(args, 'list_args') and args.list_args == 'list':
         list_workflows()
 
-    if hasattr(args, 'templates_args') and args.templates_args == 'list':
-        list_templates()
+    if hasattr(args, 'template_command'):
+        if args.template_command == 'list':
+            list_templates()
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog='PROG' , description='Description of your program')
-    # parser.add_argument('list',help='Filepath of the YAML file to process' )
-    subparsers = parser.add_subparsers(help='sub-command help')
-
-    parser_list = subparsers.add_parser('list', help='a help'  )
-    parser_list.add_argument('list_args', help='a help' , action='store_const' , const='list')
-
-    parser_template = subparsers.add_parser('template', help='a help')
-    parser_template.add_argument('templates_args', help='a help' , choices=['list'])
+        elif args.template_command == 'validate':
+            parse_yaml(args.filename)
 
     
-    parser.set_defaults(func=lambda x: parser.print_help())
+    
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(prog='PROG', description='Description of your program')
+    subparsers = parser.add_subparsers(help='sub-command help')
+
+    parser_list = subparsers.add_parser('list', help='list workflows or templates')
+    parser_list.add_argument('list_args', help='list workflows or templates', choices=['workflows', 'templates'])
+
+    parser_template = subparsers.add_parser('template', help='template-related commands')
+    template_subparsers = parser_template.add_subparsers(help='sub-command help')
+
+    parser_template_list = template_subparsers.add_parser('list', help='list templates')
+    parser_template_list.set_defaults(template_command='list')
+
+    parser_template_validate = template_subparsers.add_parser('validate', help='validate a template')
+    parser_template_validate.set_defaults(template_command='validate')
+    parser_template_validate.add_argument('filename', help='template filename')
+
+
+
+    # parser.set_defaults(func=lambda x: parser.print_help())
 
     args = parser.parse_args()
 
-    args.func(args)
+    # args.func(args)
 
     main(args)
