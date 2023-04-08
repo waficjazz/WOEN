@@ -5,6 +5,7 @@ import json
 import requests
 from prettytable import PrettyTable
 from jsonschema import validate
+from workflow.workflow import list_workflows
 
 
 
@@ -30,31 +31,6 @@ def parse_yaml(file_path):
         data = yaml.safe_load(f)
     print(file_path)
     print(data)
-
-def list_workflows():
-    url = SERVER + '/api/v1/workflow/all/' + PROJECT_ID
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {ACCESS_TOKEN}'
-    }
-
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
-    except requests.exceptions.HTTPError as error:
-        print(f'Error: {error}')
-        return None
-
-    json_data = response.json()
-
-    table = PrettyTable(['NAME', 'STATUS'])
-    table.border = False
-    table.align = 'l'
-    for obj in json_data:
-        row = [obj['name'], obj['status']]
-        table.add_row(row)
-
-    print(table)
 
 
 def list_templates():
@@ -103,13 +79,13 @@ if __name__ == '__main__':
     subparsers = parser.add_subparsers(help='sub-command help')
 
     parser_list = subparsers.add_parser('list', help='list workflows or templates')
-    parser_list.add_argument('list_args', help='list workflows or templates', choices=['workflows', 'templates'])
+    parser_list.add_argument('list_args', help='list workflows or templates',  action="store_const" ,const='list')
 
     parser_template = subparsers.add_parser('template', help='template-related commands')
     template_subparsers = parser_template.add_subparsers(help='sub-command help')
 
     parser_template_list = template_subparsers.add_parser('list', help='list templates')
-    parser_template_list.set_defaults(template_command='list')
+    parser_template_list.set_defaults(template_command='list ')
 
     parser_template_validate = template_subparsers.add_parser('validate', help='validate a template')
     parser_template_validate.set_defaults(template_command='validate')

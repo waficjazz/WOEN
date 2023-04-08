@@ -1,18 +1,18 @@
 type: template
 name: first
-# params:
-#   - name: p1
-#     default: "p1"
-#   - name: p2
-#     default: "p2"
-# jobs:
-#   - name: job1
-#     outputs:
-#       - name: ds
-#         path: /tmp/ff
-#       - name: dds
-#         path: /tmdp/ff
-#     container:
-#       name: ds
-#       image: alpine
-#       commands: ["sh", "-c", "echo hii > /tmp/ff"]
+params:
+  - name: p1
+    default: "p1"
+  - name: p2
+    default: "p2"
+jobs:
+  - name: job1
+    outputs:
+      - name: ds
+        path: /tmp/ff
+      - name: dds
+        path: /tmdp/ff
+    container:
+      name: ds
+      image: alpine
+      commands: ["sh", "-c", "echo hii > /tmp/ff"]

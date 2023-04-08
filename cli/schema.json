@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "type": {
       "type": "string",
@@ -26,6 +27,7 @@
   "definitions": {
     "job": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["name", "container"],
       "properties": {
         "name": {
@@ -54,6 +56,7 @@
         },
         "container": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "image": {
               "type": "string"
@@ -71,6 +74,7 @@
     },
     "output": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
@@ -83,6 +87,7 @@
     },
     "input": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
@@ -95,6 +100,7 @@
     },
     "param": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
