@@ -35,6 +35,7 @@ export const initTemplate = async (name: string, uid: number, projectId: number,
         },
       };
     }
+    console.log("enter here", data);
     workflow = await prisma.workflowTemplate.create({
       data,
     });

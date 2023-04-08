@@ -13,7 +13,7 @@ from template.template import list_templates , submit_template
 
 SERVER =  os.environ.get('SERVER', 'http://localhost:5001')
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoid2FmIiwiaWF0IjoxNjgwMjc0MjAxLCJleHAiOjMxNzIyNDcxNjYwMX0.iS8SD0DiyMIPAsZwcNQ87iRvV5YejCV2j9D5iJ8rReQ')
-PROJECT_ID = os.environ.get('PROJECT_ID', '2')
+PROJECT_ID = os.environ.get('PROJECT_ID', 2)
 
 
 
