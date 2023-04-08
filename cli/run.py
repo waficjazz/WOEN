@@ -6,7 +6,7 @@ import requests
 from prettytable import PrettyTable
 from jsonschema import validate
 from workflow.workflow import list_workflows
-from template.template import list_templates
+from template.template import list_templates , submit_template
 
 
 
@@ -45,6 +45,9 @@ def main(args):
         elif args.template_command == 'validate':
             validate_yaml(args.filename, 'schema.json')
 
+        elif args.template_command == 'submit':
+            submit_template(args.filename)
+
     
     
 
@@ -64,6 +67,10 @@ if __name__ == '__main__':
     parser_template_validate = template_subparsers.add_parser('validate', help='validate a template')
     parser_template_validate.set_defaults(template_command='validate')
     parser_template_validate.add_argument('filename', help='template filename')
+
+    parser_template_submit = template_subparsers.add_parser('submit', help='submit a template')
+    parser_template_submit.set_defaults(template_command='submit')
+    parser_template_submit.add_argument('filename', help='template filename')
 
 
 

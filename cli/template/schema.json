@@ -23,7 +23,7 @@
       }
     }
   },
-  "required": ["name", "type"],
+  "required": ["name", "jobs"],
   "definitions": {
     "job": {
       "type": "object",
@@ -58,6 +58,9 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "name": {
+              "type": "string"
+            },
             "image": {
               "type": "string"
             },
