@@ -1,7 +1,7 @@
-name: first
+name: newtem
 jobs:
-  - name: job1
+  - name: job1d
     container:
       name: ds
       image: alpine
-      commands: ["sh", "-c", "echo hii"]
+      commands: ["sh", "-c", "echo hii; echo hello ; echo kkd ;"]
