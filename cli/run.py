@@ -15,6 +15,15 @@ PROJECT_ID = os.environ.get('PROJECT_ID', '2')
 
 
 
+def validate_yaml(yaml_file_path, schema_file_path):
+    with open(yaml_file_path) as yaml_file, open(schema_file_path) as schema_file:
+        yaml_data = yaml.safe_load(yaml_file)
+        schema = yaml.safe_load(schema_file)
+
+    validate(instance=yaml_data, schema=schema)
+    print(f"{yaml_file_path} is valid according to {schema_file_path}")
+
+
 def parse_yaml(file_path):
     print("entered parse_yaml")
     with open(file_path, 'r') as f:
@@ -84,7 +93,7 @@ def main(args):
             list_templates()
 
         elif args.template_command == 'validate':
-            parse_yaml(args.filename)
+            validate_yaml(args.filename, 'schema.json')
 
     
     
