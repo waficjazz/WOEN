@@ -6,6 +6,7 @@ import requests
 from prettytable import PrettyTable
 from jsonschema import validate
 from workflow.workflow import list_workflows
+from template.template import list_templates
 
 
 
@@ -31,33 +32,6 @@ def parse_yaml(file_path):
         data = yaml.safe_load(f)
     print(file_path)
     print(data)
-
-
-def list_templates():
-    url = SERVER + '/api/v1/workflow/all/templates/' + PROJECT_ID
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {ACCESS_TOKEN}'
-    }
-
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
-    except requests.exceptions.HTTPError as error:
-        print(f'Error: {error}')
-        return None
-
-    json_data = response.json()
-
-    table = PrettyTable(['NAME'])
-    table.border = False
-    table.align = 'l'
-    for obj in json_data:
-        row = [obj['name']]
-        table.add_row(row)
-
-    print(table)
-
 
 
 def main(args):
