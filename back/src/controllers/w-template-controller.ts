@@ -22,7 +22,6 @@ const submitWorkflowTemplate = async (req: RequestWithUserId, res: Response, nex
         let job = await createJobTemplate(j, template.id);
         jobMapping[job.name] = job.id;
         job.outputParams?.map((out) => {
-          console.log(out);
           outputs[job.name] = { ...outputs[job.name], [out.name]: out.id };
         });
       })
