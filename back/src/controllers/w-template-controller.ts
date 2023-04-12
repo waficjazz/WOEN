@@ -70,7 +70,7 @@ const createWorkflowTemplate = async (req: RequestWithUserId, res: Response, nex
   let template: workflowTemplate;
   try {
     template = await initTemplate(name, req.userId, projectId, params);
-    messageOneUser(req.userId, "wts", template);
+    // messageOneUser(req.userId, "wts", template);
   } catch (err) {
     const error = new HttpError("Could not create workflow template.", 500);
     console.log(err);

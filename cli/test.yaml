@@ -1,7 +1,11 @@
-name: newtemdddd
-jobs:
-  - name: job1d
-    container:
-      name: ds
-      image: alpine
-      commands: ["sh", "-c", "echo hii; echo hello ; echo kkd ;"]
+# name: newtemdddd
+# jobs:
+#   - name: job1d
+#     container:
+#       name: ds
+#       image: alpine
+#       commands: ["sh", "-c", "echo hii; echo hello ; echo kkd ;"]
+templateName: dd
+params:
+  - name: test
+    value: "jdj"

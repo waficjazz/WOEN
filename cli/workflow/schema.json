@@ -2,12 +2,16 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "additionalProperties": false,
+  "required": ["templateName"],
   "properties": {
     "type": {
       "type": "string",
       "enum": ["template", "workflow"]
     },
     "name": {
+      "type": "string"
+    },
+    "templateName": {
       "type": "string"
     },
     "params": {
@@ -18,10 +22,10 @@
     }
   },
   "definitions": {
-    "job": {
+    "param": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "container"],
+      "required": ["name", "value"],
       "properties": {
         "name": {
           "type": "string"

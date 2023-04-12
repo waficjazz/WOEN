@@ -1,4 +1,5 @@
 import os
+import yaml
 import requests
 from prettytable import PrettyTable
 from jsonschema import validate
@@ -7,7 +8,28 @@ SERVER =  os.environ.get('SERVER', 'http://localhost:5001')
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImVtYWlsIjoid2FmIiwiaWF0IjoxNjgwMjc0MjAxLCJleHAiOjMxNzIyNDcxNjYwMX0.iS8SD0DiyMIPAsZwcNQ87iRvV5YejCV2j9D5iJ8rReQ')
 PROJECT_ID = os.environ.get('PROJECT_ID', '2')
 
+def init_workflow(yaml_file_path):
+    with open(yaml_file_path) as yaml_file , open('workflow/schema.json') as schema_file:
+        yaml_data = yaml.safe_load(yaml_file)
+        schema = yaml.safe_load(schema_file)
+    validate(instance=yaml_data, schema=schema)
 
+    url = SERVER + '/api/v1/workflow/init'
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {ACCESS_TOKEN}'
+    }
+    data = {
+        'projectId': int(PROJECT_ID),
+        **yaml_data
+    }
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
+    except requests.exceptions.HTTPError as error:
+        print(f'Error: {error}')
+        return None
+    print(response.json())
 
 def list_workflows():
     url = SERVER + '/api/v1/workflow/all/' + PROJECT_ID

@@ -5,7 +5,7 @@ import json
 import requests
 from prettytable import PrettyTable
 from jsonschema import validate
-from workflow.workflow import list_workflows
+from workflow.workflow import list_workflows , init_workflow
 from template.template import list_templates , submit_template
 
 
@@ -35,6 +35,9 @@ def parse_yaml(file_path):
 
 
 def main(args):
+    if hasattr(args, 'create_filename'):
+        init_workflow(args.create_filename)
+        
     if hasattr(args, 'list_args') and args.list_args == 'list':
         list_workflows()
 
@@ -57,6 +60,9 @@ if __name__ == '__main__':
 
     parser_list = subparsers.add_parser('list', help='list workflows or templates')
     parser_list.add_argument('list_args', help='list workflows or templates',  action="store_const" ,const='list')
+
+    parser_workflow = subparsers.add_parser('create', help='workflow-related commands')
+    parser_workflow.add_argument('create_filename', help='template filename')
 
     parser_template = subparsers.add_parser('template', help='template-related commands')
     template_subparsers = parser_template.add_subparsers(help='sub-command help')
